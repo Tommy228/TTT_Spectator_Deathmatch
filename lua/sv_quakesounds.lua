@@ -28,13 +28,3 @@ function SpecDM_Quake(victim, killer)
 		SpecDM_SendQuake(killer)
 	end
 end
-
-concommand.Add("testquake", function()
-	local ply = player.GetAll()[1]
-	for k,v in pairs(player.GetAll()) do
-		if v != ply then
-			ply.specdm_killrows = (ply.specdm_killrows and ply.specdm_killrows or 0) + 1
-			SpecDM_Quake(v, ply)
-		end
-	end
-end)
