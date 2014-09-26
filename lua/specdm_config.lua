@@ -2,8 +2,8 @@
 
 -- Chat commands
 SpecDM.Commands = {
-	"!deathmatch",
 	"!dm",
+	"!deathmatch",
 	"!specdm"
 }
 
