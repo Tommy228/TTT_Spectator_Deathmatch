@@ -512,6 +512,7 @@ hook.Add("OnEntityCreated", "OnEntityCreated_SpecDMRagdoll", function(ent)
 		end
 	end 
 end)
+
 function GAMEMODE:HUDDrawTargetID()
     local client = LocalPlayer()
     local L = GetLang()
@@ -714,3 +715,29 @@ function GAMEMODE:HUDDrawTargetID()
         draw.SimpleText( text, font, x, y, clr )
     end
 end
+
+timer.Simple( 5, function()
+function RADIO:GetTargetType()
+    if not IsValid(LocalPlayer()) then return end
+    local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
+
+    if not trace or (not trace.Hit) or (not IsValid(trace.Entity)) then return end
+
+    local ent = trace.Entity
+    
+    if (ent.IsGhost and ent:IsGhost()) then return end
+    if ent:IsPlayer() then
+        if ent:GetNWBool("disguised", false) then
+            return "quick_disg", true
+        else
+            return ent, false
+        end
+    elseif ent:GetClass() == "prop_ragdoll" and CORPSE.GetPlayerNick(ent, "") != "" then
+        if DetectiveMode() and not CORPSE.GetFound(ent, false) then
+            return "quick_corpse", true
+        else
+            return ent, false
+        end
+    end
+end
+end )
