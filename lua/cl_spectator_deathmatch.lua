@@ -542,7 +542,7 @@ function GAMEMODE:HUDDrawTargetID()
     local hint = (not minimal) and (ent.TargetIDHint or ClassHint[cls])
 
     if ent:IsPlayer() then
-	if (ent.IsGhost and ent:IsGhost()) then return end
+	if ((ent.IsGhost and ent:IsGhost()) and !(client.IsGhost and client:IsGhost())) or ((client.IsGhost and client:IsGhost()) and !(ent.IsGhost and ent:IsGhost())) then return end
         if ent:GetNWBool("disguised", false) then
             client.last_id = nil
 
