@@ -513,6 +513,7 @@ hook.Add("OnEntityCreated", "OnEntityCreated_SpecDMRagdoll", function(ent)
 	end 
 end)
 
+hook.Add("Initialize", "Initialize_HUDEdit", function()
 function GAMEMODE:HUDDrawTargetID()
     local client = LocalPlayer()
     local L = GetLang()
@@ -715,8 +716,6 @@ function GAMEMODE:HUDDrawTargetID()
         draw.SimpleText( text, font, x, y, clr )
     end
 end
-
-timer.Simple( 5, function()
 	function RADIO:GetTargetType()
 		if not IsValid(LocalPlayer()) then return end
 		local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
