@@ -28,11 +28,12 @@ hook.Add("OnEntityCreated", "OnEntityCreated_Ghost", function(ent)
 end)
 
 hook.Add("ShouldCollide", "ShouldCollide_Ghost", function(ent1, ent2)
-	if not IsValid(ent1) or not IsValid(ent2) then return false end
-	if ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost()) and not (ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost())) then
-		return false
-	end
-	if ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost()) and not (ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost())) then
-		return false
+	if IsValid(ent1) and IsValid(ent2) then
+		if ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost()) and not (ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost())) then
+			return false
+		end
+		if ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost()) and not (ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost())) then
+			return false
+		end
 	end
 end)
