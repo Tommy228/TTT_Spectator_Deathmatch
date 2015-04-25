@@ -70,7 +70,8 @@ function meta:GiveGhostWeapons()
 	self:Give("weapon_ghost_crowbar")
 end
 
-function meta:ManageGhost(spawn)
+function meta:ManageGhost(spawn, silent)
+	local silent = silent or false
 	self:SetGhost(spawn)
 	if spawn then
 		self:Spawn()
@@ -84,6 +85,9 @@ function meta:ManageGhost(spawn)
 	net.Start("SpecDM_Ghost")
 	net.WriteUInt(spawn and 1 or 0, 1)
 	net.Send(self)
+	if silent then
+		return
+	end
 	local tbl = player.GetHumans()
 	for k,v in pairs(tbl) do
 		if v == self then
@@ -141,7 +145,7 @@ end
 hook.Add("TTTEndRound", "TTTEndRound_Ghost", function()
 	for k,v in pairs(player.GetAll()) do
 		if v:IsGhost() then
-			v:ManageGhost(false)
+			v:ManageGhost(false, true)
 		end
 	end
 end)
