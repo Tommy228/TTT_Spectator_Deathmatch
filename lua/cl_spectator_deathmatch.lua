@@ -473,7 +473,7 @@ net.Receive("SpecDM_Autoswitch", function()
 		frame:MakePopup()
 	end
 	if SpecDM.DisplayMessage and not spawned then
-		chat.AddText("You've died! Type ", Color(98,176,255), SpecDM.Commands[1], Color(255, 255, 255), " to enter deathmatch mode and ", Color(255,62,62), "keep killing", Color(255, 255, 255), "!")
+		chat.AddText(Color(255, 62, 62), "[DM] ", color_white, "You've died! Type ", Color(98,176,255), SpecDM.Commands[1], Color(255, 255, 255), " to enter deathmatch mode and ", Color(255,62,62), "keep killing", Color(255, 255, 255), "!")
 		-- Now this will say !dm instead of !deathmatch. (see specdm_config.lua)
 	end
 end)
