@@ -17,7 +17,7 @@ local function decode_weapons(str)
 	return tbl
 end
 
-if not sql.TableExists("specdm_stats") then
+if sql.TableExists("specdm_stats") then
 	sql.Query("DROP TABLE specdm_stats")
 end
 if not sql.TableExists("specdm_stats_new") then
