@@ -1,1 +1,3 @@
-SpecDM = {}include("sv_spectator_deathmatch.lua")
+SpecDM = {}
+
+include("sv_spectator_deathmatch.lua")
