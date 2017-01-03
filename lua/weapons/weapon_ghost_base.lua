@@ -95,6 +95,7 @@ SWEP.IsGrenade = false
 SWEP.Weight             = 5
 SWEP.AutoSwitchTo       = false
 SWEP.AutoSwitchFrom     = false
+SWEP.UseHands			= true
 
 SWEP.Primary.Sound          = Sound( "Weapon_Pistol.Empty" )
 SWEP.Primary.Recoil         = 1.5
@@ -237,7 +238,7 @@ function SWEP:PrimaryAttack(worldsnd)
       net.Start("BulletGhost")
       net.WriteString(self.Primary.Sound)
       net.WriteVector(self:GetPos())
-      net.WriteUInt(self.Primary.SoundLevel or 0, 32)
+      net.WriteUInt(self.Primary.SoundLevel or 0, 19)
       net.Send(tbl)
    end
 
@@ -254,7 +255,7 @@ function SWEP:PrimaryAttack(worldsnd)
   net.Receive("BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
-	 local num = net.ReadUInt(32)
+	 local num = net.ReadUInt(19)
 	 if num == 0 then num = nil end
      sound.Play(str, vector, num)
   end)

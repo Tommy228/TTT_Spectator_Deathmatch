@@ -6,12 +6,11 @@ AddCSLuaFile("specdm_config.lua")
 AddCSLuaFile("cl_specdm_hud.lua")
 AddCSLuaFile("vgui/spec_dm_loadout.lua")
 AddCSLuaFile("cl_stats.lua")
-AddCSLuaFile("includes/von.lua")
+AddCSLuaFile("von.lua")
 AddCSLuaFile("cl_quakesounds.lua")
 
 include("sh_spectator_deathmatch.lua")
 include("sv_specdm_overrides.lua")
-include("sv_resources.lua")
 include("sv_stats.lua")
 include("sv_quakesounds.lua")
 
@@ -28,6 +27,33 @@ util.AddNetworkString("SpecDM_AskOpenStats")
 util.AddNetworkString("SpecDM_QuakeSound")
 util.AddNetworkString("SpecDM_Hitmarker")
 util.AddNetworkString("SpecDM_CreateRagdoll")
+
+if SpecDM.LoadoutEnabled then
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_ak47.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_aug.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_awp.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_galil.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_mp5.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_pistol.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_revolver.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_smg.vmt")
+	resource.AddFile("materials/vgui/spec_dm/icon_sdm_stmp.vmt")
+end
+
+if SpecDM.QuakeSoundsEnabled then
+	resource.AddFile("sound/specdm/killingspree.mp3")
+	resource.AddFile("sound/specdm/dominating.mp3")
+	resource.AddFile("sound/specdm/megakill.mp3")
+	resource.AddFile("sound/specdm/wickedsick.mp3")
+	resource.AddFile("sound/specdm/monsterkill.mp3")
+	resource.AddFile("sound/specdm/unstoppable.mp3")
+	resource.AddFile("sound/specdm/godlike.mp3")
+	resource.AddFile("sound/specdm/triplekill.mp3")
+	resource.AddFile("sound/specdm/ultrakill.mp3")
+	resource.AddFile("sound/specdm/doublekill.mp3")
+	resource.AddFile("sound/specdm/rampage.mp3")
+	resource.AddFile("sound/specdm/holyshit.mp3")
+end
 
 hook.Add("PlayerSay", "PlayerSay_SpecDM", function(ply, text, public)
 	if table.HasValue(SpecDM.Commands, string.lower(text)) then
@@ -76,10 +102,13 @@ function meta:ManageGhost(spawn, silent)
 	if spawn then
 		self:Spawn()
 		self:SetBloodColor(-1)
+		self:Flashlight(false)
+		self:AllowFlashlight(false)
 		self:GiveGhostWeapons()
 		SpecDM:RelationShip(self)
 	else
 		self:Kill()
+		self:AllowFlashlight(true)
 		self:Spectate(OBS_MODE_ROAMING)
 	end
 	net.Start("SpecDM_Ghost")
@@ -127,11 +156,11 @@ function meta:WantsToDM()
 				local timername = "SpecDM_Timer_"..tostring(self:UniqueID())
 				timer.Create(timername, 1, 0, function()
 					if not IsValid(self) then
-						timer.Destroy(timername)
+						timer.Remove(timername)
 					else
 						self.DMTimer = self.DMTimer - 1
 						if self.DMTimer <= 0 then
-							timer.Destroy(timername)
+							timer.Remove(timername)
 						end
 					end
 				end)

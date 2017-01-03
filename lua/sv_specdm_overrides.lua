@@ -82,7 +82,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 end)
 
 -- too many damn scripts override this function on Initialize
--- so I had the idea of putting this here
+-- so I had the idea of putting this here (Some scripts override this, too...)
 hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
 	local old_haste = HasteMode
 	local old_PlayerDeath = GAMEMODE.PlayerDeath
@@ -121,7 +121,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_PlayerCanPickupWeapon = GAMEMODE.PlayerCanPickupWeapon
 	function GAMEMODE:PlayerCanPickupWeapon(ply, wep)
 		if not IsValid(ply) or not IsValid(wep) then return end
-		if ply:IsGhost() then 
+		if ply:IsGhost() then
 			return string.Left(wep:GetClass(), #"weapon_ghost") == "weapon_ghost"
 		end
 		return old_PlayerCanPickupWeapon(self, ply, wep)

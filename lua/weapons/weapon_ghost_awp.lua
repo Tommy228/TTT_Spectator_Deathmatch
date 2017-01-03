@@ -29,7 +29,7 @@ SWEP.AutoSpawnable = false
 SWEP.ViewModel          = Model("models/weapons/v_snip_awp.mdl")
 SWEP.WorldModel         = Model("models/weapons/w_snip_awp.mdl")
 
-SWEP.Primary.Sound = Sound(")weapons/awp/awp1.wav")
+SWEP.Primary.Sound = Sound("weapons/awp/awp1.wav")
 
 SWEP.Secondary.Sound = Sound("Default.Zoom")
 
@@ -135,4 +135,3 @@ if CLIENT then
       return (self:GetIronsights() and 0.2) or nil
    end
 end
-

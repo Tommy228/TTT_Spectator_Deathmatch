@@ -211,7 +211,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 			end
 			return true
 		elseif bind == "+attack" then
-			if WSWITCH.Show then
+			if WSWITCH:PreventAttack() then
 				if not pressed then
 					WSWITCH:ConfirmSelection()
 				end
@@ -256,11 +256,6 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 					gui.EnableScreenClicker(true)
 					GAMEMODE.ForcedMouse = true
 				end
-			end
-		elseif bind == "messagemode" and pressed and ply:IsSpec() then
-			if GAMEMODE.round_state == ROUND_ACTIVE and DetectiveMode() then
-				LANG.Msg("spec_teamchat_hint")
-				return true
 			end
 		elseif bind == "noclip" and pressed then
 			if not GetConVar("sv_cheats"):GetBool() then
@@ -308,11 +303,11 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 	
 	local function overrideTargetID()
 		local old_HUDDrawTargetID = GAMEMODE.HUDDrawTargetID
-		function GAMEMODE:HUDDrawTargetID()
+		function GAMEMODE:HUDDrawTargetID() -- Make sure no addon is overwriting this function otherwise people may see ghosts
 			local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
 			local ent = trace.Entity
 			if IsValid(ent) and ent:IsPlayer() then
-				if (ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool()) then
+				if ((ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool())) then
 					return
 				end
 			end
@@ -495,7 +490,7 @@ end)
 net.Receive("SpecDM_Hitmarker", function()
 	hitmarker_enabled = true
 	if timer.Exists("SpecDM_Hitmarker") then
-		timer.Destroy("SpecDM_Hitmarker")
+		timer.Remove("SpecDM_Hitmarker")
 	end
 	timer.Create("SpecDM_Hitmarker", 0.35, 1, function()
 		hitmarker_enabled = false

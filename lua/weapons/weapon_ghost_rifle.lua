@@ -9,7 +9,8 @@ if CLIENT then
    SWEP.PrintName          = "Scout"
 
    SWEP.Slot               = 2
-
+   SWEP.ViewModelFlip		= false
+   SWEP.ViewModelFOV = 54
    SWEP.Icon = "VGUI/ttt/icon_scout_green"
 end
 
@@ -28,22 +29,24 @@ SWEP.Primary.Ammo = "357"
 SWEP.Primary.Damage = 50
 SWEP.Primary.Cone = 0.005
 SWEP.Primary.ClipSize = 10
-SWEP.Primary.ClipMax = 20 -- keep mirrored to ammo
+SWEP.Primary.ClipMax = 20
+SWEP.UseHands				= true
 SWEP.Primary.DefaultClip = 30
 
 SWEP.HeadshotMultiplier = 4
 
 SWEP.AutoSpawnable      = false
 SWEP.NoAmmoEnt = "item_ammo_357_ttt"
-SWEP.ViewModel          = Model("models/weapons/v_snip_scout.mdl")
-SWEP.WorldModel         = Model("models/weapons/w_snip_scout.mdl")
 
-SWEP.Primary.Sound = Sound(")weapons/scout/scout_fire-1.wav")
+SWEP.Primary.Sound = Sound("weapons/scout/scout_fire-1.wav")
 
 SWEP.Secondary.Sound = Sound("Default.Zoom")
 
-SWEP.IronSightsPos      = Vector( 5, -15, -2 )
-SWEP.IronSightsAng      = Vector( 2.6, 1.37, 3.5 )
+SWEP.ViewModel             = Model("models/weapons/cstrike/c_snip_scout.mdl")
+SWEP.WorldModel            = Model("models/weapons/w_snip_scout.mdl")
+
+SWEP.IronSightsPos         = Vector( 5, -15, -2 )
+SWEP.IronSightsAng = Vector( 2.6, 1.37, 3.5 )
 
 function SWEP:SetZoom(state)
     if CLIENT then 

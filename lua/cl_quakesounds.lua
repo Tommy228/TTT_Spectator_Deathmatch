@@ -1,4 +1,3 @@
-
 surface.CreateFont("SpecDM_Quake", {
 	font = "Arial",
 	size = 24,
@@ -6,39 +5,37 @@ surface.CreateFont("SpecDM_Quake", {
 })
 
 local playing_quake = false
-local path = "specdm_quakesounds/"
+local path = "specdm/"
 
 local kill_tbl = {
-	[3] = { "killingspree.wav", "is on a ", "Killing spree " },
-	[4] = { "dominating.wav", "is ", "Dominating " },
-	[5] = { "megakill.wav", "is on a ", "Megakill " },
-	[6] = { "wickedsick.wav", "is ", "Wicked sick " },
-	[7] = { "monsterkill.wav", "is on a ", "Monsterkill " },
-	[8] = { "unstoppable.wav", "is ", "Unstoppable " },
-	[9] = { "godlike.wav", "is ", "Godlike " }
+	[3] = { "killingspree.mp3", "is on a ", "Killing spree " },
+	[4] = { "dominating.mp3", "is ", "Dominating " },
+	[5] = { "megakill.mp3", "is on a ", "Megakill " },
+	[6] = { "wickedsick.mp3", "is ", "Wicked sick " },
+	[7] = { "monsterkill.mp3", "is on a ", "Monsterkill " },
+	[8] = { "unstoppable.mp3", "is ", "Unstoppable " },
+	[9] = { "godlike.mp3", "is ", "Godlike " }
 }
 
 local tbl_combos = {
-	[2] = { "doublekill.wav", "with a ", "Double kill" },
-	[3] = { "triplekill.wav", "with a ", "Triple kill" },
-	[4] = { "ultrakill.wav", "with an ", "Ultrakill" },
-	[5] = { "rampage.wav", "and is on a ", "Rampage" }
+	[2] = { "doublekill.mp3", "with a ", "Double kill" },
+	[3] = { "triplekill.mp3", "with a ", "Triple kill" },
+	[4] = { "ultrakill.mp3", "with an ", "Ultrakill" },
+	[5] = { "rampage.mp3", "and is on a ", "Rampage" }
 }
 
 local tbl_combos_2 = {
-	[2] = { "doublekill.wav", "just got a ", "Double kill" },
-	[3] = { "triplekill.wav", "just a ", "Triple kill" },
-	[4] = { "ultrakill.wav", "just got an ", "Ultrakill" },
-	[5] = { "rampage.wav", "is on a ", "Rampage" }
+	[2] = { "doublekill.mp3", "just got a ", "Double kill" },
+	[3] = { "triplekill.mp3", "just a ", "Triple kill" },
+	[4] = { "ultrakill.mp3", "just got an ", "Ultrakill" },
+	[5] = { "rampage.mp3", "is on a ", "Rampage" }
 }
 
 local label_1, label_2, label_3, label_4, label_5, label_6, label_7
 
-net.Receive("SpecDM_QuakeSound", function()
-	
-	local ply = net.ReadEntity()
-	local kills = net.ReadUInt(32)
-	local combos = net.ReadUInt(32)
+net.Receive("SpecDM_QuakeSound", function( len, ply )
+	local kills = net.ReadUInt(19)
+	local combos = net.ReadUInt(19)
 	if playing_quake and playing_quake != ply then return end
 	-- too lazy to use tables
 	if label_1 then label_1:Remove() end
@@ -48,9 +45,9 @@ net.Receive("SpecDM_QuakeSound", function()
 	if label_5 then label_5:Remove() end
 	if label_6 then label_6:Remove() end
 	if label_7 then label_7:Remove() end
-	if timer.Exists("SpecDM_1") then timer.Destroy("SpecDM_1") end
-	if timer.Exists("SpecDM_2") then timer.Destroy("SpecDM_2") end
-	if timer.Exists("SpecDM_3") then timer.Destroy("SpecDM_3") end
+	if timer.Exists("SpecDM_1") then timer.Remove("SpecDM_1") end
+	if timer.Exists("SpecDM_2") then timer.Remove("SpecDM_2") end
+	if timer.Exists("SpecDM_3") then timer.Remove("SpecDM_3") end
 	if not IsValid(ply) or not tonumber(kills) or not tonumber(combos) then return end
 	playing_quake = (kills >= 3 or combos >= 2) and ply or false
 	if playing_quake then
@@ -64,7 +61,7 @@ net.Receive("SpecDM_QuakeSound", function()
 		label_1:SizeToContents()
 		label_1:SetTextColor(Color(78, 126, 200, 255))
 		local x1, y1 = surface.GetTextSize(text_1)
-		local tbl = kills <= 9 and kill_tbl[kills] or { "holyshit.wav", "is beyond ", "Godlike" }
+		local tbl = kills <= 9 and kill_tbl[kills] or { "holyshit.mp3", "is beyond ", "Godlike" }
 		surface.PlaySound(path..tbl[1])
 		label_2 = vgui.Create("DLabel")
 		label_2:SetFont("SpecDM_Quake")

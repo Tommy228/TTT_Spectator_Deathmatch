@@ -36,9 +36,11 @@ SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "AirboatGun"
 SWEP.Primary.Recoil			= 1.9
 SWEP.Primary.Sound			= Sound("Weapon_m249.Single")
-SWEP.ViewModel			= "models/weapons/v_mach_m249para.mdl"
-SWEP.WorldModel			= "models/weapons/w_mach_m249para.mdl"
+SWEP.UseHands				= true
+SWEP.ViewModel				= "models/weapons/cstrike/c_mach_m249para.mdl"
+SWEP.WorldModel				= "models/weapons/w_mach_m249para.mdl"
 
 SWEP.HeadshotMultiplier = 2.2
 
-SWEP.IronSightsPos 		= Vector( -4.4, -3, 2 )
+SWEP.IronSightsPos = Vector(-5.96, -5.119, 2.349)
+SWEP.IronSightsAng = Vector(0, 0, 0)

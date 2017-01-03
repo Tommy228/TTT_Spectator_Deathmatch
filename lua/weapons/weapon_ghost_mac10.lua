@@ -6,10 +6,10 @@ SWEP.HoldType = "ar2"
 
 if CLIENT then
 
-   SWEP.PrintName = "MAC10"
-   SWEP.Slot = 2
-
---   SWEP.Icon = "VGUI/ttt/icon_mac"
+	SWEP.PrintName = "MAC10"
+	SWEP.Slot = 2
+    SWEP.ViewModelFlip = false
+	SWEP.ViewModelFOV = 54
 end
 
 
@@ -33,13 +33,14 @@ SWEP.AutoSpawnable = false
 
 SWEP.NoAmmoEnt = "item_ammo_smg1_ttt"
 
-SWEP.ViewModel  = "models/weapons/v_smg_mac10.mdl"
-SWEP.WorldModel = "models/weapons/w_smg_mac10.mdl"
+SWEP.UseHands            = true
+SWEP.ViewModel           = "models/weapons/cstrike/c_smg_mac10.mdl"
+SWEP.WorldModel          = "models/weapons/w_smg_mac10.mdl"
 
-SWEP.IronSightsPos = Vector( 6.62, -3, 2.9 )
-SWEP.IronSightsAng = Vector( 0.7, 5.3, 7 )
+SWEP.IronSightsPos       = Vector(-8.921, -9.528, 2.9)
+SWEP.IronSightsAng       = Vector(0.699, -5.301, -7)
 
-SWEP.DeploySpeed = 3
+SWEP.DeploySpeed         = 3
 
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    local att = dmginfo:GetAttacker()

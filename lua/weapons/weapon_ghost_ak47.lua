@@ -40,9 +40,3 @@ SWEP.IronSightsAng = Vector( 2.2, -0.1, 0 )
 
 SWEP.ViewModel  = "models/weapons/v_rif_ak47.mdl"
 SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"
-
-
-
-
-
-

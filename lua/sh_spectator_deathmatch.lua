@@ -1,6 +1,6 @@
 
 include("specdm_config.lua")
-include("includes/von.lua")
+include("von.lua")
 
 local meta = FindMetaTable("Player")
 
@@ -9,6 +9,12 @@ function meta:IsGhost()
 end
 
 hook.Add("PlayerFootstep", "PlayerFootstep_Ghost", function(ply, pos, foot, sound, volume, rf)
+	if ply:IsGhost() then
+		return true
+	end
+end)
+
+hook.Add("PlayerSpray", "PlayerSpray_Ghost", function(ply)
 	if ply:IsGhost() then
 		return true
 	end
