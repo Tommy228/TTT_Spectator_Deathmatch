@@ -118,16 +118,6 @@ function SWEP:OpenEnt(hitEnt)
    end
 end
 
-if SERVER then
-	  net.Receive("BulletGhost", function()
-     local str = net.ReadString()
-	 local vector = net.ReadVector()
-	 local num = net.ReadUInt(19)
-	 if num == 0 then num = nil end
-     sound.Play(str, vector, num)
-  end)
- end
-
 function SWEP:PrimaryAttack()
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
 
@@ -143,7 +133,7 @@ function SWEP:PrimaryAttack()
    local tr_main = util.TraceLine({start=spos, endpos=sdest, filter=self.Owner, mask=MASK_SHOT_HULL})
    local hitEnt = tr_main.Entity
 
-  if CLIENT and LocalPlayer() == self.Owner then
+   if CLIENT and LocalPlayer() == self.Owner then
       self.Weapon:EmitSound(sound_single, self.Primary.SoundLevel )
    else
       local tbl = {}

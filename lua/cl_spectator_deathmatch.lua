@@ -62,7 +62,7 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 	end
 end)
 
-local COLOR_WHITE = COLOR_WHITE
+local COLOR_WHITE = Color(255,255,255,255)
 local gray = Color(255, 255, 255, 100)
 
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
