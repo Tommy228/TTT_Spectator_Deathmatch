@@ -1,6 +1,6 @@
 
 include("specdm_config.lua")
-include("von.lua")
+include("specdm_von.lua")
 
 local meta = FindMetaTable("Player")
 
