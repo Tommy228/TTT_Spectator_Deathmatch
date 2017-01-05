@@ -187,6 +187,10 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 					Damagelog_New(Format("DMG: \t %s [%s] damaged %s [%s] for %d dmg", attacker:Nick(), attacker:GetRoleString(), ent:Nick(), ent:GetRoleString(), math.Round(dmginfo:GetDamage())))
 				end
 			end
+
+			if ent:IsGhost() and dmginfo:GetInflictor():GetClass() == "trigger_hurt" then
+				return true
+			end
 		end
 	end)
 	
@@ -199,17 +203,22 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			Damagelog_New(str)
 		end
 	end
-	
-	local old_BeginRound = BeginRound
-	function BeginRound()
-		old_BeginRound()
-		for k,v in pairs(player.GetAll()) do
-			if v:Alive() and not v:IsGhost() then
-				v:SetNWBool("PlayedSRound", true)
-			else
-				v:SetNWBool("PlayedSRound", false)
-			end
+end)
+
+hook.Add("TTTBeginRound", "BeginRound_SpecDM", function()
+	for k,v in ipairs(player.GetAll()) do
+		if v:IsTerror() then
+			v:SetNWBool("PlayedSRound", true)
+		else
+			v:SetNWBool("PlayedSRound", false)
 		end
 	end
-	
+end)
+
+hook.Add("AcceptInput", "AcceptInput_Ghost", function(ent, name, activator, caller, data)
+	if IsValid(caller) and caller:GetClass() == "ttt_logic_role" then
+		if IsValid(activator) and activator:IsPlayer() and activator:IsGhost() then
+			return true
+		end
+	end
 end)
