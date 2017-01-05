@@ -14,12 +14,6 @@ hook.Add("PlayerFootstep", "PlayerFootstep_Ghost", function(ply, pos, foot, soun
 	end
 end)
 
-hook.Add("PlayerSpray", "PlayerSpray_Ghost", function(ply)
-	if ply:IsGhost() then
-		return true
-	end
-end)
-
 hook.Add("OnEntityCreated", "OnEntityCreated_Ghost", function(ent)
 	if ent:IsPlayer() then
 		ent:SetCustomCollisionCheck(true)

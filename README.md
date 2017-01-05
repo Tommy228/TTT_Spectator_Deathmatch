@@ -23,13 +23,14 @@ How to install : Just drop the TTT_Spectator_Deathmatch folder to addons/.
 And don't forget to update your FastDL (or use the workshop) and edit the specdm_config.lua file!
 
 
-###TTT Spectator Deathmatch is **NOT** working with
-- 'TTT Dead Ringer' (use of :SetNoDraw)
+###Known bugs:
+- On some maps traps will activate by a ghost player
 
 
 ##Upcoming features:
 
 * Cleaner code and example template for creating own ghost weapons
+* Add an update notification (like 'TTT Damagelogs' has)
 
 
 #License:

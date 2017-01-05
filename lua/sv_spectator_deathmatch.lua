@@ -102,13 +102,10 @@ function meta:ManageGhost(spawn, silent)
 	if spawn then
 		self:Spawn()
 		self:SetBloodColor(-1)
-		self:Flashlight(false)
-		self:AllowFlashlight(false)
 		self:GiveGhostWeapons()
 		SpecDM:RelationShip(self)
 	else
 		self:Kill()
-		self:AllowFlashlight(true)
 		self:Spectate(OBS_MODE_ROAMING)
 	end
 	net.Start("SpecDM_Ghost")

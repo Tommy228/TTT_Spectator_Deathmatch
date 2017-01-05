@@ -301,12 +301,19 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
 	
-	function overrideTargetID()
-		local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
-		local ent = trace.Entity
-		if IsValid(ent) and ent:IsPlayer() and ((ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool())) then return end
+	local function overrideTargetID()
+		local old_HUDDrawTargetID = GAMEMODE.HUDDrawTargetID
+		function GAMEMODE:HUDDrawTargetID()
+			local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
+			local ent = trace.Entity
+			if IsValid(ent) and ent:IsPlayer() then
+				if (ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool()) then
+					return
+				end
+			end
+			old_HUDDrawTargetID(self)
+		end
 	end
-	hook.Add("HUDDrawTargetID", "SpecDMTargetID", overrideTargetID)
 	
 	if not SpecDM.IsScoreboardCustom then
 		GROUP_COUNT = 5
@@ -337,6 +344,27 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		end
 	end
 		
+	function TargetIDChangeCallback()
+		local old_DrawPropSpecLabels = DrawPropSpecLabels_New
+		function DrawPropSpecLabels_New(client)
+			if not showalive:GetBool() then return end
+			return old_DrawPropSpecLabels(client)
+		end
+		overrideTargetID()
+	end
+	
+	-- fuck you ttt and fuck your local functions
+	-- you are making me write the most stupid code ever
+	local targetid = file.Read(GAMEMODE.FolderName.."/gamemode/cl_targetid.lua", "LUA")
+	if targetid then
+		targetid = string.gsub(targetid, "function GM:", "function GAMEMODE:")
+		targetid = string.gsub(targetid, "local function DrawPropSpecLabels", "function DrawPropSpecLabels")
+		targetid = string.gsub(targetid, "DrawPropSpecLabels", "DrawPropSpecLabels_New")
+		targetid = targetid.." TargetIDChangeCallback()"
+		RunString(targetid)
+	else
+		overrideTargetID()
+	end
 end)
 
 local primary = CreateClientConVar("ttt_specdm_primaryweapon", "random", FCVAR_ARCHIVE)
