@@ -118,7 +118,7 @@ function SWEP:OpenEnt(hitEnt)
    end
 end
 
-if SERVER then
+if CLIENT then
 	  net.Receive("BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
