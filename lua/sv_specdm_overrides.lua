@@ -222,3 +222,11 @@ hook.Add("AcceptInput", "AcceptInput_Ghost", function(ent, name, activator, call
 		end
 	end
 end)
+
+hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
+	if t.Entity and t.Entity:IsPlayer() and t.Entity:IsGhost() and t.OriginalSoundName == "HL2Player.BurnPain" then
+		return false
+	else
+		return
+	end
+end)
