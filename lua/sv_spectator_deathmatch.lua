@@ -6,7 +6,7 @@ AddCSLuaFile("specdm_config.lua")
 AddCSLuaFile("cl_specdm_hud.lua")
 AddCSLuaFile("vgui/spec_dm_loadout.lua")
 AddCSLuaFile("cl_stats.lua")
-AddCSLuaFile("von.lua")
+AddCSLuaFile("specdm_von.lua")
 AddCSLuaFile("cl_quakesounds.lua")
 
 include("sh_spectator_deathmatch.lua")
