@@ -313,32 +313,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 	if not SpecDM.IsScoreboardCustom then
 		GROUP_COUNT = 5
 	end
-	
-	for k,v in pairs(weapons.GetList()) do
-		if v.Base == "weapon_tttbase" then
-			local old_DrawWorldModel = v.DrawWorldModel
-			v.DrawWorldModel = function(self)
-				if LocalPlayer():IsGhost() then
-					if showalive:GetBool() then
-						if old_DrawWorldModel then
-							old_DrawWorldModel(self)
-						else
-							self:DrawModel()
-						end
-					else
-						return false
-					end
-				else
-					if old_DrawWorldModel then
-						old_DrawWorldModel(self)
-					else
-						self:DrawModel()
-					end
-				end
-			end
-		end
-	end
-		
+
 	function TargetIDChangeCallback()
 		local old_DrawPropSpecLabels = DrawPropSpecLabels_New
 		function DrawPropSpecLabels_New(client)
