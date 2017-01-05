@@ -121,7 +121,7 @@ if not SpecDM.IsScoreboardCustom then
 			player_group_panels[GROUP_DEATHMATCH] = t
 		end)
 
-	function ScoreGroupDM(p)
+	local function ScoreGroupDM(p)
 		if LocalPlayer():IsTerror() and p:GetNWBool("PlayedSRound",false) and p:IsGhost() then
 			if p:GetNWBool("body_found", false) then
 				return GROUP_FOUND
