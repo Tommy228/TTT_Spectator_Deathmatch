@@ -213,3 +213,11 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	end
 	
 end)
+
+hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
+	if t.Entity && t.Entity:IsPlayer() && t.Entity:IsGhost() then
+		return false
+	else
+		return
+	end	
+end)
