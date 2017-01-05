@@ -63,26 +63,7 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 end)
 
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
-local nextheartbeat = false
 hook.Add("Think", "Think_Ghost", function()
-	if not IsValid(LocalPlayer()) then return end
-	if LocalPlayer():IsGhost() then
-		if not nextheartbeat or CurTime() > nextheartbeat then
-			nextheartbeat = CurTime() + 5
-			for k,v in pairs(player.GetAll()) do
-				if v != LocalPlayer() and v:IsGhost() then
-					emitter = ParticleEmitter(LocalPlayer():GetPos())
-					local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
-					heartbeat:SetDieTime(0.5)
-					heartbeat:SetStartAlpha(255)
-					heartbeat:SetEndAlpha(0)
-					heartbeat:SetStartSize(50)
-					heartbeat:SetEndSize(0)
-					heartbeat:SetColor(255,0,0)
-				end
-			end
-		end
-    end
 	for k,v in pairs(player.GetAll()) do
 		if v:IsGhost() then
 			if LocalPlayer():IsGhost() then
@@ -118,6 +99,25 @@ hook.Add("Think", "Think_Ghost", function()
 		end
 	end
 end)
+
+local function SendHeartbeat()
+	if not IsValid(LocalPlayer()) then return end
+	if LocalPlayer():IsGhost() then
+		for k,v in pairs(player.GetHumans()) do -- Bots don't like SpecDM
+			if v != LocalPlayer() and v:IsGhost() then
+				emitter = ParticleEmitter(LocalPlayer():GetPos())
+				local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
+				heartbeat:SetDieTime(0.5)
+				heartbeat:SetStartAlpha(255)
+				heartbeat:SetEndAlpha(0)
+				heartbeat:SetStartSize(50)
+				heartbeat:SetEndSize(0)
+				heartbeat:SetColor(255,0,0)
+			end
+		end
+	end
+end
+timer.Create( "SpecDMHeartbeat", 5, 0, SendHeartbeat )
 
 if not SpecDM.IsScoreboardCustom then
 
@@ -211,7 +211,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 			end
 			return true
 		elseif bind == "+attack" then
-			if WSWITCH.Show then
+			if WSWITCH:PreventAttack() then
 				if not pressed then
 					WSWITCH:ConfirmSelection()
 				end
@@ -257,11 +257,6 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 					GAMEMODE.ForcedMouse = true
 				end
 			end
-		elseif bind == "messagemode" and pressed and ply:IsSpec() then
-			if GAMEMODE.round_state == ROUND_ACTIVE and DetectiveMode() then
-				LANG.Msg("spec_teamchat_hint")
-				return true
-			end
 		elseif bind == "noclip" and pressed then
 			if not GetConVar("sv_cheats"):GetBool() then
 				RunConsoleCommand("ttt_equipswitch")
@@ -306,19 +301,12 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
 	
-	local function overrideTargetID()
-		local old_HUDDrawTargetID = GAMEMODE.HUDDrawTargetID
-		function GAMEMODE:HUDDrawTargetID()
-			local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
-			local ent = trace.Entity
-			if IsValid(ent) and ent:IsPlayer() then
-				if (ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool()) then
-					return
-				end
-			end
-			old_HUDDrawTargetID(self)
-		end
+	function overrideTargetID()
+		local trace = LocalPlayer():GetEyeTrace(MASK_SHOT)
+		local ent = trace.Entity
+		if IsValid(ent) and ent:IsPlayer() and ((ent:IsGhost() and not LocalPlayer():IsGhost()) or (not ent:IsGhost() and LocalPlayer():IsGhost() and not showalive:GetBool())) then return end
 	end
+	hook.Add("HUDDrawTargetID", "SpecDMTargetID", overrideTargetID)
 	
 	if not SpecDM.IsScoreboardCustom then
 		GROUP_COUNT = 5
@@ -347,28 +335,6 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 				end
 			end
 		end
-	end
-		
-	function TargetIDChangeCallback()
-		local old_DrawPropSpecLabels = DrawPropSpecLabels_New
-		function DrawPropSpecLabels_New(client)
-			if not showalive:GetBool() then return end
-			return old_DrawPropSpecLabels(client)
-		end
-		overrideTargetID()
-	end
-	
-	-- fuck you ttt and fuck your local functions
-	-- you are making me write the most stupid code ever
-	local targetid = file.Read(GAMEMODE.FolderName.."/gamemode/cl_targetid.lua", "LUA")
-	if targetid then
-		targetid = string.gsub(targetid, "function GM:", "function GAMEMODE:")
-		targetid = string.gsub(targetid, "local function DrawPropSpecLabels", "function DrawPropSpecLabels")
-		targetid = string.gsub(targetid, "DrawPropSpecLabels", "DrawPropSpecLabels_New")
-		targetid = targetid.." TargetIDChangeCallback()"
-		RunString(targetid)
-	else
-		overrideTargetID()
 	end
 		
 end)
@@ -495,7 +461,7 @@ end)
 net.Receive("SpecDM_Hitmarker", function()
 	hitmarker_enabled = true
 	if timer.Exists("SpecDM_Hitmarker") then
-		timer.Destroy("SpecDM_Hitmarker")
+		timer.Remove("SpecDM_Hitmarker")
 	end
 	timer.Create("SpecDM_Hitmarker", 0.35, 1, function()
 		hitmarker_enabled = false

@@ -155,8 +155,8 @@ local general_sorted = {
 net.Receive("SpecDM_AskStats", function(_, ply)
 	local Update_General = net.ReadUInt(1) == 1
 	if Update_General then
-		local General_page = net.ReadUInt(32)
-		local sort = net.ReadUInt(32)
+		local General_page = net.ReadUInt(19)
+		local sort = net.ReadUInt(19)
 		local General_sort = general_sorted[sort] or "kills"
 		local General_order = net.ReadUInt(1) == 1 and "ASC" or "DESC"
 		local General_filter = net.ReadUInt(1) == 1
@@ -184,8 +184,8 @@ net.Receive("SpecDM_AskStats", function(_, ply)
 			count = sql.QueryValue("SELECT COUNT(steamid) FROM specdm_stats_new")
 		end
 		if not count then return end
-		net.WriteUInt(count, 32)
-		net.WriteUInt(#compressed, 32)
+		net.WriteUInt(count, 19)
+		net.WriteUInt(#compressed, 19)
 		net.WriteData(compressed, #compressed)
 		net.Send(ply)
 	end
@@ -197,7 +197,7 @@ net.Receive("SpecDM_AskOpenStats", function(_, ply)
 	if not query or not weapons then return end
 	weapons = decode_weapons(weapons)
 	net.Start("SpecDM_OpenStats")
-	net.WriteUInt(query, 32)
+	net.WriteUInt(query, 19)
 	net.WriteTable(weapons)
 	net.Send(ply)
 end)

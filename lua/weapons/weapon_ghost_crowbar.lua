@@ -11,7 +11,7 @@ if CLIENT then
 
    SWEP.Slot				= 0
 
-   SWEP.Icon = "VGUI/ttt/icon_cbar"   
+   SWEP.Icon = "vgui/ttt/icon_cbar"   
    SWEP.ViewModelFOV = 54
 end
 
@@ -122,7 +122,7 @@ if SERVER then
 	  net.Receive("BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
-	 local num = net.ReadUInt(32)
+	 local num = net.ReadUInt(19)
 	 if num == 0 then num = nil end
      sound.Play(str, vector, num)
   end)
@@ -155,7 +155,7 @@ function SWEP:PrimaryAttack()
       net.Start("BulletGhost")
       net.WriteString(sound_single)
       net.WriteVector(self:GetPos())
-      net.WriteUInt(self.Primary.SoundLevel or 0, 32)
+      net.WriteUInt(self.Primary.SoundLevel or 0, 19)
       net.Send(tbl)
    end
 
@@ -168,8 +168,8 @@ function SWEP:PrimaryAttack()
          edata:SetStart(spos)
          edata:SetOrigin(tr_main.HitPos)
          edata:SetNormal(tr_main.Normal)
-
-         --edata:SetSurfaceProp(tr_main.MatType)
+         edata:SetSurfaceProp(tr_main.SurfaceProps)
+         edata:SetHitBox(tr_main.HitBox)
          --edata:SetDamageType(DMG_CLUB)
          edata:SetEntity(hitEnt)
 

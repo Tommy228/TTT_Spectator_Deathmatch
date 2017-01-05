@@ -57,7 +57,7 @@ end
 function PANEL:SetWeapons(tbl)
 	self.Weapons = {}
 	for k,v in pairs(tbl) do
-		self.Weapons[v] = SpecDM.Loadout_Icons[v] or "VGUI/ttt/icon_nades"
+		self.Weapons[v] = SpecDM.Loadout_Icons[v] or "vgui/ttt/icon_nades"
 	end
 	self:AddWeapons()
 end
@@ -84,7 +84,7 @@ function PANEL:AddWeapons()
 		if Material(v) and Material(v).IsError and not Material(v):IsError() then
 			icon:SetIcon(v)
 		else
-			icon:SetIcon("VGUI/ttt/icon_nades")
+			icon:SetIcon("vgui/ttt/icon_nades")
 		end
 		icon:SetTooltip(k)
 		local old_func = icon.OnCursorEntered

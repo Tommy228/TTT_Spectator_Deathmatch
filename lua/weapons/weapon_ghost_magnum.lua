@@ -11,7 +11,7 @@ if CLIENT then
    SWEP.Slot				= 1
    SWEP.SlotPos			= 1
 
-   SWEP.Icon = "VGUI/ttt/magnumnew"		
+   SWEP.Icon = "vgui/ttt/magnumnew"		
 
    SWEP.ViewModelFOV  = 54
    SWEP.ViewModelFlip = false

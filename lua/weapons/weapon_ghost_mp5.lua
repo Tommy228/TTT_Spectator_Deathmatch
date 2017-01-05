@@ -9,7 +9,7 @@ if CLIENT then
    SWEP.PrintName = "MP5"			
    SWEP.Slot      = 2
   
---   SWEP.Icon = "VGUI/ttt/icon_dp_mp5"
+--   SWEP.Icon = "vgui/ttt/icon_dp_mp5"
 end
 
 

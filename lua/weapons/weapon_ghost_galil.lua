@@ -8,11 +8,11 @@ if CLIENT then
 
    SWEP.ViewModelFOV  = 72
    SWEP.ViewModelFlip = false
---   SWEP.Icon = "VGUI/ttt/icon_mtg_galil"
+--   SWEP.Icon = "vgui/ttt/icon_mtg_galil"
 end
 
 if SERVER then
-   resource.AddFile("materials/VGUI/ttt/icon_mtg_galil.vmt")
+   resource.AddFile("materials/vgui/ttt/icon_mtg_galil.vmt")
 end
 
 

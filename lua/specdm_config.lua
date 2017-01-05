@@ -27,7 +27,7 @@ SpecDM.DisplayMessage = true
 SpecDM.EnableJoinMessages = true
 
 -- Mute alive players by default when you join the specdm
-SpecDM.MuteAlive = false
+SpecDM.MuteAlive = true
 
 -- F-Key to open the statistics menu
 SpecDM.StatsFKey = KEY_F7
@@ -48,18 +48,13 @@ SpecDM.Ghost_weapons = {
 		"weapon_ghost_ak47",
 		"weapon_ghost_augbar",
 		"weapon_ghost_awp",
-		"weapon_ghost_famas",
 		"weapon_ghost_galil",
 		"weapon_ghost_sledge",
 		"weapon_ghost_mac10",
 		"weapon_ghost_hl2smg",
-		"weapon_ghost_m16",
 		"weapon_ghost_mp5",
-		"weapon_ghost_p90",
-		"weapon_ghost_sg550",
-		"weapon_ghost_siltmp",
 		"weapon_ghost_shotgun",
-		"weapon_ghost_rifle",
+		"weapon_ghost_rifle"
 	}
 }
 
@@ -71,26 +66,20 @@ SpecDM.QuakeSoundsEnabled = true
 
 -- Icons on the F1 loadout if the loadout is enabled
 SpecDM.Loadout_Icons = {
-	weapon_ghost_revolver = "VGUI/ttt/icon_deagle",
-	weapon_ghost_glock = "VGUI/ttt/icon_glock",
-	weapon_ghost_pistol = "VGUI/ttt/icon_pistol",
-	weapon_ghost_magnum = "VGUI/spec_dm/icon_sdm_revolver",
-	weapon_ghost_rifle = "VGUI/ttt/icon_scout",
-	weapon_ghost_sg550 = "VGUI/spec_dm/icon_sdm_sg550",
-	weapon_ghost_ak47 = "VGUI/spec_dm/icon_sdm_ak47",
-	weapon_ghost_sledge = "VGUI/ttt/icon_m249",
-	weapon_ghost_mac10 = "VGUI/ttt/icon_mac",
-	weapon_ghost_augbar = "VGUI/spec_dm/icon_sdm_aug",
-	weapon_ghost_m16 = "VGUI/ttt/icon_m16",
-	weapon_ghost_hl2pistol = "VGUI/spec_dm/icon_sdm_pistol",
-	weapon_ghost_hl2smg = "VGUI/spec_dm/icon_sdm_smg",
-	weapon_ghost_shotgun = "VGUI/ttt/icon_shotgun",
-	weapon_ghost_p90 = "VGUI/spec_dm/icon_sdm_p90",
-	weapon_ghost_awp = "VGUI/spec_dm/icon_sdm_awp",
-	weapon_ghost_galil = "VGUI/spec_dm/icon_sdm_galil",
-	weapon_ghost_famas = "VGUI/spec_dm/icon_sdm_famas",
-	weapon_ghost_mp5 = "VGUI/spec_dm/icon_sdm_mp5",
-	weapon_ghost_siltmp = "VGUI/spec_dm/icon_sdm_stmp"
+	weapon_ghost_revolver = "vgui/ttt/icon_deagle",
+	weapon_ghost_glock = "vgui/ttt/icon_glock",
+	weapon_ghost_pistol = "vgui/ttt/icon_pistol",
+	weapon_ghost_magnum = "vgui/spec_dm/icon_sdm_revolver",
+	weapon_ghost_rifle = "vgui/ttt/icon_scout",
+	weapon_ghost_ak47 = "vgui/spec_dm/icon_sdm_ak47",
+	weapon_ghost_sledge = "vgui/ttt/icon_m249",
+	weapon_ghost_mac10 = "vgui/ttt/icon_mac",
+	weapon_ghost_augbar = "vgui/spec_dm/icon_sdm_aug",
+	weapon_ghost_hl2smg = "vgui/spec_dm/icon_sdm_smg",
+	weapon_ghost_shotgun = "vgui/ttt/icon_shotgun",
+	weapon_ghost_awp = "vgui/spec_dm/icon_sdm_awp",
+	weapon_ghost_galil = "vgui/spec_dm/icon_sdm_galil",
+	weapon_ghost_mp5 = "vgui/spec_dm/icon_sdm_mp5"
 }
 
 -- If you're using _Undefined's pointshop you can enable this to give ghosts points when they kill other ghosts

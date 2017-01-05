@@ -1,6 +1,6 @@
 "UnlitGeneric"
 {
- "$basetexture" "VGUI/spec_dm/icon_sdm_revolver"
+ "$basetexture" "vgui/spec_dm/icon_sdm_revolver"
  "$vertexcolor" 1
  "$vertexalpha" 1
  "$translucent" 1

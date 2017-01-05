@@ -1,8 +1,6 @@
 -- Custom weapon base, used to derive from CS one, still very similar
 
-if SERVER then
-   AddCSLuaFile()
-end
+AddCSLuaFile()
 
 ---- TTT SPECIAL EQUIPMENT FIELDS
 
@@ -36,18 +34,18 @@ if CLIENT then
 
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
-   SWEP.Icon = "VGUI/ttt/icon_nades" -- most generic icon I guess
+   SWEP.Icon = "vgui/ttt/icon_nades" -- most generic icon I guess
 
    -- You can make your own weapon icon using the template in:
    --   /garrysmod/gamemodes/terrortown/template/
 
    -- Open one of TTT's icons with VTFEdit to see what kind of settings to use
    -- when exporting to VTF. Once you have a VTF and VMT, you can
-   -- resource.AddFile("materials/VGUI/...") them here. GIVE YOUR ICON A UNIQUE
+   -- resource.AddFile("materials/vgui/...") them here. GIVE YOUR ICON A UNIQUE
    -- FILENAME, or it WILL be overwritten by other servers! Gmod does not check
    -- if the files are different, it only looks at the name. I recommend you
    -- create your own directory so that this does not happen,
-   -- eg. /materials/VGUI/ttt/mycoolserver/mygun.vmt
+   -- eg. /materials/vgui/ttt/mycoolserver/mygun.vmt
 end
 
 ---- MISC TTT-SPECIFIC BEHAVIOUR CONFIGURATION
@@ -62,7 +60,7 @@ end
 SWEP.AutoSpawnable = false
 
 -- Set to true if weapon can be manually dropped by players (with Q)
-SWEP.AllowDrop = true
+SWEP.AllowDrop = false
 
 -- Set to true if weapon kills silently (no death scream)
 SWEP.IsSilent = false
@@ -95,6 +93,7 @@ SWEP.IsGrenade = false
 SWEP.Weight             = 5
 SWEP.AutoSwitchTo       = false
 SWEP.AutoSwitchFrom     = false
+SWEP.UseHands			= true
 
 SWEP.Primary.Sound          = Sound( "Weapon_Pistol.Empty" )
 SWEP.Primary.Recoil         = 1.5
@@ -130,11 +129,11 @@ AccessorFuncDT(SWEP, "ironsights", "Ironsights")
 SWEP.fingerprints = {}
 
 local sparkle = CLIENT and CreateConVar("ttt_crazy_sparks", "0", FCVAR_ARCHIVE)
+local crosshair_size = CreateConVar("ttt_crosshair_size", "1.0", FCVAR_ARCHIVE)
 
 -- crosshair
 if CLIENT then
 
-   local GetTranslation  = LANG.GetTranslation
    local GetPTranslation = LANG.GetParamTranslation
 
    -- Many non-gun weapons benefit from some help
@@ -147,8 +146,8 @@ if CLIENT then
 
       local sights = self:GetIronsights()
 
-      local x = ScrW() / 2.0
-      local y = ScrH() / 2.0
+      local x = math.floor(ScrW() / 2.0)
+      local y = math.floor(ScrH() / 2.0)
       local scale = math.max(0.2,  10 * self:GetPrimaryCone())
 
       local LastShootTime = self.Weapon:LastShootTime()
@@ -164,8 +163,8 @@ if CLIENT then
                               0,
                               255 * alpha)
 
-      local gap = 20 * scale * (sights and 0.8 or 1)
-      local length = gap + (25) * scale
+      local gap = math.floor(20 * scale * (sights and 0.8 or 1))
+      local length = math.floor(gap + (25 * crosshair_size:GetFloat()) * scale)
       surface.DrawLine( x - length, y, x - gap, y )
       surface.DrawLine( x + length, y, x + gap, y )
       surface.DrawLine( x, y - length, x, y - gap )
@@ -237,7 +236,7 @@ function SWEP:PrimaryAttack(worldsnd)
       net.Start("BulletGhost")
       net.WriteString(self.Primary.Sound)
       net.WriteVector(self:GetPos())
-      net.WriteUInt(self.Primary.SoundLevel or 0, 32)
+      net.WriteUInt(self.Primary.SoundLevel or 0, 19)
       net.Send(tbl)
    end
 
@@ -248,13 +247,13 @@ function SWEP:PrimaryAttack(worldsnd)
    local owner = self.Owner   
    if not IsValid(owner) or owner:IsNPC() or (not owner.ViewPunch) then return end
    
-   owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) *self.Primary.Recoil, 0 ) )
+   owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) * self.Primary.Recoil, 0 ) )
   end
   
   net.Receive("BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
-	 local num = net.ReadUInt(32)
+	 local num = net.ReadUInt(19)
 	 if num == 0 then num = nil end
      sound.Play(str, vector, num)
   end)

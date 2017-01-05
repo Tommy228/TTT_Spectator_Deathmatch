@@ -9,7 +9,7 @@ local Stats = nil
 
 local function OpenStats()
 
-	local general_pages = net.ReadUInt(32)
+	local general_pages = net.ReadUInt(19)
 	local weapons = net.ReadTable()
 	local General_CurPage = 1
 
@@ -142,8 +142,8 @@ local function OpenStats()
 				General_CurPage = 1
 				General_PrevFilter = (filter and General_Search:GetRealValue())
 			end
-			net.WriteUInt(General_CurPage, 32)
-			net.WriteUInt(General_ListView.CurColumn or 2, 32)
+			net.WriteUInt(General_CurPage, 19)
+			net.WriteUInt(General_ListView.CurColumn or 2, 19)
 			local order = nil
 			if General_ListView.CurDesc != nil then
 				order = General_ListView.CurDesc
@@ -165,8 +165,8 @@ local function OpenStats()
 	
 	net.Receive("SpecDM_SendStats", function()
 		local to_update = net.ReadUInt(1) == 1
-		general_pages = net.ReadUInt(32)
-		local size = net.ReadUInt(32)
+		general_pages = net.ReadUInt(19)
+		local size = net.ReadUInt(19)
 		local compressed = net.ReadData(size)
 		if not compressed then return end
 		local uncompressed = util.Decompress(compressed)

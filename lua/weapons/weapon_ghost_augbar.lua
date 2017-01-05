@@ -8,13 +8,14 @@ SWEP.HoldType			= "crossbow"
 
 if CLIENT then
 
-   SWEP.PrintName			= "Augbar"
+   SWEP.PrintName			= "AUG"
 
    SWEP.Slot				= 2
 
-   SWEP.Icon = "VGUI/ttt/icon_tt_aug"
+   SWEP.Icon = "vgui/ttt/icon_tt_aug"
 
-   SWEP.ViewModelFlip		= true
+   SWEP.ViewModelFlip		= false
+   SWEP.ViewModelFOV = 60
 end
 
 
@@ -26,39 +27,29 @@ SWEP.AdminSpawnable = true
 SWEP.Kind = WEAPON_HEAVY
 SWEP.WeaponID = AMMO_AUGBAR
 
-
-SWEP.ViewModel			= "models/weapons/v_rif_aug.mdl"
-SWEP.WorldModel			= "models/weapons/w_rif_aug.mdl"
-
 SWEP.Weight				= 5
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.Primary.Sound				= Sound( "Weapon_AUG.Single" );
+SWEP.Primary.Sound			= Sound( "Weapon_AUG.Single" );
 SWEP.Primary.Recoil			= 3
-SWEP.Primary.Damage = 14
-SWEP.Primary.Delay = 0.11
+SWEP.Primary.Damage			= 12
+SWEP.Primary.Delay			= 0.11
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.02
-SWEP.Primary.ClipSize		= 100
+SWEP.Primary.ClipSize		= 50
 SWEP.Primary.DefaultClip	= 200
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "AirboatGun"
-SWEP.HeadshotMultiplier = 2,5
+SWEP.HeadshotMultiplier = 2.5
 
 SWEP.Secondary.Automatic	= false
+SWEP.UseHands				= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.ScopeZooms			= {1}
-   SWEP.EquipMenuData = {
-      type = "item_weapon",
-      desc = [[
-Fusil d'assaut
-Recul : Élevé
-Dégâts moyens : 16
-Chargeur : 100 balles
-Cadence de tir : 9 balles/sec]]
-    };
+SWEP.ViewModel = Model("models/weapons/cstrike/c_rif_aug.mdl")
+SWEP.WorldModel = Model("models/weapons/w_rif_aug.mdl")
 
 SWEP.IronSightsPos      = Vector( 5, -15, -2 )
 SWEP.IronSightsAng      = Vector( 2.6, 1.37, 3.5 )
@@ -69,7 +60,7 @@ function SWEP:SetZoom(state)
        return
     else
        if state then
-          self.Owner:SetFOV(0, 0.3)
+          self.Owner:SetFOV(20, 0.3)
        else
           self.Owner:SetFOV(0, 0.2)
        end
@@ -81,7 +72,7 @@ function SWEP:SecondaryAttack()
     if not self.IronSightsPos then return end
     if self.Weapon:GetNextSecondaryFire() > CurTime() then return end
     
-    bIronsights = not self:GetIronsights()
+    local bIronsights = not self:GetIronsights()
     
     self:SetIronsights( bIronsights )
     
@@ -104,9 +95,6 @@ function SWEP:Reload()
     self:SetIronsights( false )
     self:SetZoom(false)
 end
-
-
-
 
 function SWEP:Holster()
     self:SetIronsights(false)
@@ -159,6 +147,7 @@ if CLIENT then
          return self.BaseClass.DrawHUD(self)
       end
    end
+   function SWEP:AdjustMouseSensitivity()
+		return (self:GetIronsights() and 0.2) or nil
+   end
 end
-
-

@@ -1,6 +1,6 @@
 "UnlitGeneric"
 {
- "$basetexture" "VGUI/spec_dm/icon_sdm_smg"
+ "$basetexture" "vgui/spec_dm/icon_sdm_smg"
  "$vertexcolor" 1
  "$vertexalpha" 1
  "$translucent" 1

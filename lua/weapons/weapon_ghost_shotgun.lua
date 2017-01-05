@@ -9,7 +9,7 @@ if CLIENT then
    SWEP.PrintName = "shotgun_name"
 
    SWEP.Slot = 2
-   SWEP.Icon = "VGUI/ttt/icon_shotgun"
+   SWEP.Icon = "vgui/ttt/icon_shotgun"
 end
 
 
@@ -25,8 +25,8 @@ SWEP.Primary.Damage = 11
 SWEP.Primary.Cone = 0.085
 SWEP.Primary.Delay = 0.8
 SWEP.Primary.ClipSize = 8
-SWEP.Primary.ClipMax = 24
-SWEP.Primary.DefaultClip = 24
+SWEP.Primary.ClipMax = 32
+SWEP.Primary.DefaultClip = 32
 SWEP.Primary.Automatic = true
 SWEP.Primary.NumShots = 8
 SWEP.AutoSpawnable = false

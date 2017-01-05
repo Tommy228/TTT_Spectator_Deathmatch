@@ -2,9 +2,8 @@
 local function SpecDM_SendQuake(ply)
 	if not tonumber(ply.specdm_killrows) or not tonumber(ply.specdm_close_kills) then return end
 	net.Start("SpecDM_QuakeSound")
-	net.WriteEntity(ply)
-	net.WriteUInt(ply.specdm_killrows, 32)
-	net.WriteUInt(ply.specdm_close_kills, 32)
+	net.WriteUInt(ply.specdm_killrows, 19)
+	net.WriteUInt(ply.specdm_close_kills, 19)
 	local tbl = {}
 	for k,v in pairs(player.GetAll()) do
 		if v:IsGhost() then

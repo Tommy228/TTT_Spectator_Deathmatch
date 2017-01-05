@@ -11,7 +11,7 @@ if CLIENT then
 
    SWEP.ViewModelFOV  = 72
    SWEP.ViewModelFlip = true
---   SWEP.Icon = "VGUI/ttt/icon_ak47"
+--   SWEP.Icon = "vgui/ttt/icon_ak47"
 end
 
 -- Always derive from weapon_tttbase.
@@ -21,8 +21,6 @@ SWEP.Base				= "weapon_ghost_base"
 
 SWEP.HoldType			= "ar2"
 SWEP.Kind = WEAPON_HEAVY
-
-SWEP.AutoSpawnable = false
 
 SWEP.Primary.Delay       = 0.12
 SWEP.Primary.Recoil      = 2.9
@@ -40,9 +38,3 @@ SWEP.IronSightsAng = Vector( 2.2, -0.1, 0 )
 
 SWEP.ViewModel  = "models/weapons/v_rif_ak47.mdl"
 SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"
-
-
-
-
-
-

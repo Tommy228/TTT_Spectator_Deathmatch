@@ -12,7 +12,7 @@ if CLIENT then
 
    SWEP.ViewModelFlip   = false
    SWEP.ViewModelFOV = 60
---   SWEP.Icon = "VGUI/ttt/icon_rttt_smg"
+--   SWEP.Icon = "vgui/ttt/icon_rttt_smg"
 end
 
 SWEP.Base				= "weapon_ghost_base"
@@ -46,7 +46,7 @@ function SWEP:SecondaryAttack()
    if not self.IronSightsPos then return end
    if self.Weapon:GetNextSecondaryFire() > CurTime() then return end
 
-   bIronsights = not self:GetIronsights()
+   local bIronsights = not self:GetIronsights()
 
    self:SetIronsights( bIronsights )
 

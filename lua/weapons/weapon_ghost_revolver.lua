@@ -11,7 +11,8 @@ if CLIENT then
    SWEP.Slot				= 1
    SWEP.SlotPos			= 1
 
-   SWEP.Icon = "VGUI/ttt/icon_deagle"
+   SWEP.Icon = "vgui/ttt/icon_deagle"
+   SWEP.ViewModelFlip		= false
 end
 
 SWEP.Base				= "weapon_ghost_base"
@@ -31,12 +32,13 @@ SWEP.Primary.ClipSize = 8
 SWEP.Primary.ClipMax = 28
 SWEP.Primary.DefaultClip = 36
 SWEP.Primary.Automatic = true
-
+SWEP.UseHands				= true
+SWEP.ViewModelFOV	= 54
 SWEP.HeadshotMultiplier = 5
 
-SWEP.NoAmmoEnt = "item_ammo_revolver_ttt"
 SWEP.Primary.Sound			= Sound( "Weapon_Deagle.Single" )
-SWEP.ViewModel			= "models/weapons/v_pist_deagle.mdl"
-SWEP.WorldModel			= "models/weapons/w_pist_deagle.mdl"
+SWEP.ViewModel				= "models/weapons/cstrike/c_pist_deagle.mdl"
+SWEP.WorldModel				= "models/weapons/w_pist_deagle.mdl"
 
-SWEP.IronSightsPos 		= Vector( 5.15, -2, 2.6 )
+SWEP.IronSightsPos			= Vector(-6.361, -3.701, 2.15)
+SWEP.IronSightsAng			= Vector(0, 0, 0)

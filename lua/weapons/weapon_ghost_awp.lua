@@ -7,7 +7,7 @@ SWEP.HoldType           = "ar2"
 if CLIENT then
    SWEP.PrintName          = "AWP"
    SWEP.Slot               = 2
---   SWEP.Icon = "VGUI/ttt/icon_awp"
+--   SWEP.Icon = "vgui/ttt/icon_awp"
 end
 
 SWEP.Base				= "weapon_ghost_base"
@@ -29,7 +29,7 @@ SWEP.AutoSpawnable = false
 SWEP.ViewModel          = Model("models/weapons/v_snip_awp.mdl")
 SWEP.WorldModel         = Model("models/weapons/w_snip_awp.mdl")
 
-SWEP.Primary.Sound = Sound(")weapons/awp/awp1.wav")
+SWEP.Primary.Sound = Sound("weapons/awp/awp1.wav")
 
 SWEP.Secondary.Sound = Sound("Default.Zoom")
 
@@ -53,7 +53,7 @@ function SWEP:SecondaryAttack()
     if not self.IronSightsPos then return end
     if self.Weapon:GetNextSecondaryFire() > CurTime() then return end
     
-    bIronsights = not self:GetIronsights()
+    local bIronsights = not self:GetIronsights()
     
     self:SetIronsights( bIronsights )
     
@@ -135,4 +135,3 @@ if CLIENT then
       return (self:GetIronsights() and 0.2) or nil
    end
 end
-
