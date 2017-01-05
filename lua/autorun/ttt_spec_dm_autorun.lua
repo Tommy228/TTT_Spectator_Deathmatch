@@ -6,7 +6,6 @@
 SpecDM = {}
 
 if SERVER then
-	AddCSLuaFile()
 	include("sv_spectator_deathmatch.lua")
 else
 	include("cl_spectator_deathmatch.lua")
