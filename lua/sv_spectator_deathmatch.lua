@@ -1,5 +1,4 @@
 
-AddCSLuaFile("autorun/client/ttt_spec_dm_autorun.lua")
 AddCSLuaFile("cl_spectator_deathmatch.lua")
 AddCSLuaFile("sh_spectator_deathmatch.lua")
 AddCSLuaFile("specdm_config.lua")
