@@ -16,6 +16,8 @@ Some features:
 - Includes Dota2-like quake sounds (killstreak sounds).
 - Creates a new scoreboard section to see the list of spectator deathmatch players.
 
+#####For *stable* releases look here: https://github.com/Tommy228/TTT_Spectator_Deathmatch/releases
+
 How to install : Just drop the TTT_Spectator_Deathmatch folder to addons/.
 
 **On Linux servers, you need to make the foldername lowercase!**
