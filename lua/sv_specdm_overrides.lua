@@ -12,7 +12,7 @@ concommand.Add = function(command, func, help)
 end
 
 hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo, dir, trace)
-	if ply:IsGhost() then
+	if ply:IsGhost() and IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker():IsGhost() then
 		local _dmginfo = DamageInfo()
 		_dmginfo:SetDamage(dmginfo:GetDamage())
 		_dmginfo:SetDamagePosition(dmginfo:GetDamagePosition())
@@ -47,6 +47,8 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
 		ply:UnSpectate()
+		ply:SetBloodColor(0)
+		timer.Simple(0.1, function() if IsValid(ply) and ply:IsGhost() and ply:GetWeapons() == nil then ply:GiveGhostWeapons() end end)
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
 		return
 	else
@@ -182,7 +184,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			local attacker = dmginfo:GetAttacker()
 			if IsValid(attacker) and attacker:IsPlayer() then
 				if (attacker:IsGhost() and not ent:IsGhost()) or (not attacker:IsGhost() and ent:IsGhost()) then
-					dmginfo:ScaleDamage(0)
+					return true
 				elseif not attacker:IsGhost() and math.floor(dmginfo:GetDamage()) > 0 and GetRoundState() == ROUND_ACTIVE then
 					Damagelog_New(Format("DMG: \t %s [%s] damaged %s [%s] for %d dmg", attacker:Nick(), attacker:GetRoleString(), ent:Nick(), ent:GetRoleString(), math.Round(dmginfo:GetDamage())))
 				end
