@@ -46,77 +46,6 @@ SWEP.AllowDelete = false -- never removed for weapon reduction
 SWEP.AllowDrop = false
 
 local sound_single = Sound("Weapon_Crowbar.Single")
-local sound_open = Sound("DoorHandles.Unlocked3")
-
-if SERVER then
-   CreateConVar("ttt_crowbar_unlocks", "1", FCVAR_ARCHIVE)
-   CreateConVar("ttt_crowbar_pushforce", "395", FCVAR_NOTIFY)
-end
-
--- only open things that have a name (and are therefore likely to be meant to
--- open) and are the right class. Opening behaviour also differs per class, so
--- return one of the OPEN_ values
-local function OpenableEnt(ent)
-   local cls = ent:GetClass()
-   if ent:GetName() == "" then
-      return OPEN_NO
-   elseif cls == "prop_door_rotating" then
-      return OPEN_ROT
-   elseif cls == "func_door" or cls == "func_door_rotating" then
-      return OPEN_DOOR
-   elseif cls == "func_button" then
-      return OPEN_BUT
-   elseif cls == "func_movelinear" then
-      return OPEN_NOTOGGLE
-   else
-      return OPEN_NO
-   end
-end
-
-
-local function CrowbarCanUnlock(t)
-   return not GAMEMODE.crowbar_unlocks or GAMEMODE.crowbar_unlocks[t]
-end
-
--- will open door AND return what it did
-function SWEP:OpenEnt(hitEnt)
-   -- Get ready for some prototype-quality code, all ye who read this
-   if SERVER and GetConVar("ttt_crowbar_unlocks"):GetBool() then
-      local openable = OpenableEnt(hitEnt)
-
-      if openable == OPEN_DOOR or openable == OPEN_ROT then
-         local unlock = CrowbarCanUnlock(openable)
-         if unlock then
-            hitEnt:Fire("Unlock", nil, 0)
-         end
-
-         if unlock or hitEnt:HasSpawnFlags(256) then
-            if openable == OPEN_ROT then
-               hitEnt:Fire("OpenAwayFrom", self.Owner, 0)
-            end
-            hitEnt:Fire("Toggle", nil, 0)
-         else
-            return OPEN_NO
-         end
-      elseif openable == OPEN_BUT then
-         if CrowbarCanUnlock(openable) then
-            hitEnt:Fire("Unlock", nil, 0)
-            hitEnt:Fire("Press", nil, 0)
-         else
-            return OPEN_NO
-         end
-      elseif openable == OPEN_NOTOGGLE then
-         if CrowbarCanUnlock(openable) then
-            hitEnt:Fire("Open", nil, 0)
-         else
-            return OPEN_NO
-         end
-      end
-      return openable
-   else
-      return OPEN_NO
-   end
-end
 
 function SWEP:PrimaryAttack()
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
@@ -224,6 +153,9 @@ function SWEP:PrimaryAttack()
    if self.Owner.LagCompensation then
       self.Owner:LagCompensation(false)
    end
+end
+
+function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnDrop()
