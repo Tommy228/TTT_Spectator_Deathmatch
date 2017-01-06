@@ -26,7 +26,7 @@ And don't forget to update your FastDL (or use the workshop) and edit the specdm
 
 
 ###Known bugs:
-- On some maps traps will activate by a ghost player
+- On some maps ghost players can get stuck. Rejoining the Spectator Deathmatch is currently the only solution.
 
 
 ##Upcoming features:
