@@ -274,6 +274,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 		if damage > 5 then
 			sound.Play(table.Random(fallsounds), ply:GetShootPos(), 55 + math.Clamp(damage, 0, 50), 100)
 		end
+		return true
 	end
 end)
 
