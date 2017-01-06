@@ -83,12 +83,12 @@ end
 
 function meta:GiveGhostWeapons()
 	if not SpecDM.LoadoutEnabled or not self.ghost_primary or self.ghost_primary == "random" or not table.HasValue(SpecDM.Ghost_weapons.primary, self.ghost_primary) then
-		self:Give(table.Random(SpecDM.Ghost_weapons.primary))
+		self:Give(SpecDM.Ghost_weapons.primary[math.random(#SpecDM.Ghost_weapons.primary)])
 	else
 		self:Give(self.ghost_primary)
 	end
 	if not SpecDM.LoadoutEnabled or not self.ghost_secondary or self.ghost_secondary == "random" or not table.HasValue(SpecDM.Ghost_weapons.secondary, self.ghost_secondary) then
-		self:Give(table.Random(SpecDM.Ghost_weapons.secondary))
+		self:Give(SpecDM.Ghost_weapons.secondary[math.random(#SpecDM.Ghost_weapons.secondary)])
 	else
 		self:Give(self.ghost_secondary)
 	end
