@@ -136,17 +136,6 @@ function SWEP:PrimaryAttack()
 --         self.Owner:TraceHullAttack(spos, sdest, Vector(-16,-16,-16), Vector(16,16,16), 30, DMG_CLUB, 11, true)
 --         self.Owner:FireBullets({Num=1, Src=spos, Dir=self.Owner:GetAimVector(), Spread=Vector(0,0,0), Tracer=0, Force=1, Damage=20})
       
-      else
---         if tr_main.HitWorld then
---            self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER )
---         else
---            self.Weapon:SendWeaponAnim( ACT_VM_MISSCENTER )
---         end
-
-         -- See if our nodraw trace got the goods
-         if tr_all.Entity and tr_all.Entity:IsValid() then
-            self:OpenEnt(tr_all.Entity)
-         end
       end
    end
 
