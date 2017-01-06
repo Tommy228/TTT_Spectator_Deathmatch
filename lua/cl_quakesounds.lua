@@ -33,7 +33,8 @@ local tbl_combos_2 = {
 
 local label_1, label_2, label_3, label_4, label_5, label_6, label_7
 
-net.Receive("SpecDM_QuakeSound", function( len, ply )
+net.Receive("SpecDM_QuakeSound", function()
+	local ply = net.ReadEntity()
 	local kills = net.ReadUInt(19)
 	local combos = net.ReadUInt(19)
 	if playing_quake and playing_quake != ply then return end

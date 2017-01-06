@@ -1,5 +1,4 @@
 
-AddCSLuaFile("autorun/client/ttt_spec_dm_autorun.lua")
 AddCSLuaFile("cl_spectator_deathmatch.lua")
 AddCSLuaFile("sh_spectator_deathmatch.lua")
 AddCSLuaFile("specdm_config.lua")
@@ -105,7 +104,7 @@ function meta:ManageGhost(spawn, silent)
 		self:GiveGhostWeapons()
 		SpecDM:RelationShip(self)
 	else
-		self:Kill()
+		self:KillSilent()
 		self:Spectate(OBS_MODE_ROAMING)
 	end
 	net.Start("SpecDM_Ghost")
