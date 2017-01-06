@@ -213,66 +213,77 @@ local fallsounds = {
 };
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
-	if in_water or speed < 450 or not IsValid(ply) then return end
+	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then
+		if in_water or speed < 450 or not IsValid(ply) then return end
 
-	-- Everything over a threshold hurts you, rising exponentially with speed
-	local damage = math.pow(0.05 * (speed - 420), 1.75)
+		-- Everything over a threshold hurts you, rising exponentially with speed
+		local damage = math.pow(0.05 * (speed - 420), 1.75)
 
-	-- I don't know exactly when on_floater is true, but it's probably when
-	-- landing on something that is in water.
-	if on_floater then damage = damage / 2 end
+		-- I don't know exactly when on_floater is true, but it's probably when
+		-- landing on something that is in water.
+		if on_floater then damage = damage / 2 end
 
-	-- if we fell on a dude, that hurts (him)
-	local ground = ply:GetGroundEntity()
-	if IsValid(ground) and ground:IsPlayer() then
-		if math.floor(damage) > 0 then
-			local att = ply
+		-- if we fell on a dude, that hurts (him)
+		local ground = ply:GetGroundEntity()
+		if IsValid(ground) and ground:IsPlayer() then
+			if math.floor(damage) > 0 then
+				local att = ply
 
-			-- if the faller was pushed, that person should get attrib
-			local push = ply.was_pushed
-			if push then
-				-- TODO: move push time checking stuff into fn?
-				if math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
-					att = push.att
+				-- if the faller was pushed, that person should get attrib
+				local push = ply.was_pushed
+				if push then
+					-- TODO: move push time checking stuff into fn?
+					if math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
+						att = push.att
+					end
 				end
+
+				local dmg = DamageInfo()
+
+				if att == ply then
+					-- hijack physgun damage as a marker of this type of kill
+					dmg:SetDamageType(DMG_CRUSH + DMG_PHYSGUN)
+				else
+					-- if attributing to pusher, show more generic crush msg for now
+					dmg:SetDamageType(DMG_CRUSH)
+				end
+
+				dmg:SetAttacker(att)
+				dmg:SetInflictor(att)
+				dmg:SetDamageForce(Vector(0,0,-1))
+				dmg:SetDamage(damage)
+
+				ground:TakeDamageInfo(dmg)
 			end
 
-			local dmg = DamageInfo()
-
-			if att == ply then
-				-- hijack physgun damage as a marker of this type of kill
-				dmg:SetDamageType(DMG_CRUSH + DMG_PHYSGUN)
-			else
-				-- if attributing to pusher, show more generic crush msg for now
-				dmg:SetDamageType(DMG_CRUSH)
-			end
-
-			dmg:SetAttacker(att)
-			dmg:SetInflictor(att)
-			dmg:SetDamageForce(Vector(0,0,-1))
-			dmg:SetDamage(damage)
-
-			ground:TakeDamageInfo(dmg)
+			-- our own falling damage is cushioned
+			damage = damage / 3
 		end
 
-		-- our own falling damage is cushioned
-		damage = damage / 3
-	end
+		if math.floor(damage) > 0 then
+			local dmg = DamageInfo()
+			dmg:SetDamageType(DMG_FALL)
+			dmg:SetAttacker(game.GetWorld())
+			dmg:SetInflictor(game.GetWorld())
+			dmg:SetDamageForce(Vector(0,0,1))
+			dmg:SetDamage(damage)
 
-	if math.floor(damage) > 0 then
-		local dmg = DamageInfo()
-		dmg:SetDamageType(DMG_FALL)
-		dmg:SetAttacker(game.GetWorld())
-		dmg:SetInflictor(game.GetWorld())
-		dmg:SetDamageForce(Vector(0,0,1))
-		dmg:SetDamage(damage)
+			ply:TakeDamageInfo(dmg)
 
-		ply:TakeDamageInfo(dmg)
-
-		-- play CS:S fall sound if we aren't a ghost and got somewhat significant damage
-		if ply:IsGhost() then return true end
-		if damage > 5 then
-			sound.Play(table.Random(fallsounds), ply:GetShootPos(), 55 + math.Clamp(damage, 0, 50), 100)
+			-- play CS:S fall sound if we got somewhat significant damage
+			if damage > 5 then
+				local filter = RecipientFilter()
+				for k,v in pairs(player.GetHumans()) do -- bots don't need to hear the sound
+					if v:IsGhost() then
+						filter:AddPlayer(v)
+					end
+				end
+				net.Start("BulletGhost")
+				net.WriteString(fallsounds[math.random(1, 3)])
+				net.WriteVector(ply:GetShootPos())
+				net.WriteUInt(55 + math.Clamp(damage, 0, 50), 19)
+				net.Send(filter)
+			end
 		end
 		return true
 	end
