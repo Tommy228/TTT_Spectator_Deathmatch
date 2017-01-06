@@ -104,7 +104,7 @@ function meta:ManageGhost(spawn, silent)
 		self:GiveGhostWeapons()
 		SpecDM:RelationShip(self)
 	else
-		self:Kill()
+		self:KillSilent()
 		self:Spectate(OBS_MODE_ROAMING)
 	end
 	net.Start("SpecDM_Ghost")
