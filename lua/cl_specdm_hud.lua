@@ -80,23 +80,25 @@ local function PaintBar(x, y, w, h, colors, value)
 	end
 end
 
-local GetLang = LANG.GetUnsafeLanguageTable
 hook.Add("HUDPaint", "GhostHUD", function()
 	local ply = LocalPlayer()
 	if ply:IsPlayer() and ply:IsGhost() then
 		local ttt_health_label = GetConVar("ttt_health_label")
 		local margin = 10
 
-		local L = GetLang()
+		local L = LANG.GetUnsafeLanguageTable()
 		local width = 250
 		local height = 90
 		local x = margin
 		local y = ScrH() - margin - height
-		DrawBg(x, y, width, height, LocalPlayer())
+
+		DrawBg(x, y, width, height, ply)
+
 		local bar_height = 25
 		local bar_width = width - (margin*2)
-		local health = math.max(0, LocalPlayer():Health())
+		local health = math.max(0, ply:Health())
 		local health_y = y + margin
+
 		PaintBar(x + margin, health_y, bar_width, bar_height, health_colors, health/100)
 		ShadowedText(tostring(health), "HealthAmmo", bar_width, health_y, COLOR_WHITE, TEXT_ALIGN_RIGHT, TEXT_ALIGN_RIGHT)
 
@@ -106,7 +108,7 @@ hook.Add("HUDPaint", "GhostHUD", function()
 		end
 
 		if ply:GetActiveWeapon().Primary then
-			local ammo_clip, ammo_max, ammo_inv = GetAmmo(LocalPlayer())
+			local ammo_clip, ammo_max, ammo_inv = GetAmmo(ply)
 			if ammo_clip != -1 then
 				local ammo_y = health_y + bar_height + margin
 				PaintBar(x+margin, ammo_y, bar_width, bar_height, ammo_colors, ammo_clip/ammo_max)
@@ -121,37 +123,24 @@ hook.Add("HUDPaint", "GhostHUD", function()
 		ShadowedText(text, "TraitorState", x + margin + 73, traitor_y, COLOR_WHITE, TEXT_ALIGN_CENTER)
 
 		local is_haste = HasteMode() and GetRoundState() == ROUND_ACTIVE
-		local endtime = GetGlobalFloat("ttt_round_end", 0) - CurTime()
-		local text
-		local font = "TimeLeft"
 		local color = COLOR_WHITE
 		local rx = x + margin + 170
 		local ry = traitor_y + 3
 
-		if is_haste then
-			local hastetime = GetGlobalFloat("ttt_haste_end", 0) - CurTime()
-			if hastetime < 0 then
-				text = L.overtime
-				font = "Trebuchet18"
-				ry = ry + 5
-				rx = rx - 3
-			else
-				local t = hastetime
-				text = util.SimpleTime(math.max(0, t), "%02i:%02i")
-			end
-		else
-			text = util.SimpleTime(math.max(0, endtime), "%02i:%02i")
-		end
-
-		ShadowedText(text, font, rx, ry, color)
+		local blab = util.SimpleTime(math.max(0, GetGlobalFloat("ttt_round_end", 0) - CurTime()), "%02i:%02i")
+		ShadowedText(blab, "TimeLeft", rx, ry, color)
 
 		if is_haste then
 			dr.SimpleText(L.hastemode, "TabLarge", x + margin + 165, traitor_y - 8)
 		end
 	end
+
+	WSWITCH:Draw(ply)
+	VOICE.Draw(ply)
+	hook.Call("HUDDrawPickupHistory", GAMEMODE)
 end)
 
 hook.Add("HUDShouldDraw", "GhostHUD", function(n)
 	local p = LocalPlayer()
-	if name == "TTTSpecHUD" and p:IsPlayer() and p:IsGhost() then return false end		
+	if p:IsPlayer() and p:IsGhost() and n == "TTTSpecHUD" then return false end
 end)
