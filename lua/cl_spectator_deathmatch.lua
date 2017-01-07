@@ -141,7 +141,7 @@ if not SpecDM.IsScoreboardCustom then
 		function sgtbl:UpdatePlayerData()
 			local to_remove = {}
 			for k, v in pairs(self.rows) do
-				if IsValid(v) and IsValid(v:GetPlayer()) and ((self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and LocalPlayer():IsSpec() or ScoreGroup(v:GetPlayer()) == self.group) then then
+				if IsValid(v) and IsValid(v:GetPlayer()) and (self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and LocalPlayer():IsSpec() or ScoreGroup(v:GetPlayer()) == self.group) then
 					v:UpdatePlayerData()
 				else
 					table.insert(to_remove, k)
@@ -172,8 +172,8 @@ if not SpecDM.IsScoreboardCustom then
 		function sbtbl:UpdateScoreboard(force)
 			if not force and not self:IsVisible() then return end
 
-			for k, v in pairs(GetGhostPlayers()) do
-				if LocalPlayer():IsSpec() then
+			for k, v in pairs(player.GetAll()) do
+				if v:IsGhost() and LocalPlayer():IsSpec() then
 					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
 						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
 					end
