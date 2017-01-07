@@ -4,6 +4,7 @@ surface.CreateFont("SpecDM_Quake", {
 	width = 1000
 })
 
+local quakesounds = CreateClientConVar("ttt_specdm_quakesounds", 1, FCVAR_ARCHIVE)
 local playing_quake = false
 local path = "specdm/"
 
@@ -34,6 +35,7 @@ local tbl_combos_2 = {
 local label_1, label_2, label_3, label_4, label_5, label_6, label_7
 
 net.Receive("SpecDM_QuakeSound", function()
+	if not quakesounds:GetBool() then return end
 	local ply = net.ReadEntity()
 	local kills = net.ReadUInt(19)
 	local combos = net.ReadUInt(19)

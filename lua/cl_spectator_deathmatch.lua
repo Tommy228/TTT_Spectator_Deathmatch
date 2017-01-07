@@ -388,6 +388,7 @@ hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
 	else
 		dgui:CheckBox("Always go to deathmatch mode after dying", "ttt_specdm_forcedeathmatch")
 	end
+	dgui:CheckBox("Enable Quake sounds + texts", "ttt_specdm_quakesounds")
 	dgui:CheckBox("Show alive players", "ttt_specdm_showaliveplayers")
 	dgui:CheckBox("Enable the color effect", "ttt_specdm_enablecoloreffect")
 	dgui:CheckBox("Enable the hitmarker", "ttt_specdm_hitmarker")
