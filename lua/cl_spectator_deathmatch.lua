@@ -115,75 +115,74 @@ end
 timer.Create( "SpecDMHeartbeat", 5, 0, SendHeartbeat )
 
 if not SpecDM.IsScoreboardCustom then
+	hook.Add("TTTScoreGroups", "TTTScoreGroups_GhostDM", function(can, pg)
+		if not GROUP_DEATHMATCH then
+			AddScoreGroup("DEATHMATCH")
+		end
 
-	GROUP_DEATHMATCH = 5
-	local old_vguiRegister = vgui.Register
-	vgui.Register = function(className, tbl, base)
-		if className == "TTTScoreboard" then
-			local old_Init = tbl.Init
-			tbl.Init = function(self)
-				old_Init(self)
-				local t = vgui.Create("TTTScoreGroup", self.ply_frame:GetCanvas())
-				t:SetGroupInfo("Spectator Deathmatch", Color(255, 127, 39, 100), GROUP_DEATHMATCH)
-				self.ply_groups[GROUP_DEATHMATCH] = t
-			end
-			local old_UpdateScoreboard = tbl.UpdateScoreboard
-			tbl.UpdateScoreboard = function(self, force)
-				if not force and not self:IsVisible() then return end
-				for k,v in pairs(player.GetAll()) do
-					if v:IsGhost() and (LocalPlayer():IsSpec() or LocalPlayer():IsActiveTraitor()) then
-						if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
-							self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
-						end
-					end
-				end
-				old_UpdateScoreboard(self, force)
-			end
-		elseif className == "TTTScoreGroup" then
-			tbl.AddPlayerRow = function(self, ply)
-				if (self.group == GROUP_DEATHMATCH or ScoreGroup(ply) == self.group) and not self.rows[ply] then
-					local row = vgui.Create("TTTScorePlayerRow", self)
-					row:SetPlayer(ply)
-					self.rows[ply] = row
-					self.rowcount = table.Count(self.rows)
-					-- I sincerely hate you for putting this here, spykr
-					self.rows[ply].OnMousePressed = function(s, mc) 
-						if RightClickRow and mc == MOUSE_RIGHT then 
-							RightClickRow(ply) 
-						elseif mc == MOUSE_LEFT then 
-							s:DoClick() 
-						elseif mc == MOUSE_RIGHT then
-							s:DoRightClick()
-						end
-					end
-					self:PerformLayout()
-				end
-			end
-			tbl.UpdatePlayerData = function(self)
-				local to_remove = {}
-				for k,v in pairs(self.rows) do
-					if ValidPanel(v) and IsValid(v:GetPlayer()) and ((self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and (LocalPlayer():IsSpec() or LocalPlayer():IsActiveTraitor())) or ScoreGroup(v:GetPlayer()) == self.group) then
-						v:UpdatePlayerData()
-					else
-						table.insert(to_remove, k)
-					end
-				end
-				if #to_remove == 0 then return end
-				for k,ply in pairs(to_remove) do
-					local pnl = self.rows[ply]
-					if ValidPanel(pnl) then
-						pnl:Remove()
-					end
-					self.rows[ply] = nil
-				end
+		local t = vgui.Create("TTTScoreGroup", can)
+		t:SetGroupInfo("Spectator Deathmatch", Color(255, 127, 39, 100), GROUP_DEATHMATCH)
+		pg[GROUP_DEATHMATCH] = t
+	end)
+
+	hook.Add("InitPostEntity", "InitPostEntity_ScoreboardOverride", function()
+		local sgtbl = vgui.GetControlTable("TTTScoreGroup")
+		function sgtbl:AddPlayerRow(ply)
+			if (self.group == GROUP_DEATHMATCH or ScoreGroup(ply) == self.group) and not self.rows[ply] then
+				local row = vgui.Create("TTTScorePlayerRow", self)
+				row:SetPlayer(ply)
+				self.rows[ply] = row
 				self.rowcount = table.Count(self.rows)
-				self:UpdateSortCache()
-				self:InvalidateLayout()
+
+				self:PerformLayout()
 			end
 		end
-		return old_vguiRegister(className, tbl, base)
-	end
-	
+
+		function sgtbl:UpdatePlayerData()
+			local to_remove = {}
+			for k, v in pairs(self.rows) do
+				if IsValid(v) and IsValid(v:GetPlayer()) and (self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and LocalPlayer():IsSpec() or ScoreGroup(v:GetPlayer()) == self.group) then
+					v:UpdatePlayerData()
+				else
+					table.insert(to_remove, k)
+				end
+			end
+
+			if #to_remove == 0 then return end
+
+			for k, ply in pairs(to_remove) do
+				local pnl = self.rows[ply]
+
+				if IsValid(pnl) then
+					pnl:Remove()
+				end
+
+				self.rows[ply] = nil
+			end
+
+			self.rowcount = table.Count(self.rows)
+
+			self:UpdateSortCache()
+
+			self:InvalidateLayout()
+		end
+
+		local sbtbl = vgui.GetControlTable("TTTScoreboard")
+		local old_UpdateScoreboard = sbtbl["UpdateScoreboard"]
+		function sbtbl:UpdateScoreboard(force)
+			if not force and not self:IsVisible() then return end
+
+			for k, v in pairs(player.GetAll()) do
+				if v:IsGhost() and LocalPlayer():IsSpec() then
+					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
+						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
+					end
+				end
+			end
+
+			old_UpdateScoreboard(self, force)
+		end
+	end)
 end
 
 hook.Add("Initialize", "Initialize_Ghost", function()
@@ -264,27 +263,37 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 	end
 
 	function ScoreGroup(p)
-		if not IsValid(p) then return -1 end 
+		if not IsValid(p) then return -1 end
+
+		local group = hook.Call("TTTScoreGroup", nil, p)
+
+		if group then
+			return group
+		end
+
 		local client = LocalPlayer()
-		if p:IsGhost()  then
-			if not p:GetNWBool("PlayedSRound") then return GROUP_SPEC end
+
+		if p:IsGhost() then
+			if not p:GetNWBool("PlayedSRound", false) then
+				return GROUP_SPEC
+			end
+
 			if p:GetNWBool("body_found", false) then
 				return GROUP_FOUND
 			else
-				local client = LocalPlayer()
-				if client:IsSpec() or client:IsActiveTraitor() or ((GAMEMODE.round_state != ROUND_ACTIVE) and client:IsTerror()) then
+				if client:IsSpec() or client:IsActiveTraitor() or ((GAMEMODE.round_state ~= ROUND_ACTIVE) and client:IsTerror()) then
 					return GROUP_NOTFOUND
 				else
 					return GROUP_TERROR
 				end
-			end	   
+			end
 		end
+
 		if DetectiveMode() then
-			if p:IsSpec() and p:GetNWBool("PlayedSRound") and not p:Alive() then
+			if p:IsSpec() and p:GetNWBool("PlayedSRound", false) and not p:Alive() then
 				if p:GetNWBool("body_found", false) then
 					return GROUP_FOUND
 				else
-					local client = LocalPlayer()
 					if client:IsSpec() or client:IsActiveTraitor() or ((GAMEMODE.round_state ~= ROUND_ACTIVE) and client:IsTerror()) then
 						return GROUP_NOTFOUND
 					else
@@ -293,6 +302,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 				end
 			end
 		end
+
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
 	
@@ -310,10 +320,6 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		end
 	end
 	
-	if not SpecDM.IsScoreboardCustom then
-		GROUP_COUNT = 5
-	end
-
 	function TargetIDChangeCallback()
 		local old_DrawPropSpecLabels = DrawPropSpecLabels_New
 		function DrawPropSpecLabels_New(client)
