@@ -133,9 +133,10 @@ hook.Add("HUDPaint", "GhostHUD", function()
 		if is_haste then
 			dr.SimpleText(L.hastemode, "TabLarge", x + margin + 165, traitor_y - 8)
 		end
-		WSWITCH:Draw(ply)
-		VOICE.Draw(ply)
 	end
+
+	WSWITCH:Draw(ply)
+	VOICE.Draw(ply)
 	hook.Call("HUDDrawPickupHistory", GAMEMODE)
 end)
 
