@@ -1,9 +1,4 @@
-if SERVER then
-   AddCSLuaFile()
-end
-
 SWEP.HoldType = "pistol"
-
 
 if CLIENT then
    SWEP.PrintName = "Glock"

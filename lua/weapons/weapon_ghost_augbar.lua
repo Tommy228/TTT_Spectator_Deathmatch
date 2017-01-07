@@ -1,8 +1,3 @@
-if SERVER then
-
-   AddCSLuaFile()
-end
-
 SWEP.HoldType			= "crossbow"
 
 

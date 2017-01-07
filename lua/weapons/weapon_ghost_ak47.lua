@@ -1,10 +1,3 @@
----- Example TTT custom weapon
-
--- First some standard GMod stuff
-if SERVER then
-   AddCSLuaFile()
-end
-
 if CLIENT then
    SWEP.PrintName = "AK47"
    SWEP.Slot      = 2 -- add 1 to get the slot number key

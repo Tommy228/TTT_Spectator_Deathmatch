@@ -1,9 +1,5 @@
-if SERVER then
-   AddCSLuaFile()
-end
-
 if CLIENT then
-   SWEP.PrintName = "GALIL"
+   SWEP.PrintName = "Galil"
    SWEP.Slot      = 2 -- add 1 to get the slot number key
 
    SWEP.ViewModelFOV  = 72

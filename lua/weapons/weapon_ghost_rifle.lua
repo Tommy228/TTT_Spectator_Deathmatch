@@ -1,12 +1,7 @@
-
-if SERVER then
-   AddCSLuaFile()
-end
-
 SWEP.HoldType           = "ar2"
 
 if CLIENT then
-   SWEP.PrintName          = "Scout"
+   SWEP.PrintName          = "rifle_name"
 
    SWEP.Slot               = 2
    SWEP.ViewModelFlip		= false

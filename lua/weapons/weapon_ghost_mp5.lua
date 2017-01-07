@@ -1,7 +1,3 @@
-if SERVER then
-   AddCSLuaFile()
-end
-
 SWEP.HoldType = "ar2"
 
 if CLIENT then
@@ -21,9 +17,9 @@ SWEP.WeaponID = AMMO_MP5
 SWEP.Primary.Damage      = 19
 SWEP.Primary.Delay       = 0.08
 SWEP.Primary.Cone        = 0.028
-SWEP.Primary.ClipSize    = 15
-SWEP.Primary.ClipMax     = 105
-SWEP.Primary.DefaultClip = 120
+SWEP.Primary.ClipSize    = 20
+SWEP.Primary.ClipMax     = 100
+SWEP.Primary.DefaultClip = 100
 SWEP.Primary.Automatic   = true
 SWEP.Primary.Ammo        = "smg1"
 SWEP.Primary.Recoil      = 1.2

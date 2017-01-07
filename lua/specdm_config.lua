@@ -1,5 +1,3 @@
-
-
 -- Chat commands
 SpecDM.Commands = {
 	"!dm",
@@ -35,8 +33,11 @@ SpecDM.StatsFKey = KEY_F7
 -- Enable HP regeneration
 SpecDM.HP_Regen = true
 
--- list of weapons
--- make sure you use the base weapon_ghost_base if you want to create your own one, but it must be a regular weapon
+-- When set to true all valid ghost weapons ("lua/weapons/weapon_ghost_*.lua") will be inserted automatically
+-- If the loadout is enabled, you still need to add the weapon icons to the Loadout_Icons table!
+SpecDM.AutoIncludeWeapons = true
+
+-- When AutoIncludeWeapons is set to true the table will be emptied before adding all ghost weapons
 SpecDM.Ghost_weapons = {
 	secondary = {
 		"weapon_ghost_glock",
@@ -61,7 +62,7 @@ SpecDM.Ghost_weapons = {
 -- Enabled the loadout and allow players to select their favorite weapons?
 SpecDM.LoadoutEnabled = true
 
--- Enable quake sounds
+-- Enable quake sounds (clients can deactivate them)
 SpecDM.QuakeSoundsEnabled = true
 
 -- Icons on the F1 loadout if the loadout is enabled

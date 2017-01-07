@@ -1,23 +1,17 @@
-if SERVER then
-   AddCSLuaFile()
-end
-   
 SWEP.HoldType = "pistol"
-   
 
 if CLIENT then
    SWEP.PrintName = "pistol_name"
    SWEP.Slot = 1
-
---   SWEP.Icon = "vgui/ttt/icon_pistol"
 end
 
+SWEP.Kind = WEAPON_PISTOL
 SWEP.WeaponID = AMMO_PISTOL
 
 SWEP.Base				= "weapon_ghost_base"
 SWEP.Primary.Recoil	= 1.3
 SWEP.Primary.Damage = 17
-SWEP.Primary.Delay = 0.09
+SWEP.Primary.Delay = 0.15
 SWEP.Primary.Cone = 0.025
 SWEP.Primary.ClipSize = 20
 SWEP.Primary.Automatic = false
