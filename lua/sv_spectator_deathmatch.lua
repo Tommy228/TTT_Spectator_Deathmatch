@@ -113,17 +113,13 @@ function meta:ManageGhost(spawn, silent)
 	if silent then
 		return
 	end
-	local tbl = player.GetHumans()
-	for k,v in pairs(tbl) do
-		if v == self then
-			table.remove(tbl, k)
-			break
-		end
-	end
+	local filter = RecipientFilter()
+	filter:AddAllPlayers()
+	filter:RemovePlayer(self)
 	net.Start("SpecDM_GhostJoin")
 	net.WriteUInt(spawn and 1 or 0, 1)
 	net.WriteEntity(self)
-	net.Send(tbl)
+	net.Send(filter)
 end
 
 function meta:WantsToDM()

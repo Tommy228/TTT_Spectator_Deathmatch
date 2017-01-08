@@ -80,7 +80,7 @@ end)
 hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
     if IsValid(LocalPlayer()) and LocalPlayer():IsGhost() then
         if not ply:IsGhost() and not showalive:GetBool() then
-			ply:DrawShadow(false)
+            ply:DrawShadow(false)
             return true
         elseif ply:IsTerror() then
             ply:SetRenderMode(RENDERMODE_TRANSALPHA)
@@ -89,7 +89,7 @@ hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
         end
     else
         if ply:IsGhost() then
-			ply:DrawShadow(false)
+            ply:DrawShadow(false)
             return true
         else
             ply:SetRenderMode(RENDERMODE_NORMAL)
