@@ -33,7 +33,7 @@ SpecDM.StatsFKey = KEY_F7
 -- Enable HP regeneration
 SpecDM.HP_Regen = true
 
--- When set to true all valid ghost weapons ("lua/weapons/weapon_ghost_*.lua") will be inserted automatically
+-- When set to true all valid ghost weapons will be inserted automatically
 -- If the loadout is enabled, you still need to add the weapon icons to the Loadout_Icons table!
 SpecDM.AutoIncludeWeapons = true
 

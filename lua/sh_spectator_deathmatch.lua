@@ -2,22 +2,21 @@ include("specdm_config.lua")
 include("specdm_von.lua")
 
 if SpecDM.AutoIncludeWeapons then
-	local files, _ = file.Find("weapons/weapon_ghost_*.lua", "LUA")
-	if (files) then
+	hook.Add("Initialize", "SharedInitialize_Ghost", function()
 		table.Empty(SpecDM.Ghost_weapons.primary)
 		table.Empty(SpecDM.Ghost_weapons.secondary)
-		for _, filename in ipairs(files) do
-			local str = file.Read("weapons/"..filename, "LUA")
-			if (!str) then return end
-			if (string.find(str, "%sSWEP.Kind%s=%sWEAPON_HEAVY")) then -- Use SWEP.Kind = WEAPON_HEAVY as indentification
-				AddCSLuaFile("weapons/"..filename)
-				table.insert(SpecDM.Ghost_weapons.primary, string.sub(filename, 0, -5))
-			elseif (string.find(str, "%sSWEP.Kind%s=%sWEAPON_PISTOL") or string.find(str, "%sSWEP.HoldType%s=%s\"pistol\"")) then -- Use HoldType = "pistol" as second indentification since WEAPON_PISTOL isn't fully working
-				AddCSLuaFile("weapons/"..filename)
-				table.insert(SpecDM.Ghost_weapons.secondary, string.sub(filename, 0, -5))
+		for _, w in pairs(weapons.GetList()) do
+			if w and w.Kind and w.Base == "weapon_ghost_base" then
+				if w.Kind == WEAPON_HEAVY then
+					AddCSLuaFile("weapons/"..w.ClassName..".lua")
+					table.insert(SpecDM.Ghost_weapons.primary, w.ClassName)
+				elseif w.Kind == WEAPON_PISTOL then
+					AddCSLuaFile("weapons/"..w.ClassName..".lua")
+					table.insert(SpecDM.Ghost_weapons.secondary, w.ClassName)
+				end
 			end
 		end
-	end
+	end)
 end
 
 local meta = FindMetaTable("Player")
