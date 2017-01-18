@@ -1,24 +1,6 @@
 include("specdm_config.lua")
 include("specdm_von.lua")
 
-if SpecDM.AutoIncludeWeapons then
-	hook.Add("Initialize", "SharedInitialize_Ghost", function()
-		table.Empty(SpecDM.Ghost_weapons.primary)
-		table.Empty(SpecDM.Ghost_weapons.secondary)
-		for _, w in pairs(weapons.GetList()) do
-			if w and w.Kind and w.Base == "weapon_ghost_base" then
-				if w.Kind == WEAPON_HEAVY then
-					AddCSLuaFile("weapons/"..w.ClassName..".lua")
-					table.insert(SpecDM.Ghost_weapons.primary, w.ClassName)
-				elseif w.Kind == WEAPON_PISTOL then
-					AddCSLuaFile("weapons/"..w.ClassName..".lua")
-					table.insert(SpecDM.Ghost_weapons.secondary, w.ClassName)
-				end
-			end
-		end
-	end)
-end
-
 local meta = FindMetaTable("Player")
 
 function meta:IsGhost()
@@ -54,3 +36,44 @@ hook.Add("ShouldCollide", "ShouldCollide_Ghost", function(ent1, ent2)
 		end
 	end
 end)
+
+local function GenerateSpecDMWeapons(weptable)
+	for k,v in pairs(weptable) do
+		if v.Kind and (v.Kind == WEAPON_HEAVY or v.Kind == WEAPON_PISTOL) and not v.CanBuy then
+			local wep = table.Copy(weapons.GetStored(k))
+			wep.Base = "weapon_ghost_base"
+			for k,v in pairs(wep) do
+				if isfunction(v) then
+					wep[k] = nil	
+				end
+			end
+			local name = "weapon_ghost" .. k
+			if k:sub(1, #"weapon_ttt_") == "weapon_ttt_" then
+				name = "weapon_ghost_" .. k:sub(#"weapon_ttt_", #k)
+			elseif k:sub(1, #"weapon_") == "weapon_" then
+				name = "weapon_ghost_" .. k:sub(#"weapon_", #k)
+			end
+			weapons.Register(wep, name)
+		end
+	end
+end
+
+if SpecDM.AutoIncludeWeapons then
+	hook.Add("Initialize", "SharedInitialize_Ghost", function()
+		table.Empty(SpecDM.Ghost_weapons.primary)
+		table.Empty(SpecDM.Ghost_weapons.secondary)
+		local weptable = weapons.GetList()
+		if SpecDM.AutoGenerateWeapons then
+			GenerateSpecDMWeapons(weptable)
+		end
+		for _, w in pairs(weptable) do
+			if w and w.Kind and w.Base == "weapon_ghost_base" then
+				if w.Kind == WEAPON_HEAVY then
+					table.insert(SpecDM.Ghost_weapons.primary, w.ClassName)
+				elseif w.Kind == WEAPON_PISTOL then
+					table.insert(SpecDM.Ghost_weapons.secondary, w.ClassName)
+				end
+			end
+		end
+	end)
+end

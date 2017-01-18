@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 if CLIENT then
    SWEP.PrintName = "Galil"
    SWEP.Slot      = 2 -- add 1 to get the slot number key

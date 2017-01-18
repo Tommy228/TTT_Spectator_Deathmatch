@@ -37,6 +37,11 @@ SpecDM.HP_Regen = true
 -- If the loadout is enabled, you still need to add the weapon icons to the Loadout_Icons table!
 SpecDM.AutoIncludeWeapons = true
 
+-- When set to true all normal weapons (WEAPON_HEAVY and WEAPON_PISTOL) will be copied.
+-- This copy then will become a SpecDM weapon. lol
+-- You need to set SpecDM.AutoIncludeWeapons to true to make this working.
+SpecDM.AutoGenerateWeapons = false
+
 -- When AutoIncludeWeapons is set to true the table will be emptied before adding all ghost weapons
 SpecDM.Ghost_weapons = {
 	secondary = {
