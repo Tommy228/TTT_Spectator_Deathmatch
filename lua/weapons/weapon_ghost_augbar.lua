@@ -26,7 +26,7 @@ SWEP.Weight				= 5
 SWEP.AutoSwitchTo		= false
 SWEP.AutoSwitchFrom		= false
 
-SWEP.Primary.Sound			= Sound( "Weapon_AUG.Single" );
+SWEP.Primary.Sound			= Sound( "Weapon_AUG.Single" )
 SWEP.Primary.Recoil			= 3
 SWEP.Primary.Damage			= 12
 SWEP.Primary.Delay			= 0.11
@@ -86,9 +86,11 @@ function SWEP:PreDrop()
 end
 
 function SWEP:Reload()
-    self.Weapon:DefaultReload( ACT_VM_RELOAD );
-    self:SetIronsights( false )
-    self:SetZoom(false)
+   if IsValid(self.Owner) and self.Owner:Alive() then
+      self.Weapon:DefaultReload(ACT_VM_RELOAD)
+      self:SetIronsights( false )
+      self:SetZoom(false)
+   end
 end
 
 function SWEP:Holster()

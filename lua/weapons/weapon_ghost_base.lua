@@ -30,7 +30,7 @@ if CLIENT then
    --
    ---- Desc is the description in the menu. Needs manual linebreaks (via \n).
    --     desc = "Text."
-   -- };
+   -- }
 
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
@@ -202,7 +202,7 @@ if CLIENT then
       primaryfire   = Key("+attack",  "LEFT MOUSE"),
       secondaryfire = Key("+attack2", "RIGHT MOUSE"),
       usekey        = Key("+use",     "USE")
-   };
+   }
 
    function SWEP:AddHUDHelp(primary_text, secondary_text, translate, extra_params)
       extra_params = extra_params or {}
@@ -212,7 +212,7 @@ if CLIENT then
          secondary = secondary_text,
          translatable = translate,
          translate_params = table.Merge(extra_params, default_key_params)
-      };
+      }
    end
 end
 
@@ -233,7 +233,7 @@ function SWEP:PrimaryAttack(worldsnd)
 	        table.insert(tbl, v)
          end
       end
-      net.Start("BulletGhost")
+      net.Start("SpecDM_BulletGhost")
       net.WriteString(self.Primary.Sound)
       net.WriteVector(self:GetPos())
       net.WriteUInt(self.Primary.SoundLevel or 0, 19)
@@ -250,7 +250,7 @@ function SWEP:PrimaryAttack(worldsnd)
    owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) * self.Primary.Recoil, 0 ) )
   end
   
-  net.Receive("BulletGhost", function()
+  net.Receive("SpecDM_BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
 	 local num = net.ReadUInt(19)
@@ -410,10 +410,11 @@ function SWEP:Deploy()
 end
 
 function SWEP:Reload()
-   self.Weapon:DefaultReload(self.ReloadAnim)
-   self:SetIronsights( false )
+   if IsValid(self.Owner) and self.Owner:Alive() then
+      self.Weapon:DefaultReload(self.ReloadAnim)
+      self:SetIronsights( false )
+   end
 end
-
 
 function SWEP:OnRestore()
    self.NextSecondaryAttack = 0

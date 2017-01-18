@@ -71,7 +71,7 @@ function SWEP:PrimaryAttack()
 	        table.insert(tbl, v)
          end
       end
-      net.Start("BulletGhost")
+      net.Start("SpecDM_BulletGhost")
       net.WriteString(sound_single)
       net.WriteVector(self:GetPos())
       net.WriteUInt(self.Primary.SoundLevel or 0, 19)

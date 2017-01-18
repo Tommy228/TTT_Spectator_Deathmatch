@@ -53,23 +53,20 @@ function SWEP:PreDrop()
    return self.BaseClass.PreDrop(self)
 end
 
-function SWEP:Reload()
-   self.Weapon:DefaultReload( ACT_VM_RELOAD );
-   self:SetIronsights( false )
-end
-
-
 function SWEP:Holster()
    self:SetIronsights(false)
    return true
 end
 
 function SWEP:Reload()
-	if !( ( self.Weapon:Clip1() ) < ( self.Weapon:Ammo1() ) ) then return end
-	if !( ( self.Weapon:Clip1() ) < ( self.Primary.ClipSize ) ) then return end
-	if !( self.Weapon:Ammo1() >= 0 ) then return end
-	if !( self.Weapon:Clip1() >= 0 ) then return end
+   if IsValid(self.Owner) and self.Owner:Alive() then
+      if !( ( self.Weapon:Clip1() ) < ( self.Weapon:Ammo1() ) ) then return end
+      if !( ( self.Weapon:Clip1() ) < ( self.Primary.ClipSize ) ) then return end
+      if !( self.Weapon:Ammo1() >= 0 ) then return end
+      if !( self.Weapon:Clip1() >= 0 ) then return end
 
-	self.Weapon:DefaultReload( ACT_VM_RELOAD )
-	self:EmitSound( "Weapon_SMG1.Reload" )
+      self.Weapon:DefaultReload( ACT_VM_RELOAD )
+	  self:SetIronsights( false )
+      self:EmitSound( "Weapon_SMG1.Reload" )
+   end
 end

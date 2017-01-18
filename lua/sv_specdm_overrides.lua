@@ -214,7 +214,7 @@ local fallsounds = {
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
 	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then
-		if in_water or speed < 450 or not IsValid(ply) then return end
+		if in_water or speed < 450 or not IsValid(ply) then return true end
 
 		-- Everything over a threshold hurts you, rising exponentially with speed
 		local damage = math.pow(0.05 * (speed - 420), 1.75)
@@ -278,7 +278,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 						filter:AddPlayer(v)
 					end
 				end
-				net.Start("BulletGhost")
+				net.Start("SpecDM_BulletGhost")
 				net.WriteString(fallsounds[math.random(1, 3)])
 				net.WriteVector(ply:GetShootPos())
 				net.WriteUInt(55 + math.Clamp(damage, 0, 50), 19)

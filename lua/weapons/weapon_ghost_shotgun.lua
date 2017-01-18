@@ -47,20 +47,16 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Reload()
-   self:SetIronsights( false )
-   
-   --if self.Weapon:GetNetworkedBool( "reloading", false ) then return end
-   if self.dt.reloading then return end
-
-   if not IsFirstTimePredicted() then return end
-   
-   if self.Weapon:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 then
-      
-      if self:StartReload() then
-         return
+   if IsValid(self.Owner) and self.Owner:Alive() then
+      self:SetIronsights( false )
+	  if self.dt.reloading then return end
+	  if not IsFirstTimePredicted() then return end
+	  if self.Weapon:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 then
+	     if self:StartReload() then
+            return
+         end
       end
    end
-
 end
 
 function SWEP:StartReload()
