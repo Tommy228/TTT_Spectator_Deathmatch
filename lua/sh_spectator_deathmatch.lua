@@ -40,18 +40,19 @@ end)
 local function GenerateSpecDMWeapons(weptable)
 	for k,v in pairs(weptable) do
 		if v.Kind and (v.Kind == WEAPON_HEAVY or v.Kind == WEAPON_PISTOL) and not v.CanBuy then
-			local wep = table.Copy(weapons.GetStored(k))
+			local classname = v.ClassName
+			local wep = table.Copy(weapons.GetStored(classname))
 			wep.Base = "weapon_ghost_base"
-			for k,v in pairs(wep) do
-				if isfunction(v) then
-					wep[k] = nil	
+			for ind, dat in pairs(wep) do
+				if isfunction(dat) then
+					wep[ind] = nil	
 				end
 			end
-			local name = "weapon_ghost" .. k
-			if k:sub(1, #"weapon_ttt_") == "weapon_ttt_" then
-				name = "weapon_ghost_" .. k:sub(#"weapon_ttt_", #k)
-			elseif k:sub(1, #"weapon_") == "weapon_" then
-				name = "weapon_ghost_" .. k:sub(#"weapon_", #k)
+			local name = "weapon_ghost" .. classname
+			if classname:sub(1, #"weapon_ttt_") == "weapon_ttt_" then
+				name = "weapon_ghost_" .. classname:sub(#"weapon_ttt_", #classname)
+			elseif classname:sub(1, #"weapon_") == "weapon_" then
+				name = "weapon_ghost_" .. classname:sub(#"weapon_", #classname)
 			end
 			weapons.Register(wep, name)
 		end
