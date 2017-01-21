@@ -37,23 +37,43 @@ hook.Add("ShouldCollide", "ShouldCollide_Ghost", function(ent1, ent2)
 	end
 end)
 
+local function WeaponCleanup(wep)
+	-- The following things have to be handled by the weapon base.
+
+	wep.PrimaryAttack = nil
+	wep.SecondaryAttack = nil
+	wep.ShootBullet = nil
+	wep.ShootEffects = nil
+	wep.DoImpactEffect = nil
+	wep.FireAnimationEvent = nil
+	wep.DrawWorldModel = nil
+
+	wep.AutoSpawnable = nil
+	wep.AllowDrop = nil
+	wep.IsSilent = nil
+	wep.InLoadoutFor = nil
+	wep.CanBuy = nil
+	wep.fingerprints = nil
+end
+
 local function GenerateSpecDMWeapons(weptable)
 	for k,v in pairs(weptable) do
 		if v.Kind and (v.Kind == WEAPON_HEAVY or v.Kind == WEAPON_PISTOL) and not v.CanBuy then
 			local classname = v.ClassName
 			local wep = table.Copy(weapons.GetStored(classname))
+
 			wep.Base = "weapon_ghost_base"
-			for ind, dat in pairs(wep) do
-				if isfunction(dat) then
-					wep[ind] = nil	
-				end
-			end
+
+			-- Splitting cleanup in another function so the code is a bit more cleaner.
+			WeaponCleanup(wep)
+
 			local name = "weapon_ghost" .. classname
 			if classname:sub(1, #"weapon_ttt_") == "weapon_ttt_" then
 				name = "weapon_ghost_" .. classname:sub(#"weapon_ttt_", #classname)
 			elseif classname:sub(1, #"weapon_") == "weapon_" then
 				name = "weapon_ghost_" .. classname:sub(#"weapon_", #classname)
 			end
+
 			weapons.Register(wep, name)
 		end
 	end
