@@ -61,14 +61,26 @@ function SWEP:Holster()
 end
 
 function SWEP:Reload()
-   if IsValid(self.Owner) and self.Owner:Alive() then
-      if !( ( self.Weapon:Clip1() ) < ( self.Weapon:Ammo1() ) ) then return end
-      if !( ( self.Weapon:Clip1() ) < ( self.Primary.ClipSize ) ) then return end
-      if !( self.Weapon:Ammo1() >= 0 ) then return end
-      if !( self.Weapon:Clip1() >= 0 ) then return end
+    if !( ( self.Weapon:Clip1() ) < ( self.Weapon:Ammo1() ) ) then return end
+    if !( ( self.Weapon:Clip1() ) < ( self.Primary.ClipSize ) ) then return end
+    if !( self.Weapon:Ammo1() >= 0 ) then return end
+    if !( self.Weapon:Clip1() >= 0 ) then return end
 
-      self.Weapon:DefaultReload( ACT_VM_RELOAD )
-	  self:SetIronsights( false )
-      self:EmitSound( "Weapon_SMG1.Reload" )
-   end
+    self.Weapon:DefaultReload( ACT_VM_RELOAD )
+    self:SetIronsights( false )
+    if CLIENT and LocalPlayer() == self.Owner then
+        self:EmitSound( "Weapon_SMG1.Reload" )
+    else
+        local filter = RecipientFilter()
+        for k,v in pairs(player.GetHumans()) do
+            if v != self.Owner and v:IsGhost() then
+                filter:AddPlayer(v)
+            end
+        end
+        net.Start("SpecDM_BulletGhost")
+        net.WriteString("Weapon_SMG1.Reload")
+        net.WriteVector(self:GetPos())
+        net.WriteUInt(45, 19)
+        net.Send(filter)
+    end
 end

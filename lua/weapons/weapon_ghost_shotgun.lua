@@ -49,16 +49,14 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Reload()
-   if IsValid(self.Owner) and self.Owner:Alive() then
-      self:SetIronsights( false )
-	  if self.dt.reloading then return end
-	  if not IsFirstTimePredicted() then return end
-	  if self.Weapon:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 then
-	     if self:StartReload() then
+    self:SetIronsights( false )
+	if self.dt.reloading then return end
+	if not IsFirstTimePredicted() then return end
+	if self.Weapon:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 then
+	    if self:StartReload() then
             return
-         end
-      end
-   end
+        end
+    end
 end
 
 function SWEP:StartReload()
@@ -121,8 +119,22 @@ function SWEP:FinishReload()
 end
 
 function SWEP:CanPrimaryAttack()
-   if self.Weapon:Clip1() <= 0 then
-      self:EmitSound( "Weapon_Shotgun.Empty" )
+    if self.Weapon:Clip1() <= 0 then
+        if CLIENT and LocalPlayer() == self.Owner then
+            self:EmitSound( "Weapon_Shotgun.Empty" )
+        else
+            local filter = RecipientFilter()
+            for k,v in pairs(player.GetHumans()) do
+                if v != self.Owner and v:IsGhost() then
+                    filter:AddPlayer(v)
+                end
+            end
+            net.Start("SpecDM_BulletGhost")
+            net.WriteString("Weapon_Shotgun.Empty")
+            net.WriteVector(self:GetPos())
+            net.WriteUInt(45, 19)
+            net.Send(filter)
+        end
       self:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
       return false
    end

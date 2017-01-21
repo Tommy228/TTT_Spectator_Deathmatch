@@ -410,10 +410,8 @@ function SWEP:Deploy()
 end
 
 function SWEP:Reload()
-   if IsValid(self.Owner) and self.Owner:Alive() then
-      self.Weapon:DefaultReload(self.ReloadAnim)
-      self:SetIronsights( false )
-   end
+    self.Weapon:DefaultReload(self.ReloadAnim)
+    self:SetIronsights( false )
 end
 
 function SWEP:OnRestore()

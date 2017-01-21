@@ -82,11 +82,9 @@ function SWEP:PreDrop()
 end
 
 function SWEP:Reload()
-   if IsValid(self.Owner) and self.Owner:Alive() then
-      self.Weapon:DefaultReload(ACT_VM_RELOAD)
-      self:SetIronsights( false )
-      self:SetZoom(false)
-   end
+    self.Weapon:DefaultReload(ACT_VM_RELOAD)
+    self:SetIronsights( false )
+    self:SetZoom(false)
 end
 
 function SWEP:Holster()
