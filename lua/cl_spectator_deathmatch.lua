@@ -102,7 +102,7 @@ end)
 local function SendHeartbeat()
 	if not IsValid(LocalPlayer()) then return end
 	if LocalPlayer():IsGhost() then
-		for k,v in ipairs(player.GetHumans()) do -- Bots don't like SpecDM
+		for k,v in ipairs(player.GetAll()) do
 			if v != LocalPlayer() and v:IsGhost() and v:Alive() then
 				emitter = ParticleEmitter(LocalPlayer():GetPos())
 				local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
