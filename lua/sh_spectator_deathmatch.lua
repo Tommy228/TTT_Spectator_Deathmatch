@@ -58,7 +58,7 @@ end
 
 local function GenerateSpecDMWeapons(weptable)
 	for k,v in pairs(weptable) do
-		if v.Kind and (v.Kind == WEAPON_HEAVY or v.Kind == WEAPON_PISTOL) and not v.CanBuy then
+		if v.Base ~= "weapon_ghost_base" and v.Kind and (v.Kind == WEAPON_HEAVY or v.Kind == WEAPON_PISTOL) and not v.CanBuy then
 			local classname = v.ClassName
 			local wep = table.Copy(weapons.GetStored(classname))
 
@@ -83,10 +83,14 @@ if SpecDM.AutoIncludeWeapons then
 	hook.Add("Initialize", "SharedInitialize_Ghost", function()
 		table.Empty(SpecDM.Ghost_weapons.primary)
 		table.Empty(SpecDM.Ghost_weapons.secondary)
+
 		local weptable = weapons.GetList()
+
 		if SpecDM.AutoGenerateWeapons then
 			GenerateSpecDMWeapons(weptable)
+			weptable = weapons.GetList()
 		end
+
 		for _, w in pairs(weptable) do
 			if w and w.Kind and w.Base == "weapon_ghost_base" then
 				if w.Kind == WEAPON_HEAVY then
