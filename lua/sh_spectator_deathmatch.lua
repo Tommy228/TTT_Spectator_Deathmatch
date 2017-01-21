@@ -40,20 +40,21 @@ end)
 local function WeaponCleanup(wep)
 	-- The following things have to be handled by the weapon base.
 
-	wep.PrimaryAttack = nil
-	wep.SecondaryAttack = nil
-	wep.ShootBullet = nil
-	wep.ShootEffects = nil
-	wep.DoImpactEffect = nil
+	wep.PrimaryAttack      = nil
+	wep.SecondaryAttack    = nil
+	wep.ShootBullet        = nil
+	wep.ShootEffects       = nil
+	wep.DoImpactEffect     = nil
 	wep.FireAnimationEvent = nil
-	wep.DrawWorldModel = nil
+	wep.DrawWorldModel     = nil
 
-	wep.AutoSpawnable = nil
-	wep.AllowDrop = nil
-	wep.IsSilent = nil
-	wep.InLoadoutFor = nil
-	wep.CanBuy = nil
-	wep.fingerprints = nil
+	wep.AutoSpawnable      = nil
+	wep.AllowDrop          = nil
+	wep.IsSilent           = nil
+	wep.InLoadoutFor       = nil
+	wep.CanBuy             = nil
+	wep.fingerprints       = nil
+	wep.AmmoEnt            = nil
 end
 
 local function GenerateSpecDMWeapons(weptable)
