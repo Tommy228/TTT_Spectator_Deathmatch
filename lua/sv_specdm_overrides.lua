@@ -55,6 +55,17 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	end	
 end)
 
+local function SpecDM_Respawn(ply)
+	ply:SetNWBool("SpecDM_PreSpawnGhost", false)
+	ply:SetNWBool("SpecDM_CanSpawnGhost", false)
+	if ply:IsGhost() then
+		ply:UnSpectate()
+		ply:Spawn()
+		ply:GiveGhostWeapons()
+		SpecDM:RelationShip(ply)
+	end
+end
+
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
 	if victim:IsGhost() then
 		victim:SetNWBool("SpecDM_PreSpawnGhost", true)
@@ -329,14 +340,3 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 		return
 	end
 end)
-
-function SpecDM_Respawn(ply)
-	ply:SetNWBool("SpecDM_PreSpawnGhost", false)
-	ply:SetNWBool("SpecDM_CanSpawnGhost", false)
-	if ply:IsGhost() then
-		ply:UnSpectate()
-		ply:Spawn()
-		ply:GiveGhostWeapons()
-		SpecDM:RelationShip(ply)
-	end
-end
