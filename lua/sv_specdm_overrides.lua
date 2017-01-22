@@ -58,26 +58,39 @@ end)
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
 	if victim:IsGhost() then
 		victim.spawning_ghost = true
+		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
+			attacker:PS_GivePoints(SpecDM.PointshopPoints)
+		end
+		if SpecDM.RespawnTime > 2 then
+			net.Start("SpecDM_SendRespawnTime")
+			net.Send(victim)
+		elseif SpecDM.RespawnTime == 0 then
+			timer.Simple(1, function()
+				SpecDM_Respawn(victim)
+			end)
+			return false
+		end
 		timer.Simple(SpecDM.RespawnTime, function()
-			if IsValid(victim) then
-				victim.spawning_ghost = false
-				if victim:IsGhost() then
-					victim:UnSpectate()
-					victim:Spawn()
-					victim:SetBloodColor(-1)
-					victim:GiveGhostWeapons()
-					SpecDM:RelationShip(victim)
-				end
-			end
-			if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
-				attacker:PS_GivePoints(SpecDM.PointshopPoints )
+			if IsValid(victim) and !victim:Alive() and victim.spawning_ghost and SpecDM.AutomaticRespawnTime ~= 0 then
+				net.Start("SpecDM_SendRespawnMessage")
+				net.Send(victim)
+				victim.can_spawn_ghost = true
 			end
 		end)
-		return
+		if SpecDM.AutomaticRespawnTime > -1 then
+			timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
+				if IsValid(victim) and !victim:Alive() and victim.spawning_ghost then
+					SpecDM_Respawn(victim)
+				end
+			end)
+		end
+		return false
 	elseif GetRoundState() == ROUND_ACTIVE and victim:IsActive() then
-		timer.Simple(1, function()
-			net.Start("SpecDM_Autoswitch")
-			net.Send(victim)
+		timer.Simple(2, function()
+			if IsValid(victim) then
+				net.Start("SpecDM_Autoswitch")
+				net.Send(victim)
+			end
 		end)
 	end
 end)
@@ -109,7 +122,12 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 
 	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
-		if IsValid(ply) and ply:IsGhost() then return end
+		if IsValid(ply) and ply:IsGhost() then
+			if !ply:Alive() and ply.can_spawn_ghost then
+				SpecDM_Respawn(ply)
+			end
+			return
+		end
 		return old_KeyPress(self, ply, key)
 	end
 	
@@ -314,3 +332,14 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 		return
 	end
 end)
+
+function SpecDM_Respawn(ply)
+	ply.spawning_ghost = false
+	ply.can_spawn_ghost = false
+	if ply:IsGhost() then
+		ply:UnSpectate()
+		ply:Spawn()
+		ply:GiveGhostWeapons()
+		SpecDM:RelationShip(ply)
+	end
+end

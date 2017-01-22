@@ -1,9 +1,40 @@
-
 include("sh_spectator_deathmatch.lua")
 include("cl_specdm_hud.lua")
 include("vgui/spec_dm_loadout.lua")
 include("cl_stats.lua")
 include("cl_quakesounds.lua")
+
+local drawtime
+net.Receive("SpecDM_SendRespawnMessage", function()
+	drawtime = CurTime() + SpecDM.AutomaticRespawnTime
+	hook.Add("HUDPaint", "SpecDM_RespawnMessage", function()
+		if !IsValid(LocalPlayer()) then return end
+		if LocalPlayer():IsGhost() and !LocalPlayer():Alive() then
+			if SpecDM.AutomaticRespawnTime > -1 then
+				draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..math.Round(drawtime - CurTime()).." second(s)", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+			else
+				draw.DrawText("Press a key to respawn!", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+			end
+		end
+	end)
+end)
+
+local timeleft
+net.Receive("SpecDM_SendRespawnTime", function()
+	hook.Remove("HUDPaint", "SpecDM_RespawnMessage")
+	timeleft = CurTime() + SpecDM.RespawnTime
+	hook.Add("HUDPaint", "SpecDM_RespawnTimer", function()
+	if !IsValid(LocalPlayer()) then return end
+		if LocalPlayer():IsGhost() and !LocalPlayer():Alive() then
+			local waittime = math.Round(timeleft - CurTime())
+			if waittime > 0 then
+				draw.DrawText("You need to wait "..waittime.." second(s) before you can respawn", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
+			else
+				hook.Remove("HUDPaint", "SpecDM_RespawnTimer")
+			end
+		end
+	end)
+end)
 
 net.Receive("SpecDM_Error", function()
 	local error_str = net.ReadString()

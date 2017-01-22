@@ -5,8 +5,11 @@ SpecDM.Commands = {
 	"!specdm"
 }
 
--- Respawn time when ghosts die
+-- Minimum time before ghosts can respawn. Set to 0 for autorespawn
 SpecDM.RespawnTime = 4
+
+-- Period after the ghosts are automatically respawned. Set to -1 to disable this behavior
+SpecDM.AutomaticRespawnTime = 0
 
 -- Set this to true if you have a custom scoreboard
 -- (a completely fresh one, not a modification like rank column, spykr's addons or logo change)
