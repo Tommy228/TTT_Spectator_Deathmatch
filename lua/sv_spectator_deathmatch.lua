@@ -1,4 +1,3 @@
-
 AddCSLuaFile("cl_spectator_deathmatch.lua")
 AddCSLuaFile("sh_spectator_deathmatch.lua")
 AddCSLuaFile("specdm_config.lua")
@@ -18,8 +17,6 @@ util.AddNetworkString("SpecDM_Ghost")
 util.AddNetworkString("SpecDM_Autoswitch")
 util.AddNetworkString("SpecDM_SendLoadout")
 util.AddNetworkString("SpecDM_GhostJoin")
-util.AddNetworkString("SpecDM_SendRespawnTime")
-util.AddNetworkString("SpecDM_SendRespawnMessage")
 util.AddNetworkString("SpecDM_BulletGhost")
 util.AddNetworkString("SpecDM_AskStats")
 util.AddNetworkString("SpecDM_SendStats")

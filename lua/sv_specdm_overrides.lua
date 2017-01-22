@@ -57,29 +57,26 @@ end)
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
 	if victim:IsGhost() then
-		victim.spawning_ghost = true
+		victim:SetNWBool("SpecDM_PreSpawnGhost", true)
 		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
 			attacker:PS_GivePoints(SpecDM.PointshopPoints)
 		end
-		if SpecDM.RespawnTime > 2 then
-			net.Start("SpecDM_SendRespawnTime")
-			net.Send(victim)
-		elseif SpecDM.RespawnTime == 0 then
+		if SpecDM.RespawnTime == 0 then
 			timer.Simple(1, function()
 				SpecDM_Respawn(victim)
 			end)
 			return false
 		end
+		victim:SetNWFloat("SpecDM_AbleToRespawnIn", CurTime() + SpecDM.RespawnTime)
 		timer.Simple(SpecDM.RespawnTime, function()
-			if IsValid(victim) and !victim:Alive() and victim.spawning_ghost and SpecDM.AutomaticRespawnTime ~= 0 then
-				net.Start("SpecDM_SendRespawnMessage")
-				net.Send(victim)
-				victim.can_spawn_ghost = true
+			if IsValid(victim) and !victim:Alive() and victim:GetNWBool("SpecDM_PreSpawnGhost") and SpecDM.AutomaticRespawnTime ~= 0 then
+				victim:SetNWFloat("SpecDM_RespawnedIn", CurTime() + SpecDM.AutomaticRespawnTime)
+				victim:SetNWBool("SpecDM_CanSpawnGhost", true)
 			end
 		end)
 		if SpecDM.AutomaticRespawnTime > -1 then
 			timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-				if IsValid(victim) and !victim:Alive() and victim.spawning_ghost then
+				if IsValid(victim) and !victim:Alive() and victim:GetNWBool("SpecDM_PreSpawnGhost") then
 					SpecDM_Respawn(victim)
 				end
 			end)
@@ -123,7 +120,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
 		if IsValid(ply) and ply:IsGhost() then
-			if !ply:Alive() and ply.can_spawn_ghost then
+			if !ply:Alive() and ply:GetNWBool("SpecDM_CanSpawnGhost") then
 				SpecDM_Respawn(ply)
 			end
 			return
@@ -334,8 +331,8 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 end)
 
 function SpecDM_Respawn(ply)
-	ply.spawning_ghost = false
-	ply.can_spawn_ghost = false
+	ply:SetNWBool("SpecDM_PreSpawnGhost", false)
+	ply:SetNWBool("SpecDM_CanSpawnGhost", false)
 	if ply:IsGhost() then
 		ply:UnSpectate()
 		ply:Spawn()
