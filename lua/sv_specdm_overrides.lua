@@ -56,8 +56,8 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 end)
 
 local function SpecDM_Respawn(ply)
-	ply:SetNWBool("SpecDM_PreSpawnGhost", false)
-	ply:SetNWBool("SpecDM_CanSpawnGhost", false)
+	ply:SetNWFloat("SpecDM_RespawnedIn", -2)
+	ply:SetNWFloat("SpecDM_AbleToRespawnIn", -2)
 	if ply:IsGhost() then
 		ply:UnSpectate()
 		ply:Spawn()
@@ -68,7 +68,6 @@ end
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
 	if victim:IsGhost() then
-		victim:SetNWBool("SpecDM_PreSpawnGhost", true)
 		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
 			attacker:PS_GivePoints(SpecDM.PointshopPoints)
 		end
@@ -80,14 +79,13 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 		end
 		victim:SetNWFloat("SpecDM_AbleToRespawnIn", CurTime() + SpecDM.RespawnTime)
 		timer.Simple(SpecDM.RespawnTime, function()
-			if IsValid(victim) and !victim:Alive() and victim:GetNWBool("SpecDM_PreSpawnGhost") and SpecDM.AutomaticRespawnTime ~= 0 then
+			if IsValid(victim) and !victim:Alive() and SpecDM.AutomaticRespawnTime ~= 0 then
 				victim:SetNWFloat("SpecDM_RespawnedIn", CurTime() + SpecDM.AutomaticRespawnTime)
-				victim:SetNWBool("SpecDM_CanSpawnGhost", true)
 			end
 		end)
 		if SpecDM.AutomaticRespawnTime > -1 then
 			timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-				if IsValid(victim) and !victim:Alive() and victim:GetNWBool("SpecDM_PreSpawnGhost") then
+				if IsValid(victim) and !victim:Alive() then
 					SpecDM_Respawn(victim)
 				end
 			end)
@@ -131,7 +129,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
 		if IsValid(ply) and ply:IsGhost() then
-			if !ply:Alive() and ply:GetNWBool("SpecDM_CanSpawnGhost") then
+			if !ply:Alive() and ply:GetNWFloat("SpecDM_RespawnedIn", -2) ~= -2 then
 				SpecDM_Respawn(ply)
 			end
 			return

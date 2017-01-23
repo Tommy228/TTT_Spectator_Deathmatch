@@ -6,15 +6,15 @@ include("cl_quakesounds.lua")
 
 hook.Add("HUDPaint", "SpecDM_RespawnMessage", function()
 	if !IsValid(LocalPlayer()) or !LocalPlayer():IsGhost() or LocalPlayer():Alive() then return end
-	if LocalPlayer():GetNWBool("SpecDM_CanSpawnGhost") and LocalPlayer():GetNWFloat("SpecDM_RespawnedIn") then
+	if LocalPlayer():GetNWFloat("SpecDM_RespawnedIn", -2) ~= -2 then
 		if SpecDM.AutomaticRespawnTime > -1 then
 			draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..math.Round(LocalPlayer():GetNWFloat("SpecDM_RespawnedIn") - CurTime()).." second(s)", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
 		else
 			draw.DrawText("Press a key to respawn!", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
 		end
-	elseif LocalPlayer():GetNWBool("SpecDM_PreSpawnGhost") and LocalPlayer():GetNWFloat("SpecDM_AbleToRespawnIn") then
+	elseif LocalPlayer():GetNWFloat("SpecDM_AbleToRespawnIn", -2) ~= -2 then
 		local waittime = math.Round(LocalPlayer():GetNWFloat("SpecDM_AbleToRespawnIn") - CurTime())
-		if waittime > 0 then
+		if waittime > -1 then
 			draw.DrawText("You need to wait "..waittime.." second(s) before you can respawn", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
 		end
 	end
