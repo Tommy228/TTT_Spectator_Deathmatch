@@ -2,9 +2,9 @@ SWEP.HoldType = "ar2"
 
 if CLIENT then
 
-   SWEP.PrintName = "MP5"			
+   SWEP.PrintName = "MP5"
    SWEP.Slot      = 2
-  
+
 --   SWEP.Icon = "vgui/ttt/icon_dp_mp5"
 end
 

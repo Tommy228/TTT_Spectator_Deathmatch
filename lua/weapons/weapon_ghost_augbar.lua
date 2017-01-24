@@ -51,7 +51,7 @@ SWEP.IronSightsAng      = Vector( 2.6, 1.37, 3.5 )
 SWEP.IronSightZoom = 1
 
 function SWEP:SetZoom(state)
-    if CLIENT then 
+    if CLIENT then
        return
     else
        if state then
@@ -66,16 +66,16 @@ end
 function SWEP:SecondaryAttack()
     if not self.IronSightsPos then return end
     if self.Weapon:GetNextSecondaryFire() > CurTime() then return end
-    
+
     local bIronsights = not self:GetIronsights()
-    
+
     self:SetIronsights( bIronsights )
-    
+
     if SERVER then
         self:SetZoom(bIronsights)
      else
     end
-    
+
     self.Weapon:SetNextSecondaryFire( CurTime() + 0.3)
 end
 
@@ -102,7 +102,7 @@ if CLIENT then
    function SWEP:DrawHUD()
       if self:GetIronsights() then
          surface.SetDrawColor( 0, 0, 0, 255 )
-         
+
          local x = ScrW() / 2.0
          local y = ScrH() / 2.0
          local scope_size = ScrH()

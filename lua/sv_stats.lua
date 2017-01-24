@@ -74,16 +74,16 @@ timer.Create("SpecDM_Time", 1, 0, function()
 				v.specdm_stats_new.time_dm = v.specdm_stats_new.time_dm + 1
 				v:SpecDM_EnableUpdate("time_dm")
 			elseif v:IsActive() and v.specdm_stats_new.time_playing then
-				v.specdm_stats_new.time_playing = v.specdm_stats_new.time_playing + 1	
-				v:SpecDM_EnableUpdate("time_playing")				
+				v.specdm_stats_new.time_playing = v.specdm_stats_new.time_playing + 1
+				v:SpecDM_EnableUpdate("time_playing")
 			end
 		end
 	end
 end)
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflictor)
-	if not ply:IsBot() then 
-		ply:SpecDM_CheckKillRows() 
+	if not ply:IsBot() then
+		ply:SpecDM_CheckKillRows()
 	end
 	if ply.specdm_killrows then
 		ply.specdm_killrows = 0

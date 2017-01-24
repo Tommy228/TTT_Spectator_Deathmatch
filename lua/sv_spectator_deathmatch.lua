@@ -136,7 +136,7 @@ function meta:WantsToDM()
 		if self:IsActive() then
 			self:SpecDM_Error("You can't enter spectator deathmatch when you're alive.")
 		elseif GetRoundState() != ROUND_ACTIVE then
-			self:SpecDM_Error("Error : round inactive.")
+			self:SpecDM_Error("Error: Current round is inactive.")
 		elseif not self.spawning_ghost then
 			if tonumber(self.DMTimer) and self.DMTimer > 0 then
 				self:SpecDM_Error("Wait "..tostring(self.DMTimer).." second(s) before using this command again!")

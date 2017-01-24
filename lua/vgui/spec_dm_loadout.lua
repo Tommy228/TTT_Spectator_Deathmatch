@@ -1,4 +1,4 @@
-	
+
 local PANEL = {
 	Start = 1,
 	End = 5
@@ -23,7 +23,7 @@ function PANEL:MoveLoadout(direction)
 	local name = "TimerLoadoutMove_"..tostring(GAMEMODE.LoadoutMoveID)
 	hook.Add("Think", name, function()
 		i = i + 1
-		if ValidPanel(self.Loadout) then
+		if IsValid(self.Loadout) then
 			local x,y = self.Loadout:GetPos()
 			if direction == LEFT then
 				self.Loadout:SetPos(x+6, y)
@@ -103,14 +103,14 @@ function PANEL:AddWeapons()
 	end
 	self.Loadout:SetSize(self.WeaponsCount*96, 100)
 end
-	
+
 function PANEL:Init()
-	
+
 	self.CheckBox = vgui.Create("DCheckBoxLabel", self)
 	self.CheckBox:SetPos(380, 3)
 	self.CheckBox:SetText("Random weapon")
 	self.CheckBox:SizeToContents()
-	
+
 	self.Save = vgui.Create("DButton", self)
 	self.Save:SetSize(50, 17)
 	self.Save:SetPos(498, 1)
@@ -119,7 +119,7 @@ function PANEL:Init()
 		RunConsoleCommand(self.cvar, self:GetNewValue())
 		SpecDM.UpdateLoadout()
 	end
-	
+
 	self.Panel = vgui.Create("DPanel", self)
 	self.Panel:SetPos(0, 20)
 	self.Panel:SetSize(600, 100)
@@ -127,7 +127,7 @@ function PANEL:Init()
 		surface.SetDrawColor(Color(200, 200, 200))
 		surface.DrawRect(30, 1, w-60, h-2)
 	end
-	
+
 	self.Loadout = vgui.Create("DPanelSelect", self.Panel)
 	self.Loadout:SetSpacing(6)
 	self.Loadout:EnableHorizontal(true)
@@ -144,7 +144,7 @@ function PANEL:Init()
 		end
 	end
 	self.Loadout:SetPos(35, 5)
-	
+
 	self.Right = vgui.Create("DButton", self.Panel)
 	self.Right:SetPos(516, 0)
 	self.Right:SetSize(35, 100)
@@ -152,7 +152,7 @@ function PANEL:Init()
 	self.Right.DoClick = function()
 		self:MoveLoadout(RIGHT)
 	end
-	
+
 	self.Left = vgui.Create("DButton", self.Panel)
 	self.Left:SetSize(35, 100)
 	self.Left:SetText("<")
@@ -160,7 +160,7 @@ function PANEL:Init()
 		self:MoveLoadout(LEFT)
 	end
 	self.Left:SetDisabled(true)
-		
+
 end
 
 vgui.Register("SpecDM_LoadoutPanel", PANEL, "DForm")

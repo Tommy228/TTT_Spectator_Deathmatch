@@ -1,7 +1,7 @@
 
 if SERVER then
    AddCSLuaFile()
-   
+
 end
 
 SWEP.HoldType			= "melee"
@@ -11,7 +11,7 @@ if CLIENT then
 
    SWEP.Slot				= 0
 
-   SWEP.Icon = "vgui/ttt/icon_cbar"   
+   SWEP.Icon = "vgui/ttt/icon_cbar"
    SWEP.ViewModelFOV = 54
 end
 
@@ -117,7 +117,7 @@ function SWEP:PrimaryAttack()
       -- Do another trace that sees nodraw stuff like func_button
       local tr_all = nil
       tr_all = util.TraceLine({start=spos, endpos=sdest, filter=self.Owner})
-      
+
       self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
       if hitEnt and hitEnt:IsValid() and hitEnt:IsPlayer() and hitEnt:IsGhost() then
@@ -131,11 +131,11 @@ function SWEP:PrimaryAttack()
          dmg:SetDamageType(DMG_CLUB)
 		 hitEnt:TakeDamageInfo(dmg)
 
---         self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER )         
+--         self.Weapon:SendWeaponAnim( ACT_VM_HITCENTER )
 
 --         self.Owner:TraceHullAttack(spos, sdest, Vector(-16,-16,-16), Vector(16,16,16), 30, DMG_CLUB, 11, true)
 --         self.Owner:FireBullets({Num=1, Src=spos, Dir=self.Owner:GetAimVector(), Spread=Vector(0,0,0), Tracer=0, Force=1, Damage=20})
-      
+
       end
    end
 

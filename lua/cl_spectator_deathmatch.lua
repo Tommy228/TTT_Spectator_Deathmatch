@@ -27,12 +27,12 @@ end)
 
 net.Receive("SpecDM_Ghost", function()
 	local enabled = net.ReadUInt(1) == 1
-	if enabled then 
+	if enabled then
 		TIPS.Hide()
 		if SpecDM.MuteAlive then
 			RunConsoleCommand("ttt_mute_team", TEAM_TERROR)
 		end
-	else 
+	else
 		TIPS:Show()
 	end
 end)
@@ -324,7 +324,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
-	
+
 	local function overrideTargetID()
 		local old_HUDDrawTargetID = GAMEMODE.HUDDrawTargetID
 		function GAMEMODE:HUDDrawTargetID()
@@ -338,7 +338,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 			old_HUDDrawTargetID(self)
 		end
 	end
-	
+
 	function TargetIDChangeCallback()
 		local old_DrawPropSpecLabels = DrawPropSpecLabels_New
 		function DrawPropSpecLabels_New(client)
@@ -347,7 +347,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		end
 		overrideTargetID()
 	end
-	
+
 	-- fuck you ttt and fuck your local functions
 	-- you are making me write the most stupid code ever
 	local targetid = file.Read(GAMEMODE.FolderName.."/gamemode/cl_targetid.lua", "LUA")
@@ -376,10 +376,10 @@ end
 hook.Add("InitPostEntity", "SpecDM_InitPostEntity", SpecDM.UpdateLoadout)
 cvars.AddChangeCallback("ttt_specdm_primaryweapon", SpecDM.UpdateLoadout)
 cvars.AddChangeCallback("ttt_specdm_secondaryweapon", SpecDM.UpdateLoadout)
-	
-	
+
+
 hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
-	
+
 	-- rip from damagelog menu and thanks hobbes
 	local padding = dtabs:GetPadding()
 	padding = padding * 2
@@ -389,23 +389,23 @@ hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
 	dsettings:EnableVerticalScrollbar(true)
 	dsettings:SetPadding(10)
 	dsettings:SetSpacing(10)
-			
+
 	if SpecDM.LoadoutEnabled then
-			
+
 		local primary_loadout = vgui.Create("SpecDM_LoadoutPanel")
 		primary_loadout.cvar = "ttt_specdm_primaryweapon"
 		primary_loadout:SetCategory("Primary weapons")
-		primary_loadout:SetWeapons(SpecDM.Ghost_weapons.primary)	
+		primary_loadout:SetWeapons(SpecDM.Ghost_weapons.primary)
 		dsettings:AddItem(primary_loadout)
-	
+
 		local secondary_loadout = vgui.Create("SpecDM_LoadoutPanel")
 		secondary_loadout.cvar = "ttt_specdm_secondaryweapon"
 		secondary_loadout:SetCategory("Secondary weapons")
-		secondary_loadout:SetWeapons(SpecDM.Ghost_weapons.secondary)	
+		secondary_loadout:SetWeapons(SpecDM.Ghost_weapons.secondary)
 		dsettings:AddItem(secondary_loadout)
-		
+
 	end
-	
+
 	local dgui = vgui.Create("DForm", dsettings)
 	dgui:SetName("General settings")
 	if not SpecDM.ForceDeathmatch then
@@ -418,7 +418,7 @@ hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
 	dgui:CheckBox("Enable the color effect", "ttt_specdm_enablecoloreffect")
 	dgui:CheckBox("Enable the hitmarker", "ttt_specdm_hitmarker")
 	dsettings:AddItem(dgui)
-	
+
 	dtabs:AddSheet("Spectator Deathmatch", dsettings, "icon16/gun.png", false, false, "Spectator deathmatch related settings")
 
 end)
@@ -451,7 +451,7 @@ net.Receive("SpecDM_Autoswitch", function()
 		report_icon:SizeToContents()
 		local close = vgui.Create("DButton", frame)
 		close:SetPos(5, 85)
-		close:SetSize(240, 25)        
+		close:SetSize(240, 25)
 		close:SetText("No, stay as a spectator")
 		close.DoClick = function()
 			frame:Close()
@@ -493,12 +493,12 @@ net.Receive("SpecDM_Hitmarker", function()
 end)
 
 hook.Add("OnEntityCreated", "OnEntityCreated_SpecDMRagdoll", function(ent)
-	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then 
+	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then
 		for k,v in pairs(player.GetAll()) do
 			if v:GetRagdollEntity() == ent and v:IsGhost() then
 				ent:SetNoDraw(true)
 				break
 			end
 		end
-	end 
+	end
 end)

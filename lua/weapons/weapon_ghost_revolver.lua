@@ -1,7 +1,7 @@
 SWEP.HoldType			= "pistol"
 
 if CLIENT then
-   SWEP.PrintName			= "Deagle"			
+   SWEP.PrintName			= "Deagle"
    SWEP.Author				= "TTT"
 
    SWEP.Slot				= 1

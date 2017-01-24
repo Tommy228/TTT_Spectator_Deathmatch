@@ -13,7 +13,7 @@ local function SpecDM_SendQuake(ply)
 	end
 	net.Send(tbl)
 end
-	
+
 function SpecDM_Quake(victim, killer)
 	if not tonumber(killer.specdm_close_kills) then
 		killer.specdm_close_kills = 1

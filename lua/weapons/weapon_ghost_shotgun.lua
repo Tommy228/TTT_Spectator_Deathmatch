@@ -66,17 +66,17 @@ function SWEP:StartReload()
    if not IsFirstTimePredicted() then return false end
 
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
-   
+
    local ply = self.Owner
-   
-   if not ply or ply:GetAmmoCount(self.Primary.Ammo) <= 0 then 
+
+   if not ply or ply:GetAmmoCount(self.Primary.Ammo) <= 0 then
       return false
    end
 
    local wep = self.Weapon
-   
-   if wep:Clip1() >= self.Primary.ClipSize then 
-      return false 
+
+   if wep:Clip1() >= self.Primary.ClipSize then
+      return false
    end
 
    wep:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
@@ -91,7 +91,7 @@ end
 
 function SWEP:PerformReload()
    local ply = self.Owner
-   
+
    -- prevent normal shooting in between reloads
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
 
@@ -112,7 +112,7 @@ end
 function SWEP:FinishReload()
    self.dt.reloading = false
    self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
-   
+
    self.reloadtimer = CurTime() + self.Weapon:SequenceDuration()
 end
 
@@ -145,7 +145,7 @@ function SWEP:Think()
          self:FinishReload()
          return
       end
-      
+
       if self.reloadtimer <= CurTime() then
 
          if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
@@ -155,7 +155,7 @@ function SWEP:Think()
          else
             self:FinishReload()
          end
-         return            
+         return
       end
    end
 end
@@ -176,7 +176,7 @@ function SWEP:GetHeadshotMultiplier(victim, dmginfo)
 
    local dist = victim:GetPos():Distance(att:GetPos())
    local d = math.max(0, dist - 140)
-   
+
    -- decay from 3.1 to 1 slowly as distance increases
    return 1 + math.max(0, (2.1 - 0.002 * (d ^ 1.25)))
 end

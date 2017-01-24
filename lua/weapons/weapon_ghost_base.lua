@@ -138,7 +138,7 @@ if CLIENT then
 
    -- Many non-gun weapons benefit from some help
    local help_spec = {text = "", font = "TabLarge", xalign = TEXT_ALIGN_CENTER}
-   
+
 
 
    function SWEP:DrawHUD()
@@ -171,7 +171,7 @@ if CLIENT then
       surface.DrawLine( x, y + length, x, y + gap )
 
    end
-   
+
    function SWEP:DrawHelp()
       local data = self.HUDHelp
 
@@ -193,7 +193,7 @@ if CLIENT then
       if secondary then
          help_spec.pos[2] = ScrH() - 60
          help_spec.text = primary
-         draw.TextShadow(help_spec, 2)         
+         draw.TextShadow(help_spec, 2)
       end
    end
 
@@ -241,15 +241,15 @@ function SWEP:PrimaryAttack(worldsnd)
    end
 
    self:ShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self:GetPrimaryCone() )
-   
+
    self:TakePrimaryAmmo( 1 )
 
-   local owner = self.Owner   
+   local owner = self.Owner
    if not IsValid(owner) or owner:IsNPC() or (not owner.ViewPunch) then return end
-   
+
    owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) * self.Primary.Recoil, 0 ) )
   end
-  
+
   net.Receive("SpecDM_BulletGhost", function()
      local str = net.ReadString()
 	 local vector = net.ReadVector()
@@ -287,7 +287,7 @@ end
 
 function SWEP:CanSecondaryAttack()
    if not IsValid(self.Owner) then return end
-   
+
    if self.Weapon:Clip2() <= 0 then
       self:DryFire(self.SetNextSecondaryFire)
       return false
@@ -327,7 +327,7 @@ function SWEP:ShootBullet( dmg, recoil, numbul, cone )
 
    numbul = numbul or 1
    cone   = cone   or 0.01
-   
+
    self.Owner:LagCompensation(true)
 
    local bullet = {}
@@ -347,27 +347,27 @@ function SWEP:ShootBullet( dmg, recoil, numbul, cone )
    else
       bullet.Callback = function(ply,tr,dmginfo)
 	     local ent = tr.Entity
-		 if not IsValid(ent) or not (ent:IsPlayer() and ent:IsGhost()) then 
+		 if not IsValid(ent) or not (ent:IsPlayer() and ent:IsGhost()) then
 		    dmginfo:ScaleDamage(0)
 			dmginfo:SetDamageType(DMG_GENERIC)
 		 end
 	  end
    end
-  	
+
    if SERVER then
 		self.Owner:FireBullets(bullet)
    elseif LocalPlayer():IsGhost() then
 	    self.Owner:FireBullets(bullet)
    end
-   
+
    self.Owner:LagCompensation(false)
 
    -- Owner can die after firebullet
    if (not IsValid(self.Owner)) or (not self.Owner:Alive()) or self.Owner:IsNPC() then return end
-      
+
    if ((game.SinglePlayer() and SERVER) or
        ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted())) then
-      
+
       -- reduce recoil if ironsighting
       recoil = sights and (recoil * 0.6) or recoil
 
@@ -398,9 +398,9 @@ function SWEP:SecondaryAttack()
 
    if self.NoSights or (not self.IronSightsPos) then return end
    --if self:GetNextSecondaryFire() > CurTime() then return end
-   
+
    self:SetIronsights(not self:GetIronsights())
-   
+
    self:SetNextSecondaryFire(CurTime() + 0.3)
 end
 
@@ -435,7 +435,7 @@ function SWEP:PreDrop()
             ammo = 0
          end
       end
-      
+
       self.StoredAmmo = ammo
 
       if ammo > 0 then
@@ -502,7 +502,7 @@ function SWEP:Initialize()
    end
 
    self:SetDeploySpeed(self.DeploySpeed)
-   
+
    -- compat for gmod update
    if self.SetHoldType then
       self:SetHoldType(self.HoldType or "pistol")
@@ -551,37 +551,37 @@ function SWEP:GetViewModelPosition( pos, ang )
    if not self.IronSightsPos then return pos, ang end
 
    local bIron = self:GetIronsights()
-   
+
    if bIron ~= self.bLastIron then
-      self.bLastIron = bIron 
+      self.bLastIron = bIron
       self.fIronTime = CurTime()
-      
-      if bIron then 
+
+      if bIron then
          self.SwayScale = 0.3
          self.BobScale = 0.1
-      else 
+      else
          self.SwayScale = 1.0
          self.BobScale = 1.0
       end
-      
+
    end
-   
+
    local fIronTime = self.fIronTime or 0
-   if (not bIron) and fIronTime < CurTime() - IRONSIGHT_TIME then 
-      return pos, ang 
+   if (not bIron) and fIronTime < CurTime() - IRONSIGHT_TIME then
+      return pos, ang
    end
-   
+
    local mul = 1.0
-   
+
    if fIronTime > CurTime() - IRONSIGHT_TIME then
-      
+
       mul = math.Clamp( (CurTime() - fIronTime) / IRONSIGHT_TIME, 0, 1 )
-      
+
       if not bIron then mul = 1 - mul end
    end
 
    local offset = self.IronSightsPos + vector_origin
- 
+
    if self.IronSightsAng then
       ang = ang * 1
       ang:RotateAroundAxis( ang:Right(),    self.IronSightsAng.x * mul )

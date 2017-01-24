@@ -1,13 +1,13 @@
 SWEP.HoldType			= "pistol"
 
 if CLIENT then
-   SWEP.PrintName			= "Magnum"			
+   SWEP.PrintName			= "Magnum"
    SWEP.Author				= "TTT"
 
    SWEP.Slot				= 1
    SWEP.SlotPos			= 1
 
-   SWEP.Icon = "vgui/ttt/magnumnew"		
+   SWEP.Icon = "vgui/ttt/magnumnew"
 
    SWEP.ViewModelFOV  = 54
    SWEP.ViewModelFlip = false
@@ -23,11 +23,11 @@ SWEP.AdminSpawnable = true
 SWEP.Kind = WEAPON_PISTOL
 SWEP.WeaponID = AMMO_MAGNUM
 
-SWEP.Primary.Delay         = 0.9       
+SWEP.Primary.Delay         = 0.9
 SWEP.Primary.ClipSize = 6
-SWEP.Primary.Recoil         =  6.5  
+SWEP.Primary.Recoil         =  6.5
 SWEP.Primary.DefaultClip = 36
-SWEP.Primary.Cone         = 0    
+SWEP.Primary.Cone         = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo       = "AlyxGun" -- hijack an ammo type we don't use otherwise
 

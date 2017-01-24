@@ -89,7 +89,7 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 	function GAMEMODE:HUDPaint()
 		if LocalPlayer():IsGhost() then
 			self:HUDDrawTargetID()
-			MSTACK:Draw(LocalPlayer())		
+			MSTACK:Draw(LocalPlayer())
 			TBHUD:Draw(LocalPlayer())
 			WSWITCH:Draw(LocalPlayer())
 			self:HUDDrawPickupHistory()
@@ -150,5 +150,5 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 		end
 		return old_DrawHUD(self)
 	end
-		
+
 end)

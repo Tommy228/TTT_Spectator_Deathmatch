@@ -14,16 +14,16 @@ local function OpenStats()
 	local General_CurPage = 1
 
 	Stats = vgui.Create("DFrame")
-	Stats:SetPos(50,50) 
-	Stats:SetSize(620, 400) 
+	Stats:SetPos(50,50)
+	Stats:SetSize(620, 400)
     Stats:SetTitle("TTT Spectator Deathmatch Statistics")
     Stats:MakePopup()
-	Stats:Center()   
-		
+	Stats:Center()
+
 	local PropertySheet = vgui.Create("DPropertySheet", Stats)
 	PropertySheet:SetPos(5, 35)
 	PropertySheet:SetSize(610, 360)
-	
+
 	local General = vgui.Create("DPanelList")
 	General:SetSpacing(2)
 	local General_Search = vgui.Create("DTextEntry")
@@ -119,7 +119,7 @@ local function OpenStats()
 		General_Next:SetDisabled(true)
 		SpecDM_UpdateStats(true, true)
 	end
-			
+
 	local General_Page = vgui.Create("DLabel", General)
 	General_Page.UpdateText = function(self, text)
 		self:SetText(text)
@@ -132,7 +132,7 @@ local function OpenStats()
 	end
 	General_Page:UpdateText("1/"..math.ceil(general_pages/15))
 	General_Page:SetTextColor(color_black)
-	
+
 	local General_PrevFilter = false
 	function SpecDM_UpdateStats(general, filter)
 		if general then
@@ -160,9 +160,9 @@ local function OpenStats()
 			net.SendToServer()
 		end
 	end
-	
+
 	PropertySheet:AddSheet("General Statistics", General, "icon16/group.png")
-	
+
 	net.Receive("SpecDM_SendStats", function()
 		local to_update = net.ReadUInt(1) == 1
 		general_pages = net.ReadUInt(19)
@@ -199,7 +199,7 @@ local function OpenStats()
 			end
 		end
 	end)
-	
+
 	local Weapon_stats = vgui.Create("DListView")
 	Weapon_stats:AddColumn("Weapon name")
 	Weapon_stats:AddColumn("Number of kills")
@@ -208,10 +208,10 @@ local function OpenStats()
 		Weapon_stats:AddLine(name, v)
 	end
 	PropertySheet:AddSheet("Your weapon statistics", Weapon_stats, "icon16/gun.png")
-	
+
 	SpecDM_UpdateStats(true, false)
 	SpecDM_UpdateStats(false, false)
-	
+
 end
 net.Receive("SpecDM_OpenStats", OpenStats)
 
@@ -233,7 +233,7 @@ hook.Add("Think", "Think_SpecDMStats", function()
 	if input.IsKeyDown(SpecDM.StatsFKey) then
 		if not bind then
 			bind = true
-			if ValidPanel(Stats) and Stats:IsVisible() then
+			if IsValid(Stats) and Stats:IsVisible() then
 				Stats:Close()
 				return false
 			else

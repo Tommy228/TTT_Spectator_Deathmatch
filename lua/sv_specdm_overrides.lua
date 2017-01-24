@@ -16,11 +16,11 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 		local _dmginfo = DamageInfo()
 		_dmginfo:SetDamage(dmginfo:GetDamage())
 		_dmginfo:SetDamagePosition(dmginfo:GetDamagePosition())
-		if IsValid(dmginfo:GetAttacker()) then 
-			_dmginfo:SetAttacker(dmginfo:GetAttacker()) 
+		if IsValid(dmginfo:GetAttacker()) then
+			_dmginfo:SetAttacker(dmginfo:GetAttacker())
 		end
-		if IsValid(dmginfo:GetInflictor()) then 
-			_dmginfo:SetInflictor(dmginfo:GetInflictor()) 
+		if IsValid(dmginfo:GetInflictor()) then
+			_dmginfo:SetInflictor(dmginfo:GetInflictor())
 		end
 		ply.was_headshot = false
 		local hs = trace.HitGroup == HITGROUP_HEAD
@@ -33,11 +33,11 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 				if hit then s = s-0.2 end
 				_dmginfo:ScaleDamage(s)
 			end
-		else 
+		else
 			_dmginfo:ScaleDamage(0.55)
 		end
-		if not hit or hs then 
-			ply:TakeDamageInfo(_dmginfo) 
+		if not hit or hs then
+			ply:TakeDamageInfo(_dmginfo)
 		end
 		return true
 	end
@@ -52,7 +52,7 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 		return
 	else
 		ply:SetBloodColor(0)
-	end	
+	end
 end)
 
 local function SpecDM_Respawn(ply)
@@ -136,13 +136,13 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 		end
 		return old_KeyPress(self, ply, key)
 	end
-	
+
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
 	function GAMEMODE:SpectatorThink(ply)
 		if IsValid(ply) and ply:IsGhost() then return true end
-		old_SpectatorThink(self, ply)		
+		old_SpectatorThink(self, ply)
 	end
-		
+
 	local old_PlayerCanPickupWeapon = GAMEMODE.PlayerCanPickupWeapon
 	function GAMEMODE:PlayerCanPickupWeapon(ply, wep)
 		if not IsValid(ply) or not IsValid(wep) then return end
@@ -151,7 +151,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 		end
 		return old_PlayerCanPickupWeapon(self, ply, wep)
 	end
-	
+
 	local meta = FindMetaTable("Player")
 
 	local old_SpawnForRound = meta.SpawnForRound
@@ -161,37 +161,37 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 		end
 		return old_SpawnForRound(self, dead_only)
 	end
-	
+
 	local old_ResetRoundFlags = meta.ResetRoundFlags
 	function meta:ResetRoundFlags()
 		if self:IsGhost() then return end
 		old_ResetRoundFlags(self)
 	end
-	
+
 	local old_spectate = meta.Spectate
 	function meta:Spectate(mode)
 		if self:IsGhost() then return end
 		return old_spectate(self, mode)
 	end
-	
+
 	local old_ShouldSpawn = meta.ShouldSpawn
 	function meta:ShouldSpawn()
 		if self:IsGhost() then return true end
 		return old_ShouldSpawn(self)
 	end
-	
+
 	local old_GiveLoadout = GAMEMODE.PlayerLoadout
 	function GAMEMODE:PlayerLoadout(ply)
 		if ply:IsGhost() then return end
 		old_GiveLoadout(self, ply)
 	end
-	
+
 	local old_KarmaHurt = KARMA.Hurt
 	function KARMA.Hurt(attacker, victim, dmginfo)
 		if (IsValid(attacker) and attacker:IsGhost()) or (IsValid(victim) and victim:IsGhost()) then return end
 		return old_KarmaHurt(attacker, victim, dmginfo)
 	end
-	
+
 	for k,v in pairs(scripted_ents.GetList()) do
 		if v.ClassName == "base_ammo_ttt" then
 			local old_PlayerCanPickup = v.PlayerCanPickup
@@ -201,7 +201,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			end
 		end
 	end
-		
+
 	hook.Add("EntityTakeDamage", "EntityTakeDamage_Ghost", function(ent, dmginfo)
 		if ent:IsPlayer() then
 			local attacker = dmginfo:GetAttacker()
@@ -218,7 +218,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			end
 		end
 	end)
-	
+
 	local old_Damagelog = DamageLog
 	function Damagelog_New(str)
 		return old_Damagelog(str)
