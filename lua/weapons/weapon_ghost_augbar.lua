@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 SWEP.HoldType			= "crossbow"
 
 

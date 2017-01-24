@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 SWEP.HoldType			= "shotgun"
 
 if CLIENT then

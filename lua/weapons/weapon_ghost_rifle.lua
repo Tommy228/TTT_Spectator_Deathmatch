@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 SWEP.HoldType           = "ar2"
 
 if CLIENT then
