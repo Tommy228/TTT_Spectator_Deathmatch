@@ -1,19 +1,14 @@
-
 if SERVER then
    AddCSLuaFile()
-
 end
 
 SWEP.HoldType			= "melee"
 
-if CLIENT then
-   SWEP.PrintName			= "crowbar_name"
+SWEP.PrintName			= "crowbar_name"
+SWEP.Slot				= 0
 
-   SWEP.Slot				= 0
-
-   SWEP.Icon = "vgui/ttt/icon_cbar"
-   SWEP.ViewModelFOV = 54
-end
+SWEP.Icon = "vgui/ttt/icon_cbar"
+SWEP.ViewModelFOV = 54
 
 SWEP.UseHands			= true
 SWEP.Base				= "weapon_tttbase"

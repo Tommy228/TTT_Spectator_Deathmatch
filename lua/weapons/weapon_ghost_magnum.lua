@@ -1,17 +1,15 @@
-SWEP.HoldType			= "pistol"
-
-if CLIENT then
-   SWEP.PrintName			= "Magnum"
-   SWEP.Author				= "TTT"
-
-   SWEP.Slot				= 1
-   SWEP.SlotPos			= 1
-
-   SWEP.Icon = "vgui/ttt/magnumnew"
-
-   SWEP.ViewModelFOV  = 54
-   SWEP.ViewModelFlip = false
+if SERVER then
+	AddCSLuaFile()
 end
+
+SWEP.HoldType			= "pistol"
+SWEP.PrintName			= "Magnum"
+
+SWEP.Slot				= 1
+SWEP.Icon = "vgui/spec_dm/icon_sdm_revolver"
+
+SWEP.ViewModelFOV  = 54
+SWEP.ViewModelFlip = false
 
 SWEP.Tracer = "AR2Tracer"
 
@@ -50,9 +48,3 @@ SWEP.ViewModel = Model("models/weapons/v_357.mdl")
 SWEP.WorldModel = Model("models/weapons/w_357.mdl")
 SWEP.IronSightsPos = Vector (-5.6917, -3.2203, 2.3961)
 SWEP.IronSightsAng = Vector (0.6991, -0.1484, 0.8356)
-
-function SWEP:WasBought(buyer)
-   if IsValid(buyer) then -- probably already self.Owner
-      buyer:GiveAmmo( 6, "AlyxGun" )
-   end
-end

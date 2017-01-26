@@ -36,8 +36,7 @@ SpecDM.StatsFKey = KEY_F7
 -- Enable HP regeneration
 SpecDM.HP_Regen = true
 
--- When set to true all valid ghost weapons will be inserted automatically
--- If the loadout is enabled, you still need to add the weapon icons to the Loadout_Icons table!
+-- When set to true all valid ghost weapons and icons will be inserted automatically
 SpecDM.AutoIncludeWeapons = true
 
 -- When AutoIncludeWeapons is set to true the table will be emptied before adding all ghost weapons

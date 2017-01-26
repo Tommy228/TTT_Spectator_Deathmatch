@@ -1,4 +1,3 @@
-
 local PANEL = {
 	Start = 1,
 	End = 5
@@ -34,14 +33,14 @@ function PANEL:MoveLoadout(direction)
 		if i == 16 then
 			self.Moving = false
 			if self.End >= self.WeaponsCount then
-				self.Right:SetDisabled(true)
+				self.Right:SetEnabled(false)
 			else
-				self.Right:SetDisabled(false)
+				self.Right:SetEnabled(true)
 			end
 			if self.Start <= 1 then
-				self.Left:SetDisabled(true)
+				self.Left:SetEnabled(false)
 			else
-				self.Left:SetDisabled(false)
+				self.Left:SetEnabled(true)
 			end
 			hook.Remove("Think", name)
 		end
@@ -99,7 +98,7 @@ function PANEL:AddWeapons()
 	end
 	self.WeaponsCount = table.Count(self.Weapons)
 	if self.WeaponsCount <= 5 then
-		self.Right:SetDisabled(true)
+		self.Right:SetEnabled(false)
 	end
 	self.Loadout:SetSize(self.WeaponsCount*96, 100)
 end
@@ -159,7 +158,7 @@ function PANEL:Init()
 	self.Left.DoClick = function()
 		self:MoveLoadout(LEFT)
 	end
-	self.Left:SetDisabled(true)
+	self.Left:SetEnabled(false)
 
 end
 

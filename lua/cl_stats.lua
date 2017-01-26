@@ -72,12 +72,12 @@ local function OpenStats()
 	General_Previous:SetText("Previous")
 	General_Previous:SetSize(70, 25)
 	General_Previous:SetPos(35, 298)
-	General_Previous:SetDisabled(true)
+	General_Previous:SetEnabled(false)
 	General_Previous.DoClick = function(self)
 		General_CurPage = General_CurPage - 1
 		if General_CurPage == 1 then
-			self:SetDisabled(true)
-			General_First:SetDisabled(true)
+			self:SetEnabled(false)
+			General_First:SetEnabled(false)
 		end
 		SpecDM_UpdateStats(true, true)
 	end
@@ -85,11 +85,11 @@ local function OpenStats()
 	General_First:SetText("<<")
 	General_First:SetSize(30, 25)
 	General_First:SetPos(0, 298)
-	General_First:SetDisabled(true)
+	General_First:SetEnabled(false)
 	General_First.DoClick = function(self)
 		General_CurPage = 1
-		self:SetDisabled(true)
-		General_Previous:SetDisabled(true)
+		self:SetEnabled(false)
+		General_Previous:SetEnabled(false)
 		SpecDM_UpdateStats(true, true)
 	end
 	local General_Last
@@ -98,15 +98,15 @@ local function OpenStats()
 	General_Next:SetSize(70, 25)
 	General_Next:SetPos(489, 298)
 	if general_pages <= 15 then
-		General_Next:SetDisabled(true)
-		if General_Last then General_Last:SetDisabled(true) end
+		General_Next:SetEnabled(false)
+		if General_Last then General_Last:SetEnabled(false) end
 	end
 	General_Next.DoClick = function(self)
 		General_CurPage = General_CurPage + 1
 		if General_CurPage == math.ceil(general_pages/15) then
-			self:SetDisabled(true)
+			self:SetEnabled(false)
 		end
-		General_Previous:SetDisabled(false)
+		General_Previous:SetEnabled(true)
 		SpecDM_UpdateStats(true, true)
 	end
 	General_Last = vgui.Create("DButton", General)
@@ -115,8 +115,8 @@ local function OpenStats()
 	General_Last:SetPos(564, 298)
 	General_Last.DoClick = function(self)
 		General_CurPage = math.ceil(general_pages/15)
-		self:SetDisabled(true)
-		General_Next:SetDisabled(true)
+		self:SetEnabled(false)
+		General_Next:SetEnabled(false)
 		SpecDM_UpdateStats(true, true)
 	end
 
@@ -177,18 +177,18 @@ local function OpenStats()
 			General_Page:UpdateText(General_CurPage.."/"..math.ceil(general_pages/15))
 			General_ListView:Clear()
 			if general_pages <= 15 then
-				General_Next:SetDisabled(true)
-				General_Last:SetDisabled(true)
+				General_Next:SetEnabled(false)
+				General_Last:SetEnabled(false)
 			else
-				General_Next:SetDisabled(false)
-				General_Last:SetDisabled(false)
+				General_Next:SetEnabled(true)
+				General_Last:SetEnabled(true)
 			end
 			if General_CurPage == 1 then
-				General_Previous:SetDisabled(true)
-				General_First:SetDisabled(true)
+				General_Previous:SetEnabled(false)
+				General_First:SetEnabled(false)
 			else
-				General_Previous:SetDisabled(false)
-				General_First:SetDisabled(false)
+				General_Previous:SetEnabled(true)
+				General_First:SetEnabled(true)
 			end
 			General_Page:UpdateText(General_CurPage.."/"..math.ceil(general_pages/15))
 			for k,v in ipairs(decoded) do

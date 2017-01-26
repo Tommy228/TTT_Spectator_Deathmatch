@@ -1,13 +1,11 @@
-SWEP.HoldType = "ar2"
-
-if CLIENT then
-
-   SWEP.PrintName = "MP5"
-   SWEP.Slot      = 2
-
---   SWEP.Icon = "vgui/ttt/icon_dp_mp5"
+if SERVER then
+	AddCSLuaFile()
 end
 
+SWEP.HoldType = "ar2"
+SWEP.PrintName = "MP5"
+SWEP.Slot      = 2
+SWEP.Icon = "vgui/spec_dm/icon_sdm_mp5"
 
 SWEP.Base				= "weapon_ghost_base"
 
@@ -46,8 +44,3 @@ function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    -- decay from 3.2 to 1.7
    return 1.7 + math.max(0, (1.5 - 0.002 * (d ^ 1.25)))
 end
-
-
-
-
-

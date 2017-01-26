@@ -1,13 +1,14 @@
-SWEP.HoldType           = "ar2"
-
-if CLIENT then
-   SWEP.PrintName          = "rifle_name"
-
-   SWEP.Slot               = 2
-   SWEP.ViewModelFlip		= false
-   SWEP.ViewModelFOV = 54
-   SWEP.Icon = "vgui/ttt/icon_scout_green"
+if SERVER then
+	AddCSLuaFile()
 end
+
+SWEP.HoldType           = "ar2"
+SWEP.PrintName          = "rifle_name"
+
+SWEP.Slot               = 2
+SWEP.ViewModelFlip		= false
+SWEP.ViewModelFOV = 54
+SWEP.Icon = "vgui/ttt/icon_scout"
 
 
 SWEP.Base               = "weapon_ghost_base"

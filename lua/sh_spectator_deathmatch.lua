@@ -2,17 +2,19 @@ include("specdm_config.lua")
 include("specdm_von.lua")
 
 if SpecDM.AutoIncludeWeapons then
+	table.Empty(SpecDM.Ghost_weapons.primary)
+	table.Empty(SpecDM.Ghost_weapons.secondary)
+	table.Empty(SpecDM.Loadout_Icons)
 	hook.Add("Initialize", "SharedInitialize_Ghost", function()
-		table.Empty(SpecDM.Ghost_weapons.primary)
-		table.Empty(SpecDM.Ghost_weapons.secondary)
 		for _, w in pairs(weapons.GetList()) do
-			if w and w.Kind and w.Base == "weapon_ghost_base" then
+			if w and w.Kind and w.Base == "weapon_ghost_base" and (w.Kind == WEAPON_HEAVY or w.Kind == WEAPON_PISTOL) then
 				if w.Kind == WEAPON_HEAVY then
-					AddCSLuaFile("weapons/"..w.ClassName..".lua")
 					table.insert(SpecDM.Ghost_weapons.primary, w.ClassName)
-				elseif w.Kind == WEAPON_PISTOL then
-					AddCSLuaFile("weapons/"..w.ClassName..".lua")
+				else
 					table.insert(SpecDM.Ghost_weapons.secondary, w.ClassName)
+				end
+				if w.Icon then
+					SpecDM.Loadout_Icons[w.ClassName] = w.Icon
 				end
 			end
 		end

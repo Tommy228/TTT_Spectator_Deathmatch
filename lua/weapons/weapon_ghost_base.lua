@@ -16,11 +16,10 @@ SWEP.Kind = WEAPON_NONE
 -- (just setting to nil here to document its existence, don't make this buyable)
 SWEP.CanBuy = nil
 
-if CLIENT then
    -- If this is a buyable weapon (ie. CanBuy is not nil) EquipMenuData must be
    -- a table containing some information to show in the Equipment Menu. See
    -- default equipment weapons for real-world examples.
-   SWEP.EquipMenuData = nil
+SWEP.EquipMenuData = nil
 
    -- Example data:
    -- SWEP.EquipMenuData = {
@@ -34,7 +33,7 @@ if CLIENT then
 
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
-   SWEP.Icon = "vgui/ttt/icon_nades" -- most generic icon I guess
+SWEP.Icon = "vgui/ttt/icon_nades" -- most generic icon I guess
 
    -- You can make your own weapon icon using the template in:
    --   /garrysmod/gamemodes/terrortown/template/
@@ -46,7 +45,6 @@ if CLIENT then
    -- if the files are different, it only looks at the name. I recommend you
    -- create your own directory so that this does not happen,
    -- eg. /materials/vgui/ttt/mycoolserver/mygun.vmt
-end
 
 ---- MISC TTT-SPECIFIC BEHAVIOUR CONFIGURATION
 

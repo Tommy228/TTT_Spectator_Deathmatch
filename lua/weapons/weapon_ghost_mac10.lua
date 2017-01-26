@@ -1,12 +1,14 @@
+if SERVER then
+	AddCSLuaFile()
+end
+
 SWEP.HoldType = "ar2"
 
-if CLIENT then
-
-	SWEP.PrintName = "MAC10"
-	SWEP.Slot = 2
-    SWEP.ViewModelFlip = false
-	SWEP.ViewModelFOV = 54
-end
+SWEP.PrintName = "MAC10"
+SWEP.Slot = 2
+SWEP.ViewModelFlip = false
+SWEP.ViewModelFOV = 54
+SWEP.Icon = "vgui/ttt/icon_mac"
 
 
 SWEP.Base				= "weapon_ghost_base"

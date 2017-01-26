@@ -1,10 +1,11 @@
-SWEP.HoldType           = "ar2"
-
-if CLIENT then
-   SWEP.PrintName          = "AWP"
-   SWEP.Slot               = 2
---   SWEP.Icon = "vgui/ttt/icon_awp"
+if SERVER then
+	AddCSLuaFile()
 end
+
+SWEP.HoldType           = "ar2"
+SWEP.PrintName          = "AWP"
+SWEP.Slot               = 2
+SWEP.Icon = "vgui/spec_dm/icon_sdm_awp"
 
 SWEP.Base				= "weapon_ghost_base"
 
@@ -15,7 +16,7 @@ SWEP.Primary.Ammo = "357"
 SWEP.Primary.Damage = 65
 SWEP.Primary.Cone = 0.003
 SWEP.Primary.ClipSize = 10
-SWEP.Primary.ClipMax = 20 -- keep mirrored to ammo
+SWEP.Primary.ClipMax = 20
 SWEP.Primary.DefaultClip = 30
 
 SWEP.Kind = WEAPON_HEAVY

@@ -27,15 +27,23 @@ util.AddNetworkString("SpecDM_Hitmarker")
 util.AddNetworkString("SpecDM_CreateRagdoll")
 
 if SpecDM.LoadoutEnabled then
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_ak47.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_aug.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_awp.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_galil.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_mp5.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_pistol.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_revolver.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_smg.vmt")
-	resource.AddFile("materials/vgui/spec_dm/icon_sdm_stmp.vmt")
+	hook.Add("Initialize", "ServerInitialize_Ghost", function()
+		for _, w in pairs(SpecDM.Loadout_Icons) do
+			if string.GetExtensionFromFilename(w) then
+				if file.Exists(w, "GAME") then
+					resource.AddFile(w)
+				elseif file.Exists("materials/"..w, "GAME") then
+					resource.AddFile("materials/"..w)
+				end
+			else
+				if file.Exists(w..".vmt", "GAME") then
+					resource.AddFile(w..".vmt")
+				elseif file.Exists("materials/"..w..".vmt", "GAME") then
+					resource.AddFile("materials/"..w..".vmt")
+				end
+			end
+		end
+	end)
 end
 
 if SpecDM.QuakeSoundsEnabled then
@@ -174,8 +182,15 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 	local primary = net.ReadString()
 	local secondary = net.ReadString()
 	if not primary or not secondary then return end
-	if primary != "random" and string.Left(primary, #"weapon_ghost") != "weapon_ghost" then return end
-	if secondary != "random" and string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then return end
+	if primary == "random" then
+		ply.ghost_primary = primary
+		return
+	end
+	if secondary == "random" then
+		ply.ghost_primary = secondary
+		return
+	end
+	if string.Left(primary, #"weapon_ghost") != "weapon_ghost" or string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then return end
 	local list = weapons.GetList()
 	for k,v in pairs(list) do
 		if v.ClassName == primary and v.Kind == WEAPON_HEAVY then

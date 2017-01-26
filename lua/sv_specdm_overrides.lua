@@ -16,6 +16,7 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 		local _dmginfo = DamageInfo()
 		_dmginfo:SetDamage(dmginfo:GetDamage())
 		_dmginfo:SetDamagePosition(dmginfo:GetDamagePosition())
+		_dmginfo:SetReportedPosition(dmginfo:GetReportedPosition())
 		if IsValid(dmginfo:GetAttacker()) then
 			_dmginfo:SetAttacker(dmginfo:GetAttacker())
 		end

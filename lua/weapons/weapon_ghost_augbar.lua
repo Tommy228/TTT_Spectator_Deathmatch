@@ -1,17 +1,16 @@
+if SERVER then
+	AddCSLuaFile()
+end
+
 SWEP.HoldType			= "crossbow"
 
 
-if CLIENT then
+SWEP.PrintName			= "AUG"
+SWEP.Slot				= 2
+SWEP.Icon = "vgui/spec_dm/icon_sdm_aug"
 
-   SWEP.PrintName			= "AUG"
-
-   SWEP.Slot				= 2
-
-   SWEP.Icon = "vgui/ttt/icon_tt_aug"
-
-   SWEP.ViewModelFlip		= false
-   SWEP.ViewModelFOV = 60
-end
+SWEP.ViewModelFlip		= false
+SWEP.ViewModelFOV = 60
 
 
 SWEP.Base				= "weapon_ghost_base"

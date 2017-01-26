@@ -1,12 +1,12 @@
-SWEP.HoldType			= "shotgun"
-
-if CLIENT then
-   SWEP.PrintName = "shotgun_name"
-
-   SWEP.Slot = 2
-   SWEP.Icon = "vgui/ttt/icon_shotgun"
+if SERVER then
+	AddCSLuaFile()
 end
 
+SWEP.HoldType			= "shotgun"
+SWEP.PrintName = "shotgun_name"
+
+SWEP.Slot = 2
+SWEP.Icon = "vgui/ttt/icon_shotgun"
 
 SWEP.Base				= "weapon_ghost_base"
 SWEP.Spawnable = true
@@ -180,4 +180,3 @@ function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    -- decay from 3.1 to 1 slowly as distance increases
    return 1 + math.max(0, (2.1 - 0.002 * (d ^ 1.25)))
 end
-
