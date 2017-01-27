@@ -1,11 +1,13 @@
 if SERVER then
 	AddCSLuaFile()
+else
+	SWEP.PrintName			= "pistol_name"
+	SWEP.Slot      = 1
+
+	SWEP.Icon = "vgui/ttt/icon_pistol"
 end
 
 SWEP.HoldType = "pistol"
-SWEP.PrintName = "pistol_name"
-SWEP.Slot = 1
-SWEP.Icon = "vgui/ttt/icon_pistol"
 
 SWEP.Kind = WEAPON_PISTOL
 SWEP.WeaponID = AMMO_PISTOL

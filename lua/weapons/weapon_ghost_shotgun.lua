@@ -1,12 +1,14 @@
 if SERVER then
 	AddCSLuaFile()
+else
+	SWEP.PrintName			= "shotgun_name"
+	SWEP.Slot      = 2
+	SWEP.Icon = "vgui/ttt/icon_shotgun"
+	SWEP.ViewModelFlip		= false
+	SWEP.ViewModelFOV		= 54
 end
 
 SWEP.HoldType			= "shotgun"
-SWEP.PrintName = "shotgun_name"
-
-SWEP.Slot = 2
-SWEP.Icon = "vgui/ttt/icon_shotgun"
 
 SWEP.Base				= "weapon_ghost_base"
 SWEP.Spawnable = true
@@ -28,8 +30,6 @@ SWEP.AutoSpawnable = false
 SWEP.NoAmmoEnt = "item_box_buckshot_ttt"
 
 SWEP.UseHands			= true
-SWEP.ViewModelFlip		= false
-SWEP.ViewModelFOV		= 54
 SWEP.ViewModel			= "models/weapons/cstrike/c_shot_xm1014.mdl"
 SWEP.WorldModel			= "models/weapons/w_shot_xm1014.mdl"
 SWEP.Primary.Sound			= Sound( "Weapon_XM1014.Single" )

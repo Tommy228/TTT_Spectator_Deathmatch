@@ -1,12 +1,13 @@
 if SERVER then
 	AddCSLuaFile()
+else
+	SWEP.PrintName			= "H.U.G.E-249"
+	SWEP.Slot      = 2
+	SWEP.Icon = "vgui/ttt/icon_m249"
+	SWEP.ViewModelFlip		= false
 end
 
 SWEP.HoldType			= "crossbow"
-SWEP.PrintName			= "H.U.G.E-249"
-SWEP.Slot				= 2
-SWEP.Icon = "vgui/ttt/icon_m249"
-SWEP.ViewModelFlip		= false
 
 SWEP.Base				= "weapon_ghost_base"
 

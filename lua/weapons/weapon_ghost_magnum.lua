@@ -1,16 +1,18 @@
 if SERVER then
 	AddCSLuaFile()
+	if SpecDM.LoadoutEnabled then
+		resource.AddFile("materials/vgui/spec_dm/icon_sdm_revolver.vmt")
+	end
+else
+	SWEP.PrintName			= "Magnum"
+	SWEP.Slot      = 1
+
+	SWEP.ViewModelFlip		= false
+	SWEP.ViewModelFOV  = 54
+	SWEP.Icon = "vgui/spec_dm/icon_sdm_revolver"
 end
 
 SWEP.HoldType			= "pistol"
-SWEP.PrintName			= "Magnum"
-
-SWEP.Slot				= 1
-SWEP.Icon = "vgui/spec_dm/icon_sdm_revolver"
-
-SWEP.ViewModelFOV  = 54
-SWEP.ViewModelFlip = false
-
 SWEP.Tracer = "AR2Tracer"
 
 SWEP.Base				= "weapon_ghost_base"

@@ -1,15 +1,16 @@
 if SERVER then
 	AddCSLuaFile()
+else
+	SWEP.PrintName			= "Deagle"
+	SWEP.Slot      = 1
+	SWEP.ViewModelFOV	= 54
+	SWEP.ViewModelFlip		= false
+
+	SWEP.Icon = "vgui/ttt/icon_deagle"
 end
 
 SWEP.HoldType			= "pistol"
-SWEP.PrintName			= "Deagle"
 SWEP.Author				= "TTT"
-
-SWEP.Slot				= 1
-
-SWEP.Icon = "vgui/ttt/icon_deagle"
-SWEP.ViewModelFlip		= false
 
 SWEP.Base				= "weapon_ghost_base"
 
@@ -29,7 +30,6 @@ SWEP.Primary.ClipMax = 28
 SWEP.Primary.DefaultClip = 36
 SWEP.Primary.Automatic = true
 SWEP.UseHands				= true
-SWEP.ViewModelFOV	= 54
 SWEP.HeadshotMultiplier = 5
 
 SWEP.Primary.Sound			= Sound( "Weapon_Deagle.Single" )

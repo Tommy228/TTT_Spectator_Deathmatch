@@ -26,26 +26,6 @@ util.AddNetworkString("SpecDM_QuakeSound")
 util.AddNetworkString("SpecDM_Hitmarker")
 util.AddNetworkString("SpecDM_CreateRagdoll")
 
-if SpecDM.LoadoutEnabled then
-	hook.Add("Initialize", "ServerInitialize_Ghost", function()
-		for _, w in pairs(SpecDM.Loadout_Icons) do
-			if string.GetExtensionFromFilename(w) then
-				if file.Exists(w, "GAME") then
-					resource.AddFile(w)
-				elseif file.Exists("materials/"..w, "GAME") then
-					resource.AddFile("materials/"..w)
-				end
-			else
-				if file.Exists(w..".vmt", "GAME") then
-					resource.AddFile(w..".vmt")
-				elseif file.Exists("materials/"..w..".vmt", "GAME") then
-					resource.AddFile("materials/"..w..".vmt")
-				end
-			end
-		end
-	end)
-end
-
 if SpecDM.QuakeSoundsEnabled then
 	resource.AddFile("sound/specdm/killingspree.mp3")
 	resource.AddFile("sound/specdm/dominating.mp3")

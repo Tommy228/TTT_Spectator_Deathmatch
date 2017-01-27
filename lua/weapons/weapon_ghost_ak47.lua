@@ -1,18 +1,18 @@
 if SERVER then
 	AddCSLuaFile()
+	if SpecDM.LoadoutEnabled then
+		resource.AddFile("materials/vgui/spec_dm/icon_sdm_ak47.vmt")
+	end
+else
+	SWEP.PrintName = "AK47"
+	SWEP.Slot      = 2
+
+	SWEP.ViewModelFOV  = 72
+	SWEP.ViewModelFlip = true
+	SWEP.Icon = "vgui/spec_dm/icon_sdm_ak47"
 end
 
-SWEP.PrintName = "AK47"
-SWEP.Slot      = 2 -- add 1 to get the slot number key
-
-SWEP.ViewModelFOV  = 72
-SWEP.ViewModelFlip = true
-SWEP.Icon = "vgui/spec_dm/icon_sdm_ak47"
-
--- Always derive from weapon_tttbase.
 SWEP.Base				= "weapon_ghost_base"
-
---- Standard GMod values
 
 SWEP.HoldType			= "ar2"
 SWEP.Kind = WEAPON_HEAVY

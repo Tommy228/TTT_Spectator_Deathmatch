@@ -1,11 +1,15 @@
 if SERVER then
 	AddCSLuaFile()
+	if SpecDM.LoadoutEnabled then
+		resource.AddFile("materials/vgui/spec_dm/icon_sdm_mp5.vmt")
+	end
+else
+	SWEP.PrintName			= "MP5"
+	SWEP.Slot      = 2
+	SWEP.Icon = "vgui/spec_dm/icon_sdm_mp5"
 end
 
 SWEP.HoldType = "ar2"
-SWEP.PrintName = "MP5"
-SWEP.Slot      = 2
-SWEP.Icon = "vgui/spec_dm/icon_sdm_mp5"
 
 SWEP.Base				= "weapon_ghost_base"
 

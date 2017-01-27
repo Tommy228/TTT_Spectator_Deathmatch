@@ -1,20 +1,21 @@
 if SERVER then
 	AddCSLuaFile()
+	if SpecDM.LoadoutEnabled then
+		resource.AddFile("materials/vgui/spec_dm/icon_sdm_aug.vmt")
+	end
+else
+	SWEP.PrintName			= "AUG"
+	SWEP.Slot      = 2
+
+	SWEP.ViewModelFlip		= false
+	SWEP.ViewModelFOV = 60
+	SWEP.Icon = "vgui/spec_dm/icon_sdm_aug"
 end
-
-SWEP.HoldType			= "crossbow"
-
-
-SWEP.PrintName			= "AUG"
-SWEP.Slot				= 2
-SWEP.Icon = "vgui/spec_dm/icon_sdm_aug"
-
-SWEP.ViewModelFlip		= false
-SWEP.ViewModelFOV = 60
 
 
 SWEP.Base				= "weapon_ghost_base"
 
+SWEP.HoldType			= "crossbow"
 SWEP.AutoSpawnable = false
 SWEP.AdminSpawnable = true
 
