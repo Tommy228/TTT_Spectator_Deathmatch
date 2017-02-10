@@ -339,3 +339,11 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 		return
 	end
 end)
+
+local function BlockFlashlight(ply, state)
+	if ply:IsGhost() then
+		return false
+	else
+		return true
+	end
+end
