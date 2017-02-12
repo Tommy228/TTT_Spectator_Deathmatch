@@ -61,9 +61,9 @@ function meta:SetGhost(bool)
 end
 
 function SpecDM:RelationShip(victim)
-	for k,v in pairs(ents.FindByClass("npc_*")) do
-		if v.AddEntityRelationship then
-			v:AddEntityRelationship(v, D_NU, 99)
+	for _, npc in ipairs(ents.FindByClass("npc_*")) do
+		if isfunction(npc.AddEntityRelationship) then
+			npc:AddEntityRelationship(victim, D_NU, 99)
 		end
 	end
 end
