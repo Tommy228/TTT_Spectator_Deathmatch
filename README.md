@@ -16,7 +16,7 @@ Some features:
 - Includes Dota2-like quake sounds (killstreak sounds).
 - Creates a new scoreboard section to see the list of spectator deathmatch players.
 
-#####For *stable* releases look here: https://github.com/Tommy228/TTT_Spectator_Deathmatch/releases
+##### For *stable* releases look here: https://github.com/Tommy228/TTT_Spectator_Deathmatch/releases
 
 How to install : Just drop the TTT_Spectator_Deathmatch folder to addons/.
 
@@ -25,17 +25,17 @@ How to install : Just drop the TTT_Spectator_Deathmatch folder to addons/.
 And don't forget to update your FastDL (or use the workshop) and edit the specdm_config.lua file!
 
 
-###Known bugs:
+### Known bugs:
 - On some maps ghost players can get stuck. Rejoining the Spectator Deathmatch is currently the only solution.
 
 
-##Upcoming features:
+## Upcoming features:
 
 * Cleaner code and example template for creating own ghost weapons
 * Add an update notification (like 'TTT Damagelogs' has)
 
 
-#License:
+# License:
 
     This addon allows dead players to enter a deathmatch mode with each other.
     Copyright (C) 2017  Ismail Ouazzany
@@ -53,5 +53,5 @@ And don't forget to update your FastDL (or use the workshop) and edit the specdm
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-####TTT Spectator Deathmatch uses the following 3rd party software:
+#### TTT Spectator Deathmatch uses the following 3rd party software:
 - https://github.com/vercas/vON from Vercas
