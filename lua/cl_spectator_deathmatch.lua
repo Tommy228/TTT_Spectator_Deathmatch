@@ -47,20 +47,20 @@ end)
 
 local emitter
 local color_modify = CreateClientConVar("ttt_specdm_enablecoloreffect", "1", FCVAR_ARCHIVE)
+local color_tbl = {
+	["$pp_colour_addr"] = 0,
+	["$pp_colour_addg"] = 0,
+	["$pp_colour_addb"] = 0,
+	["$pp_colour_brightness"] = 0,
+	["$pp_colour_contrast"] = 1,
+	["$pp_colour_colour"] = 0,
+	["$pp_colour_mulr"] = 0.05,
+	["$pp_colour_mulg"] = 0.05,
+	["$pp_colour_mulb"] = 0.05
+}
 hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function()
 	if LocalPlayer():IsGhost() and color_modify:GetBool() then
-		local tbl = {
-			["$pp_colour_addr"] = 0,
-			["$pp_colour_addg" ] = 0,
-			["$pp_colour_addb" ] = 0,
-			["$pp_colour_brightness" ] = 0,
-			["$pp_colour_contrast" ] = 1,
-			["$pp_colour_colour" ] = 0,
-			["$pp_colour_mulr" ] = 0.05,
-			["$pp_colour_mulg" ] = 0.05,
-			["$pp_colour_mulb" ] = 0.05
-		}
-		DrawColorModify(tbl)
+		DrawColorModify(color_tbl)
 		cam.Start3D(EyePos(), EyeAngles())
 			for k,v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() then
@@ -77,12 +77,26 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 	end
 end)
 
+local RagdollEntities = {}
+
+hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
+	if ent:GetClass() == "prop_ragdoll" and !RagdollEntities[ent:EntIndex()] then
+		RagdollEntities[ent:EntIndex()] = ent
+	end
+end)
+
+hook.Add("EntityRemoved", "RemoveRagdolls_SpecDM", function(ent)
+	if ent:GetClass() == "prop_ragdoll" and RagdollEntities[ent:EntIndex()] then
+		RagdollEntities[ent:EntIndex()] = nil
+	end
+end)
+
 local COLOR_WHITE = Color(255,255,255,255)
 local gray = Color(255, 255, 255, 100)
 
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
 hook.Add("Think", "Think_Ghost", function()
-	for k,v in ipairs(ents.FindByClass("prop_ragdoll")) do
+	for k,v in ipairs(RagdollEntities) do
 		if LocalPlayer():IsGhost() then
 			v:SetRenderMode(RENDERMODE_TRANSALPHA)
 			v:SetColor(gray)
