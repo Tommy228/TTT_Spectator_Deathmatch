@@ -47,20 +47,20 @@ end)
 
 local emitter
 local color_modify = CreateClientConVar("ttt_specdm_enablecoloreffect", "1", FCVAR_ARCHIVE)
+local color_tbl = {
+	["$pp_colour_addr"] = 0,
+	["$pp_colour_addg"] = 0,
+	["$pp_colour_addb"] = 0,
+	["$pp_colour_brightness"] = 0,
+	["$pp_colour_contrast"] = 1,
+	["$pp_colour_colour"] = 0,
+	["$pp_colour_mulr"] = 0.05,
+	["$pp_colour_mulg"] = 0.05,
+	["$pp_colour_mulb"] = 0.05
+}
 hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function()
 	if LocalPlayer():IsGhost() and color_modify:GetBool() then
-		local tbl = {
-			["$pp_colour_addr"] = 0,
-			["$pp_colour_addg" ] = 0,
-			["$pp_colour_addb" ] = 0,
-			["$pp_colour_brightness" ] = 0,
-			["$pp_colour_contrast" ] = 1,
-			["$pp_colour_colour" ] = 0,
-			["$pp_colour_mulr" ] = 0.05,
-			["$pp_colour_mulg" ] = 0.05,
-			["$pp_colour_mulb" ] = 0.05
-		}
-		DrawColorModify(tbl)
+		DrawColorModify(color_tbl)
 		cam.Start3D(EyePos(), EyeAngles())
 			for k,v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() then
