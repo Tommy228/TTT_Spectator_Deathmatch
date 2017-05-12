@@ -38,7 +38,7 @@ hook.Add("OnEntityCreated", "OnEntityCreated_Ghost", function(ent)
 		ent:SetCustomCollisionCheck(true)
 	end
 	if SERVER and ent:IsNPC() then
-		for k,v in pairs(player.GetAll()) do
+		for k,v in ipairs(player.GetAll()) do
 			if v:IsGhost() then
 				ent:AddEntityRelationship(v, D_NU, 99)
 			end

@@ -122,7 +122,7 @@ function SWEP:CanPrimaryAttack()
             self:EmitSound( "Weapon_Shotgun.Empty" )
         else
             local filter = RecipientFilter()
-            for k,v in pairs(player.GetHumans()) do
+            for k,v in ipairs(player.GetHumans()) do
                 if v != self.Owner and v:IsGhost() then
                     filter:AddPlayer(v)
                 end

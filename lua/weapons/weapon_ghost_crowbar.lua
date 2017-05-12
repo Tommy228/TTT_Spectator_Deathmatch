@@ -61,7 +61,7 @@ function SWEP:PrimaryAttack()
       self.Weapon:EmitSound(sound_single, self.Primary.SoundLevel )
    else
       local tbl = {}
-      for k,v in pairs(player.GetHumans()) do
+      for k,v in ipairs(player.GetHumans()) do
          if v != self.Owner and v:IsGhost() then
 	        table.insert(tbl, v)
          end

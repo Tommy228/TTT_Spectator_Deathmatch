@@ -80,6 +80,7 @@ function meta:GiveGhostWeapons()
 		self:Give(self.ghost_secondary)
 	end
 	self:Give("weapon_ghost_crowbar")
+	self:SelectWeapon(self.ghost_primary)
 end
 
 function meta:ManageGhost(spawn, silent)
@@ -151,7 +152,7 @@ function meta:WantsToDM()
 end
 
 hook.Add("TTTEndRound", "TTTEndRound_Ghost", function()
-	for k,v in pairs(player.GetAll()) do
+	for k,v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			v:ManageGhost(false, true)
 		end
@@ -179,7 +180,7 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 end)
 
 hook.Add("Tick", "Tick_Ghost", function()
-	for k,v in pairs(player.GetAll()) do
+	for k,v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			v:Extinguish()
 			local wep = v:GetActiveWeapon()
@@ -211,7 +212,7 @@ end)
 if SpecDM.HP_Regen then
 	timer.Create("SpecDM_HPRegen", 1, 0, function()
 		if GetRoundState() == ROUND_ACTIVE then
-			for k,v in pairs(player.GetHumans()) do
+			for k,v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() and v:Health() > 0 and v:Health() < 100 then
 					v:SetHealth(v:Health() + 1)
 				end

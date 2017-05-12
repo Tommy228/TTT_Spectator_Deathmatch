@@ -298,7 +298,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 			-- play CS:S fall sound if we got somewhat significant damage
 			if damage > 5 then
 				local filter = RecipientFilter()
-				for k,v in pairs(player.GetHumans()) do -- bots don't need to hear the sound
+				for k,v in ipairs(player.GetHumans()) do -- bots don't need to hear the sound
 					if v:IsGhost() then
 						filter:AddPlayer(v)
 					end

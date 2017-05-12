@@ -68,7 +68,7 @@ end
 
 timer.Create("SpecDM_Time", 1, 0, function()
 	if GetRoundState() == ROUND_ACTIVE then
-		for k,v in pairs(player.GetHumans()) do
+		for k,v in ipairs(player.GetHumans()) do
 			if not v.specdm_stats_new then continue end
 			if v:IsGhost() and v.specdm_stats_new.time_dm then
 				v.specdm_stats_new.time_dm = v.specdm_stats_new.time_dm + 1

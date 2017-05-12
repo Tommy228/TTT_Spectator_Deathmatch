@@ -85,7 +85,7 @@ hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
 	end
 	
 	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then
-		for k,v in pairs(player.GetAll()) do
+		for k,v in ipairs(player.GetAll()) do
 			if v:GetRagdollEntity() == ent and v:IsGhost() then
 				ent:SetNoDraw(true)
 				break
@@ -214,7 +214,7 @@ if not SpecDM.IsScoreboardCustom then
 		function sbtbl:UpdateScoreboard(force)
 			if not force and not self:IsVisible() then return end
 
-			for k, v in pairs(player.GetAll()) do
+			for k, v in ipairs(player.GetAll()) do
 				if v:IsGhost() and LocalPlayer():IsSpec() then
 					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
 						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
