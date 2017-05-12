@@ -83,6 +83,15 @@ hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
 	if ent:GetClass() == "prop_ragdoll" and !RagdollEntities[ent:EntIndex()] then
 		RagdollEntities[ent:EntIndex()] = ent
 	end
+	
+	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then
+		for k,v in pairs(player.GetAll()) do
+			if v:GetRagdollEntity() == ent and v:IsGhost() then
+				ent:SetNoDraw(true)
+				break
+			end
+		end
+	end
 end)
 
 hook.Add("EntityRemoved", "RemoveRagdolls_SpecDM", function(ent)
@@ -504,15 +513,4 @@ net.Receive("SpecDM_Hitmarker", function()
 	timer.Create("SpecDM_Hitmarker", 0.35, 1, function()
 		hitmarker_enabled = false
 	end)
-end)
-
-hook.Add("OnEntityCreated", "OnEntityCreated_SpecDMRagdoll", function(ent)
-	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then
-		for k,v in pairs(player.GetAll()) do
-			if v:GetRagdollEntity() == ent and v:IsGhost() then
-				ent:SetNoDraw(true)
-				break
-			end
-		end
-	end
 end)

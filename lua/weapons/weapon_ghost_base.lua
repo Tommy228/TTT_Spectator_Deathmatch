@@ -311,7 +311,7 @@ function SWEP:DoImpactEffect()
 end
 
 function SWEP:FireAnimationEvent(pos, ang, ev)
-	if not LocalPlayer():IsGhost() then
+	if not self.Owner:IsGhost() then
 		return true
 	end
 end

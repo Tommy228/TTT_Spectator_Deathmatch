@@ -162,15 +162,12 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 	local primary = net.ReadString()
 	local secondary = net.ReadString()
 	if not primary or not secondary then return end
-	if primary == "random" then
-		ply.ghost_primary = primary
-		return
+	if primary == "random" or string.Left(primary, #"weapon_ghost") != "weapon_ghost" then
+		ply.ghost_primary = "random"
 	end
-	if secondary == "random" then
-		ply.ghost_primary = secondary
-		return
+	if secondary == "random" or string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then
+		ply.ghost_primary = "random"
 	end
-	if string.Left(primary, #"weapon_ghost") != "weapon_ghost" or string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then return end
 	local list = weapons.GetList()
 	for k,v in pairs(list) do
 		if v.ClassName == primary and v.Kind == WEAPON_HEAVY then
