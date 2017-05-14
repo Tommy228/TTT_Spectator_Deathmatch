@@ -53,6 +53,9 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 					if emitter then
 						emitter:Draw()
 					end
+					if not v:IsDormant() then
+						v:DrawModel()
+					end
 					render.SuppressEngineLighting( false )
 				end
 			end
