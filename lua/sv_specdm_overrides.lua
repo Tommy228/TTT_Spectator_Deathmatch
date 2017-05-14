@@ -57,9 +57,8 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 end)
 
 local function SpecDM_Respawn(ply)
-	ply:SetNWFloat("SpecDM_RespawnedIn", -2)
-	ply:SetNWFloat("SpecDM_AbleToRespawnIn", -2)
-	if ply:IsGhost() then
+	ply.allowrespawn = false
+	if IsValid(ply) and ply:IsGhost() and !ply:Alive() then
 		ply:UnSpectate()
 		ply:Spawn()
 		ply:GiveGhostWeapons()
@@ -72,23 +71,20 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
 			attacker:PS_GivePoints(SpecDM.PointshopPoints)
 		end
-		if SpecDM.RespawnTime == 0 then
-			timer.Simple(1, function()
+		if SpecDM.RespawnTime < 1 then
+			timer.Simple(0, function()
 				SpecDM_Respawn(victim)
 			end)
 			return false
 		end
-		victim:SetNWFloat("SpecDM_AbleToRespawnIn", CurTime() + SpecDM.RespawnTime)
+		net.Start("SpecDM_RespawnTimer")
+		net.Send(victim)
 		timer.Simple(SpecDM.RespawnTime, function()
-			if IsValid(victim) and !victim:Alive() and SpecDM.AutomaticRespawnTime ~= 0 then
-				victim:SetNWFloat("SpecDM_RespawnedIn", CurTime() + SpecDM.AutomaticRespawnTime)
-			end
+			victim.allowrespawn = true
 		end)
 		if SpecDM.AutomaticRespawnTime > -1 then
 			timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-				if IsValid(victim) and !victim:Alive() then
-					SpecDM_Respawn(victim)
-				end
+				SpecDM_Respawn(victim)
 			end)
 		end
 		return false
@@ -130,7 +126,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
 		if IsValid(ply) and ply:IsGhost() then
-			if !ply:Alive() and ply:GetNWFloat("SpecDM_RespawnedIn", -2) ~= -2 then
+			if ply.allowrespawn then
 				SpecDM_Respawn(ply)
 			end
 			return
@@ -235,7 +231,7 @@ local fallsounds = {
    Sound("player/damage1.wav"),
    Sound("player/damage2.wav"),
    Sound("player/damage3.wav")
-};
+}
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
 	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then

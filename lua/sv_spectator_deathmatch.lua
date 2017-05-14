@@ -25,6 +25,7 @@ util.AddNetworkString("SpecDM_AskOpenStats")
 util.AddNetworkString("SpecDM_QuakeSound")
 util.AddNetworkString("SpecDM_Hitmarker")
 util.AddNetworkString("SpecDM_CreateRagdoll")
+util.AddNetworkString("SpecDM_RespawnTimer")
 
 if SpecDM.QuakeSoundsEnabled then
 	resource.AddFile("sound/specdm/killingspree.mp3")
@@ -80,7 +81,6 @@ function meta:GiveGhostWeapons()
 		self:Give(self.ghost_secondary)
 	end
 	self:Give("weapon_ghost_crowbar")
-	self:SelectWeapon(self.ghost_primary)
 end
 
 function meta:ManageGhost(spawn, silent)
@@ -198,6 +198,11 @@ hook.Add("EntityTakeDamage", "EntityTakeDamage_SpecDMHitmarker", function(ent, d
 		local att = dmginfo:GetAttacker()
 		if IsValid(att) and att:IsPlayer() and att:IsGhost() then
 			net.Start("SpecDM_Hitmarker")
+			if SpecDM.DeadlyHitmarker and dmginfo:GetDamage() > ent:Health() then
+				net.WriteBool(true)
+			else
+				net.WriteBool(false)
+			end
 			net.Send(att)
 		end
 	end

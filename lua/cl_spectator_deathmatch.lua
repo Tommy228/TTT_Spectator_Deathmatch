@@ -4,22 +4,6 @@ include("vgui/spec_dm_loadout.lua")
 include("cl_stats.lua")
 include("cl_quakesounds.lua")
 
-hook.Add("HUDPaint", "SpecDM_RespawnMessage", function()
-	if !IsValid(LocalPlayer()) or !LocalPlayer():IsGhost() or LocalPlayer():Alive() then return end
-	if LocalPlayer():GetNWFloat("SpecDM_RespawnedIn", -2) ~= -2 then
-		if SpecDM.AutomaticRespawnTime > -1 then
-			draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..math.Round(LocalPlayer():GetNWFloat("SpecDM_RespawnedIn") - CurTime()).." second(s)", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
-		else
-			draw.DrawText("Press a key to respawn!", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
-		end
-	elseif LocalPlayer():GetNWFloat("SpecDM_AbleToRespawnIn", -2) ~= -2 then
-		local waittime = math.Round(LocalPlayer():GetNWFloat("SpecDM_AbleToRespawnIn") - CurTime())
-		if waittime > -1 then
-			draw.DrawText("You need to wait "..waittime.." second(s) before you can respawn", "Trebuchet24", ScrW()/2, ScrH()/4, Color(255,255,255,255), TEXT_ALIGN_CENTER)
-		end
-	end
-end)
-
 net.Receive("SpecDM_Error", function()
 	local error_str = net.ReadString()
 	chat.AddText(Color(255, 62, 62, 255), error_str)
@@ -69,7 +53,6 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 					if emitter then
 						emitter:Draw()
 					end
-					v:DrawModel()
 					render.SuppressEngineLighting( false )
 				end
 			end
@@ -101,14 +84,16 @@ hook.Add("EntityRemoved", "RemoveRagdolls_SpecDM", function(ent)
 end)
 
 local COLOR_WHITE = Color(255,255,255,255)
-local gray = Color(255, 255, 255, 100)
+local COLOR_LIGHTGREY = Color(225, 225, 225, 200)
+local COLOR_GREY = Color(255, 255, 255, 100)
+local COLOR_RED = Color(255, 16, 16, 255)
 
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
 hook.Add("Think", "Think_Ghost", function()
 	for k,v in ipairs(RagdollEntities) do
 		if LocalPlayer():IsGhost() then
 			v:SetRenderMode(RENDERMODE_TRANSALPHA)
-			v:SetColor(gray)
+			v:SetColor(COLOR_GREY)
 		else
 			v:SetColor(COLOR_WHITE)
 		end
@@ -122,7 +107,7 @@ hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
             return true
         elseif ply:IsTerror() then
             ply:SetRenderMode(RENDERMODE_TRANSALPHA)
-            ply:SetColor(gray)
+            ply:SetColor(COLOR_GREY)
             ply:DrawShadow(true)
         end
     else
@@ -138,19 +123,17 @@ hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
 end)
 
 local function SendHeartbeat()
-	if not IsValid(LocalPlayer()) then return end
-	if LocalPlayer():IsGhost() then
-		for k,v in ipairs(player.GetAll()) do
-			if v != LocalPlayer() and v:IsGhost() and v:Alive() then
-				emitter = ParticleEmitter(LocalPlayer():GetPos())
-				local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
-				heartbeat:SetDieTime(0.5)
-				heartbeat:SetStartAlpha(255)
-				heartbeat:SetEndAlpha(0)
-				heartbeat:SetStartSize(50)
-				heartbeat:SetEndSize(0)
-				heartbeat:SetColor(255,0,0)
-			end
+	if not IsValid(LocalPlayer()) or not LocalPlayer():IsGhost() then return end
+	for k,v in ipairs(player.GetAll()) do
+		if v != LocalPlayer() and v:IsGhost() and v:Alive() then
+			emitter = ParticleEmitter(LocalPlayer():GetPos())
+			local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
+			heartbeat:SetDieTime(0.5)
+			heartbeat:SetStartAlpha(255)
+			heartbeat:SetEndAlpha(0)
+			heartbeat:SetStartSize(50)
+			heartbeat:SetEndSize(0)
+			heartbeat:SetColor(255,0,0)
 		end
 	end
 end
@@ -486,31 +469,69 @@ net.Receive("SpecDM_Autoswitch", function()
 		frame:MakePopup()
 	end
 	if SpecDM.DisplayMessage and not spawned then
-		chat.AddText(Color(255, 62, 62), "[DM] ", color_white, "You've died! Type ", Color(98,176,255), SpecDM.Commands[1], Color(255, 255, 255), " to enter deathmatch mode and ", Color(255,62,62), "keep killing", Color(255, 255, 255), "!")
+		chat.AddText(Color(255, 62, 62), "[DM] ", color_white, "You've died! Type ", Color(98,176,255), SpecDM.Commands[1], COLOR_WHITE, " to enter deathmatch mode and ", Color(255,62,62), "keep killing", COLOR_WHITE, "!")
 		-- Now this will say !dm instead of !deathmatch. (see specdm_config.lua)
 	end
 end)
 
 local hitmarker_enabled = false
+local hitmarker_deadly = false
 local hitmarker = CreateClientConVar("ttt_specdm_hitmarker", "1", FCVAR_ARCHIVE)
-hook.Add("HUDPaint", "HUDPaint_SpecDMHitmarker", function()
+
+local respawntime = -2
+local autorespawntime = -2
+hook.Add("HUDPaint", "HUDPaint_SpecDM", function()
+	if !IsValid(LocalPlayer()) or !LocalPlayer():IsGhost() then return end
 	if hitmarker:GetBool() and hitmarker_enabled then
 		local x = ScrW() / 2
 		local y = ScrH() / 2
-		surface.SetDrawColor(Color(225, 225, 225, 200))
+		if hitmarker_deadly then
+			surface.SetDrawColor(COLOR_RED)
+		else
+			surface.SetDrawColor(COLOR_LIGHTGREY)
+		end
 		surface.DrawLine( x+7, y-7, x+15, y-15 )
 		surface.DrawLine( x-7, y+7, x-15, y+15 )
 		surface.DrawLine( x+7, y+7, x+15, y+15 )
 		surface.DrawLine( x-7, y-7, x-15, y-15 )
+		return
+	end
+	if LocalPlayer():Alive() then return end
+	local x = ScrW() / 2
+	local y = ScrH() / 4
+	if autorespawntime ~= -2 then
+		if SpecDM.AutomaticRespawnTime > 0 then
+			draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..math.Round(autorespawntime - CurTime()).." second(s)", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
+		else
+			draw.DrawText("Press a key to respawn!", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
+		end
+	elseif respawntime ~= -2 then
+		local waittime = math.Round(respawntime - CurTime())
+		if waittime > -1 then
+			draw.DrawText("You need to wait "..waittime.." second(s) before you can respawn", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
+		end
 	end
 end)
 
 net.Receive("SpecDM_Hitmarker", function()
+	if net.ReadBool() then
+		hitmarker_deadly = true
+	end
 	hitmarker_enabled = true
 	if timer.Exists("SpecDM_Hitmarker") then
 		timer.Remove("SpecDM_Hitmarker")
 	end
 	timer.Create("SpecDM_Hitmarker", 0.35, 1, function()
 		hitmarker_enabled = false
+		hitmarker_deadly = false
+	end)
+end)
+
+net.Receive("SpecDM_RespawnTimer", function()
+	autorespawntime = -2
+	respawntime = CurTime() + SpecDM.RespawnTime
+	timer.Simple(SpecDM.RespawnTime, function()
+		autorespawntime = CurTime() + SpecDM.AutomaticRespawnTime
+		respawntime = -2
 	end)
 end)

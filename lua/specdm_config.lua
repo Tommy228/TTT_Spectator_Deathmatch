@@ -67,6 +67,9 @@ SpecDM.LoadoutEnabled = true
 -- Enable quake sounds (clients can deactivate them)
 SpecDM.QuakeSoundsEnabled = true
 
+-- Should the hitmarker be red on death shots?
+SpecDM.DeadlyHitmarker = true
+
 -- Icons on the F1 loadout if the loadout is enabled
 SpecDM.Loadout_Icons = {
 	weapon_ghost_revolver = "vgui/ttt/icon_deagle",
