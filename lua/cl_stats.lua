@@ -24,10 +24,10 @@ local function OpenStats()
 	PropertySheet:SetPos(5, 35)
 	PropertySheet:SetSize(610, 360)
 
-	local General = vgui.Create("DPanelList")
-	General:SetSpacing(2)
+	local General = vgui.Create("DScrollPanel")
 	local General_Search = vgui.Create("DTextEntry")
 	General_Search:SetText("Search player...")
+	General_Search:SetSize(535, 20)
 	General_Search.OnGetFocus = function(self)
 		if self:GetValue() == "Search player..." and not self.Focused then
 			self.Focused = true
@@ -53,7 +53,8 @@ local function OpenStats()
 		SpecDM_UpdateStats(true, true)
 	end
 	local General_ListView = vgui.Create("DListView")
-	General_ListView:SetHeight(273)
+	General_ListView:SetSize(595, 273)
+	General_ListView:SetPos(0, 23)
 	General_ListView.CurDesc = false
 	General_ListView.SortByColumn = function(self, column, desc)
 		General_ListView.CurColumn = column

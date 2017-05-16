@@ -389,28 +389,23 @@ cvars.AddChangeCallback("ttt_specdm_secondaryweapon", SpecDM.UpdateLoadout)
 
 hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
 
-	-- rip from damagelog menu and thanks hobbes
-	local padding = dtabs:GetPadding()
-	padding = padding * 2
-
-	local dsettings = vgui.Create("DPanelList", dtabs)
-	dsettings:StretchToParent(0,0,padding,0)
-	dsettings:EnableVerticalScrollbar(true)
-	dsettings:SetPadding(10)
-	dsettings:SetSpacing(10)
-
+	local dsettings = vgui.Create("DScrollPanel", dtabs)
 	if SpecDM.LoadoutEnabled then
 
 		local primary_loadout = vgui.Create("SpecDM_LoadoutPanel")
 		primary_loadout.cvar = "ttt_specdm_primaryweapon"
 		primary_loadout:SetCategory("Primary weapons")
 		primary_loadout:SetWeapons(SpecDM.Ghost_weapons.primary)
+		primary_loadout:SetSize(550, 50)
+		primary_loadout:SetPos(10, 10)
 		dsettings:AddItem(primary_loadout)
 
 		local secondary_loadout = vgui.Create("SpecDM_LoadoutPanel")
 		secondary_loadout.cvar = "ttt_specdm_secondaryweapon"
 		secondary_loadout:SetCategory("Secondary weapons")
 		secondary_loadout:SetWeapons(SpecDM.Ghost_weapons.secondary)
+		secondary_loadout:SetSize(550, 50)
+		secondary_loadout:SetPos(10, 140)
 		dsettings:AddItem(secondary_loadout)
 
 	end
@@ -426,6 +421,8 @@ hook.Add("TTTSettingsTabs", "SpecDM_TTTSettingsTab", function(dtabs)
 	dgui:CheckBox("Show alive players", "ttt_specdm_showaliveplayers")
 	dgui:CheckBox("Enable the color effect", "ttt_specdm_enablecoloreffect")
 	dgui:CheckBox("Enable the hitmarker", "ttt_specdm_hitmarker")
+	dgui:SetSize(555, 50)
+	dgui:SetPos(10, 270)
 	dsettings:AddItem(dgui)
 
 	dtabs:AddSheet("Spectator Deathmatch", dsettings, "icon16/gun.png", false, false, "Spectator deathmatch related settings")
