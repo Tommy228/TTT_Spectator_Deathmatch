@@ -174,10 +174,11 @@ local function OpenStats()
 		if not uncompressed then return end
 		local decoded = von.deserialize(uncompressed)
 		if not decoded then return end
+		local maxpages = math.ceil(general_pages/15)
 		if to_update then
-			General_Page:UpdateText(General_CurPage.."/"..math.ceil(general_pages/15))
+			General_Page:UpdateText(General_CurPage.."/"..maxpages)
 			General_ListView:Clear()
-			if general_pages <= 15 then
+			if general_pages <= 15 or General_CurPage == maxpages then
 				General_Next:SetEnabled(false)
 				General_Last:SetEnabled(false)
 			else
@@ -191,7 +192,6 @@ local function OpenStats()
 				General_Previous:SetEnabled(true)
 				General_First:SetEnabled(true)
 			end
-			General_Page:UpdateText(General_CurPage.."/"..math.ceil(general_pages/15))
 			for k,v in ipairs(decoded) do
 				if not v.name or not tonumber(v.kills) or not tonumber(v.kill_row) or not tonumber(v.deaths) or not tonumber(v.time_dm) or not tonumber(v.time_playing) then continue end
 				local time_dm = math.Round(tonumber(v.time_dm) / 3600, 2)
