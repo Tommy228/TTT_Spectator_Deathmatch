@@ -123,6 +123,7 @@ end)
 
 hook.Add("Initialize", "Initialize_SpecDM", function()
 
+	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
 		if IsValid(ply) and ply:IsGhost() then
 			if ply.allowrespawn then
@@ -130,6 +131,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			end
 			return
 		end
+		return old_KeyPress(self, ply, key)
 	end
 
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
