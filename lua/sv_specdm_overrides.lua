@@ -75,7 +75,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 			timer.Simple(0, function()
 				SpecDM_Respawn(victim)
 			end)
-			return false
+			return
 		end
 		net.Start("SpecDM_RespawnTimer")
 		net.Send(victim)
@@ -87,7 +87,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 				SpecDM_Respawn(victim)
 			end)
 		end
-		return false
+		return
 	elseif GetRoundState() == ROUND_ACTIVE and victim:IsActive() then
 		timer.Simple(2, function()
 			if IsValid(victim) then
