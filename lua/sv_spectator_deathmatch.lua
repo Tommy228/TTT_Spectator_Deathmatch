@@ -88,7 +88,6 @@ function meta:ManageGhost(spawn, silent)
 	self:SetGhost(spawn)
 	if spawn then
 		self:Spawn()
-		self:SetBloodColor(-1)
 		self:GiveGhostWeapons()
 		SpecDM:RelationShip(self)
 	else

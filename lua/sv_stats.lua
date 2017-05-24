@@ -102,7 +102,6 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 				end
 				ply:SpecDM_CheckKillRows()
 			end
-			local weapon = killer:GetActiveWeapon()
 			local dmg = {
 				GetInflictor = function()
 					return inflictor

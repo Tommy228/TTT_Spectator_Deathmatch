@@ -48,11 +48,10 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
 		ply:UnSpectate()
-		timer.Simple(0.1, function() if IsValid(ply) and ply:IsGhost() and ply:GetWeapons() == nil then ply:GiveGhostWeapons() end end)
+		if IsValid(ply) and ply:IsGhost() and ply:GetWeapons() == nil then
+			ply:GiveGhostWeapons()
+		end
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
-		return
-	else
-		ply:SetBloodColor(0)
 	end
 end)
 
@@ -75,19 +74,18 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 			timer.Simple(0, function()
 				SpecDM_Respawn(victim)
 			end)
-			return
-		end
-		net.Start("SpecDM_RespawnTimer")
-		net.Send(victim)
-		timer.Simple(SpecDM.RespawnTime, function()
-			victim.allowrespawn = true
-		end)
-		if SpecDM.AutomaticRespawnTime > -1 then
-			timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-				SpecDM_Respawn(victim)
+		else
+			net.Start("SpecDM_RespawnTimer")
+			net.Send(victim)
+			timer.Simple(SpecDM.RespawnTime, function()
+				victim.allowrespawn = true
 			end)
+			if SpecDM.AutomaticRespawnTime > -1 then
+				timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
+					SpecDM_Respawn(victim)
+				end)
+			end
 		end
-		return
 	elseif GetRoundState() == ROUND_ACTIVE and victim:IsActive() then
 		timer.Simple(2, function()
 			if IsValid(victim) then
