@@ -1,6 +1,6 @@
 local old_concommandAdd = concommand.Add
 concommand.Add = function(...)
-	if command == "ttt_spec_use" or command == "ttt_dropweapon" then
+	if ({...})[1] == "ttt_spec_use" or ({...})[1] == "ttt_dropweapon" then
 		local old_func = func
 		func = function(ply, cmd, arg)
 			if IsValid(ply) and ply:IsGhost() then return end
@@ -8,7 +8,7 @@ concommand.Add = function(...)
 		end
 	end
 	return old_concommandAdd(...)
-end
+en
 
 hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo, dir, trace)
 	if ply:IsGhost() then
