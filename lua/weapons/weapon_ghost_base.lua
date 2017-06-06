@@ -35,6 +35,14 @@ if CLIENT then
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
 	SWEP.Icon = "vgui/ttt/icon_nades" -- most generic icon I guess
+	
+	net.Receive("SpecDM_BulletGhost", function()
+		local str = net.ReadString()
+		local vector = net.ReadVector()
+		local num = net.ReadUInt(19)
+		if num == 0 then num = nil end
+		sound.Play(str, vector, num)
+	end)
 
    -- You can make your own weapon icon using the template in:
    --   /garrysmod/gamemodes/terrortown/template/
@@ -249,14 +257,6 @@ function SWEP:PrimaryAttack(worldsnd)
 
    owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) * self.Primary.Recoil, 0 ) )
   end
-
-  net.Receive("SpecDM_BulletGhost", function()
-     local str = net.ReadString()
-	 local vector = net.ReadVector()
-	 local num = net.ReadUInt(19)
-	 if num == 0 then num = nil end
-     sound.Play(str, vector, num)
-  end)
 
 function SWEP:DryFire(setnext)
    if CLIENT and LocalPlayer() == self.Owner then

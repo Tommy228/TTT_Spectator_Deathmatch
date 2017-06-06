@@ -47,9 +47,7 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
 		ply:UnSpectate()
-		if IsValid(ply) and ply:IsGhost() and ply:GetWeapons() == nil then
-			ply:GiveGhostWeapons()
-		end
+		ply:GiveGhostWeapons()
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
 	end
 end)
