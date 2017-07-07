@@ -369,6 +369,25 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 	else
 		overrideTargetID()
 	end
+	
+	function util.GetPlayerTrace(ply, dir)
+		dir = dir or ply:GetAimVector()
+		local trace = {}
+		trace.start = ply:EyePos()
+		trace.endpos = trace.start + (dir * (4096 * 8))
+		local plyghost = ply:IsGhost()
+		if plyghost and showalive:GetBool() then
+			trace.filter = ply
+			return trace
+		end
+		trace.filter = function(ent)
+			if ent == ply or (ent:IsPlayer() and ((!ent:IsGhost() and plyghost) or (ent:IsGhost() and !plyghost))) then
+				return false
+			end
+			return true
+		end
+		return trace
+	end
 end)
 
 local primary = CreateClientConVar("ttt_specdm_primaryweapon", "random", FCVAR_ARCHIVE)

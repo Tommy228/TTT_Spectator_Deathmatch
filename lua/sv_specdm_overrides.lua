@@ -205,7 +205,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 				end
 			end
 
-			if ent:IsGhost() and dmginfo:GetInflictor():GetClass() == "trigger_hurt" then
+			if ent:IsGhost() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "trigger_hurt" then
 				return true
 			end
 		end
@@ -220,6 +220,30 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			Damagelog_New(str)
 		end
 	end
+
+	local function force_spectate(ply, cmd, arg)
+		if IsValid(ply) then
+			if #arg == 1 and tonumber(arg[1]) == 0 then
+				ply:SetForceSpec(false)
+			else
+				if ply:IsGhost() then
+					ply:SetForceSpec(true)
+					return
+				end
+				if not ply:IsSpec() then
+					ply:Kill()
+				end
+				GAMEMODE:PlayerSpawnAsSpectator(ply)
+				ply:SetTeam(TEAM_SPEC)
+				ply:SetForceSpec(true)
+				ply:Spawn()
+				ply:SetRagdollSpec(false)
+			end
+		end
+	end
+	
+	concommand.Remove("ttt_spectate") -- local function without a hook.call
+	concommand.Add("ttt_spectate", force_spectate)
 end)
 
 local fallsounds = {
