@@ -221,7 +221,7 @@ if SpecDM.HP_Regen then
 	timer.Create("SpecDM_HPRegen", 1, 0, function()
 		if GetRoundState() == ROUND_ACTIVE then
 			for k, v in ipairs(player.GetAll()) do
-				if v:IsGhost() and v:Alive() and v:Health() > 0 and v:Health() <= v:GetMaxHealth() then
+				if v:IsGhost() and v:Alive() and v:Health() > 0 and v:Health() < v:GetMaxHealth() then
 					v:SetHealth(v:Health() + 1)
 				end
 			end

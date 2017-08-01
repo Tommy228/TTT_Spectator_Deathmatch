@@ -493,7 +493,7 @@ local autorespawntime = -2
 hook.Add("HUDPaint", "HUDPaint_SpecDM", function()
 	if !IsValid(LocalPlayer()) or !LocalPlayer():IsGhost() then return end
 	if hitmarker:GetBool() then
-		if hitmarker_remain and hitmarker_remain > CurTime() then return end
+		if hitmarker_remain and hitmarker_remain < CurTime() then return end
 		local x = ScrW() / 2
 		local y = ScrH() / 2
 		if hitmarker_deadly then
