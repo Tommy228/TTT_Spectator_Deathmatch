@@ -44,7 +44,7 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 	if LocalPlayer():IsGhost() and color_modify:GetBool() then
 		DrawColorModify(color_tbl)
 		cam.Start3D(EyePos(), EyeAngles())
-			for k,v in ipairs(player.GetAll()) do
+			for k, v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() then
 					render.SuppressEngineLighting( true )
 					render.SetColorModulation(1,1,1)
@@ -85,7 +85,7 @@ local COLOR_RED = Color(255, 16, 16, 255)
 
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
 hook.Add("Think", "Think_Ghost", function()
-	for k,v in ipairs(RagdollEntities) do
+	for k, v in ipairs(RagdollEntities) do
 		if LocalPlayer():IsGhost() then
 			v:SetRenderMode(RENDERMODE_TRANSALPHA)
 			v:SetColor(COLOR_GREY)
@@ -119,7 +119,7 @@ end)
 
 local function SendHeartbeat()
 	if not IsValid(LocalPlayer()) or not LocalPlayer():IsGhost() then return end
-	for k,v in ipairs(player.GetAll()) do
+	for k, v in ipairs(player.GetAll()) do
 		if v != LocalPlayer() and v:IsGhost() and v:Alive() then
 			emitter = ParticleEmitter(LocalPlayer():GetPos())
 			local heartbeat = emitter:Add("sprites/light_glow02_add_noz", v:GetPos() + Vector(0,0,50))
@@ -160,7 +160,7 @@ if not SpecDM.IsScoreboardCustom then
 
 		function sgtbl:UpdatePlayerData()
 			local to_remove = {}
-			for k,v in pairs(self.rows) do
+			for k, v in pairs(self.rows) do
 				if IsValid(v) and IsValid(v:GetPlayer()) and (self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and LocalPlayer():IsSpec() or ScoreGroup(v:GetPlayer()) == self.group) then
 					v:UpdatePlayerData()
 				else
@@ -192,7 +192,7 @@ if not SpecDM.IsScoreboardCustom then
 		function sbtbl:UpdateScoreboard(force)
 			if not force and not self:IsVisible() then return end
 
-			for k,v in ipairs(player.GetAll()) do
+			for k, v in ipairs(player.GetAll()) do
 				if v:IsGhost() and LocalPlayer():IsSpec() then
 					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
 						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)

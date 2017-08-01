@@ -43,7 +43,7 @@ if SpecDM.QuakeSoundsEnabled then
 end
 
 local commands_table = {}
-for k,v in ipairs(SpecDM.Commands) do
+for k, v in ipairs(SpecDM.Commands) do
 	commands_table[v] = true
 end
 
@@ -113,7 +113,7 @@ function meta:ManageGhost(spawn, silent)
 end
 
 local allowed_groups = {}
-for k,v in ipairs(SpecDM.AllowedGroups) do
+for k, v in ipairs(SpecDM.AllowedGroups) do
 	allowed_groups[v] = true
 end
 
@@ -156,7 +156,7 @@ function meta:WantsToDM()
 end
 
 hook.Add("TTTEndRound", "TTTEndRound_Ghost", function()
-	for k,v in ipairs(player.GetAll()) do
+	for k, v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			v:ManageGhost(false, true)
 		end
@@ -173,7 +173,7 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 	if secondary == "random" or string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then
 		ply.ghost_primary = "random"
 	end
-	for k,v in ipairs(weapons.GetList()) do
+	for k, v in ipairs(weapons.GetList()) do
 		if v.ClassName == primary and v.Kind == WEAPON_HEAVY then
 			ply.ghost_primary = primary
 		elseif v.ClassName == secondary and v.Kind == WEAPON_PISTOL then
@@ -183,7 +183,7 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 end)
 
 hook.Add("Tick", "Tick_Ghost", function()
-	for k,v in ipairs(player.GetAll()) do
+	for k, v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			v:Extinguish()
 			local wep = v:GetActiveWeapon()
@@ -220,7 +220,7 @@ end)
 if SpecDM.HP_Regen then
 	timer.Create("SpecDM_HPRegen", 1, 0, function()
 		if GetRoundState() == ROUND_ACTIVE then
-			for k,v in ipairs(player.GetAll()) do
+			for k, v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() and v:Health() > 0 and v:Health() <= v:GetMaxHealth() then
 					v:SetHealth(v:Health() + 1)
 				end

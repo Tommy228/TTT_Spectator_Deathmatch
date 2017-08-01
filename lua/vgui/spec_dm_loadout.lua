@@ -55,7 +55,7 @@ end
 
 function PANEL:SetWeapons(tbl)
 	self.Weapons = {}
-	for k,v in pairs(tbl) do
+	for k, v in pairs(tbl) do
 		self.Weapons[v] = SpecDM.Loadout_Icons[v] or "vgui/ttt/icon_nades"
 	end
 	self:AddWeapons()
@@ -76,7 +76,7 @@ function PANEL:Toggle()
 end
 
 function PANEL:AddWeapons()
-	for k,v in pairs(self.Weapons) do
+	for k, v in pairs(self.Weapons) do
 		local icon = vgui.Create("SimpleIcon", self.Loadout)
 		icon.Value = k
 		icon:SetIconSize(90)
