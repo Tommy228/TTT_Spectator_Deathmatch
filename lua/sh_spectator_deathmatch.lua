@@ -2,12 +2,13 @@ include("specdm_config.lua")
 include("specdm_von.lua")
 
 if SpecDM.AutoIncludeWeapons then
-	table.Empty(SpecDM.Ghost_weapons.primary)
-	table.Empty(SpecDM.Ghost_weapons.secondary)
-	table.Empty(SpecDM.Loadout_Icons)
+	SpecDM.Ghost_weapons.primary = {}
+	SpecDM.Ghost_weapons.secondary = {}
+	SpecDM.Loadout_Icons = {}
+
 	hook.Add("Initialize", "SharedInitialize_Ghost", function()
-		for _, w in pairs(weapons.GetList()) do
-			if w and w.Kind and w.Base == "weapon_ghost_base" and (w.Kind == WEAPON_HEAVY or w.Kind == WEAPON_PISTOL) then
+		for _, w in ipairs(weapons.GetList()) do
+			if w.Kind and w.Base == "weapon_ghost_base" and (w.Kind == WEAPON_HEAVY or w.Kind == WEAPON_PISTOL) then
 				if w.Kind == WEAPON_HEAVY then
 					table.insert(SpecDM.Ghost_weapons.primary, w.ClassName)
 				else
@@ -48,10 +49,10 @@ end)
 
 hook.Add("ShouldCollide", "ShouldCollide_Ghost", function(ent1, ent2)
 	if IsValid(ent1) and IsValid(ent2) then
-		if ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost()) and not (ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost())) then
+		if ent1:IsPlayer() and ent1:IsGhost() and not (ent2:IsPlayer() and ent2:IsGhost()) then
 			return false
 		end
-		if ent2:IsPlayer() and (ent2.IsGhost and ent2:IsGhost()) and not (ent1:IsPlayer() and (ent1.IsGhost and ent1:IsGhost())) then
+		if ent2:IsPlayer() and ent2:IsGhost() and not (ent1:IsPlayer() and ent1:IsGhost()) then
 			return false
 		end
 	end

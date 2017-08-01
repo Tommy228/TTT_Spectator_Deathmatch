@@ -441,7 +441,7 @@ _serialize = {
 
 		--	First thing to be done is separate the numeric and key:value components of the given table in two tables.
 		--	pairs(data) is slower than next, data as far as my tests tell me.
-		for k, v in next, data do
+		for k,v in next, data do
 			--	Skip the numeric keyz.
 			if type(k) ~= "number" or k < 1 or k > len or (k % 1 ~= 0) then	--	k % 1 == 0 is, as proven by personal benchmarks,
 				keyvals[#keyvals + 1] = k									--	the quickest way to check if a number is an integer.
@@ -729,11 +729,11 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 		end,
 	}
 
-	for k, v in pairs(extra_serialize) do
+	for k,v in pairs(extra_serialize) do
 		_serialize[k] = v
 	end
 
-	for k, v in pairs(extra_deserialize) do
+	for k,v in pairs(extra_deserialize) do
 		_deserialize[k] = v
 	end
 
@@ -760,7 +760,7 @@ local function checkTableForRecursion(tab, checked, assoc)
 		checked[tab] = true
 	end
 
-	for k, v in pairs(tab) do
+	for k,v in pairs(tab) do
 		if type(k) == "table" and not checked[k] then
 			checkTableForRecursion(k, checked, assoc)
 		end

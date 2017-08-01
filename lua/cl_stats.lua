@@ -5,7 +5,6 @@ surface.CreateFont("SpecDM_Page", {
 })
 
 local weapon_tbl = {}
-local Stats = nil
 
 local function OpenStats()
 
@@ -217,7 +216,7 @@ end
 net.Receive("SpecDM_OpenStats", OpenStats)
 
 hook.Add("Initialize", "Initialize_SpecDMStats", function()
-	for k,v in pairs(weapons.GetList()) do
+	for k,v in ipairs(weapons.GetList()) do
 		if v.PrintName then
 			weapon_tbl[v.ClassName] = v.PrintName
 		end

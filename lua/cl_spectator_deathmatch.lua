@@ -5,8 +5,7 @@ include("cl_stats.lua")
 include("cl_quakesounds.lua")
 
 net.Receive("SpecDM_Error", function()
-	local error_str = net.ReadString()
-	chat.AddText(Color(255, 62, 62, 255), error_str)
+	chat.AddText(Color(255, 62, 62, 255), net.ReadString())
 end)
 
 net.Receive("SpecDM_Ghost", function()
@@ -24,8 +23,7 @@ end)
 net.Receive("SpecDM_GhostJoin", function()
 	local joined = net.ReadUInt(1) == 1
 	local ply = net.ReadEntity()
-	if not IsValid(LocalPlayer()) then return end
-	if not LocalPlayer():IsSpec() or not SpecDM.EnableJoinMessages or not IsValid(ply) then return end
+	if not IsValid(LocalPlayer()) or not LocalPlayer():IsSpec() or not SpecDM.EnableJoinMessages or not IsValid(ply) then return end
 	chat.AddText(Color(255,128,0), ply:Nick().." has ", joined and "joined" or "left", " the deathmatch!")
 end)
 
@@ -64,18 +62,12 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 end)
 
 local RagdollEntities = {}
-
 hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
 	if ent:GetClass() == "prop_ragdoll" and !RagdollEntities[ent:EntIndex()] then
 		RagdollEntities[ent:EntIndex()] = ent
-	end
-	
-	if not (LocalPlayer().IsGhost and LocalPlayer():IsGhost()) and ent:GetClass() == "class C_HL2MPRagdoll" then
-		for k,v in ipairs(player.GetAll()) do
-			if v:GetRagdollEntity() == ent and v:IsGhost() then
-				ent:SetNoDraw(true)
-				break
-			end
+	elseif ent:GetClass() == "class C_HL2MPRagdoll" then 
+		if IsValid(ent:GetRagdollOwner()) and ent:GetRagdollOwner():IsGhost() then
+			SafeRemoveEntity(ent)
 		end
 	end
 end)
@@ -140,7 +132,7 @@ local function SendHeartbeat()
 		end
 	end
 end
-timer.Create( "SpecDMHeartbeat", 5, 0, SendHeartbeat )
+timer.Create("SpecDMHeartbeat", 5, 0, SendHeartbeat)
 
 if not SpecDM.IsScoreboardCustom then
 	hook.Add("TTTScoreGroups", "TTTScoreGroups_GhostDM", function(can, pg)
@@ -168,7 +160,7 @@ if not SpecDM.IsScoreboardCustom then
 
 		function sgtbl:UpdatePlayerData()
 			local to_remove = {}
-			for k, v in pairs(self.rows) do
+			for k,v in pairs(self.rows) do
 				if IsValid(v) and IsValid(v:GetPlayer()) and (self.group == GROUP_DEATHMATCH and v:GetPlayer():IsGhost() and LocalPlayer():IsSpec() or ScoreGroup(v:GetPlayer()) == self.group) then
 					v:UpdatePlayerData()
 				else
@@ -178,7 +170,7 @@ if not SpecDM.IsScoreboardCustom then
 
 			if #to_remove == 0 then return end
 
-			for k, ply in pairs(to_remove) do
+			for k, ply in ipairs(to_remove) do
 				local pnl = self.rows[ply]
 
 				if IsValid(pnl) then
@@ -200,7 +192,7 @@ if not SpecDM.IsScoreboardCustom then
 		function sbtbl:UpdateScoreboard(force)
 			if not force and not self:IsVisible() then return end
 
-			for k, v in ipairs(player.GetAll()) do
+			for k,v in ipairs(player.GetAll()) do
 				if v:IsGhost() and LocalPlayer():IsSpec() then
 					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
 						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
@@ -501,7 +493,8 @@ local respawntime = -2
 local autorespawntime = -2
 hook.Add("HUDPaint", "HUDPaint_SpecDM", function()
 	if !IsValid(LocalPlayer()) or !LocalPlayer():IsGhost() then return end
-	if hitmarker:GetBool() and hitmarker_enabled then
+	if hitmarker:GetBool() then
+		if hitmarker_remain and hitmarker_remain > CurTime() then return end
 		local x = ScrW() / 2
 		local y = ScrH() / 2
 		if hitmarker_deadly then
@@ -520,7 +513,8 @@ hook.Add("HUDPaint", "HUDPaint_SpecDM", function()
 	local y = ScrH() / 4
 	if autorespawntime ~= -2 then
 		if SpecDM.AutomaticRespawnTime > 0 then
-			draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..math.Round(autorespawntime - CurTime()).." second(s)", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
+			local rtime = math.Round(autorespawntime - CurTime())
+			draw.DrawText("Press a key to respawn!\nYou will be automaticly respawned in "..rtime.." second"..(rtime != 1 and "s" or ""), "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
 		else
 			draw.DrawText("Press a key to respawn!", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
 		end
@@ -535,15 +529,10 @@ end)
 net.Receive("SpecDM_Hitmarker", function()
 	if net.ReadBool() then
 		hitmarker_deadly = true
-	end
-	hitmarker_enabled = true
-	if timer.Exists("SpecDM_Hitmarker") then
-		timer.Remove("SpecDM_Hitmarker")
-	end
-	timer.Create("SpecDM_Hitmarker", 0.35, 1, function()
-		hitmarker_enabled = false
+	else
 		hitmarker_deadly = false
-	end)
+	end
+	hitmarker_remain = CurTime() + 0.35
 end)
 
 net.Receive("SpecDM_RespawnTimer", function()
