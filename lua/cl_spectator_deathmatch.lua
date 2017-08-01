@@ -118,7 +118,7 @@ hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
 end)
 
 local function SendHeartbeat()
-	if not LocalPlayer():IsGhost() then return end
+	if not IsValid(LocalPlayer()) or not LocalPlayer():IsGhost() then return end
 	for k, v in ipairs(player.GetAll()) do
 		if v != LocalPlayer() and v:IsGhost() and v:Alive() then
 			emitter = ParticleEmitter(LocalPlayer():GetPos())
