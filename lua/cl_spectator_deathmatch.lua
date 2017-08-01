@@ -23,12 +23,12 @@ end)
 net.Receive("SpecDM_GhostJoin", function()
 	local joined = net.ReadUInt(1) == 1
 	local ply = net.ReadEntity()
-	if not IsValid(LocalPlayer()) or not LocalPlayer():IsSpec() or not SpecDM.EnableJoinMessages or not IsValid(ply) then return end
+	if not LocalPlayer():IsSpec() or not SpecDM.EnableJoinMessages or not IsValid(ply) then return end
 	chat.AddText(Color(255,128,0), ply:Nick().." has ", joined and "joined" or "left", " the deathmatch!")
 end)
 
 local emitter
-local color_modify = CreateClientConVar("ttt_specdm_enablecoloreffect", "1", FCVAR_ARCHIVE)
+local color_modify = CreateClientConVar("ttt_specdm_enablecoloreffect", 1, FCVAR_ARCHIVE)
 local color_tbl = {
 	["$pp_colour_addr"] = 0,
 	["$pp_colour_addg"] = 0,
@@ -65,7 +65,7 @@ local RagdollEntities = {}
 hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
 	if ent:GetClass() == "prop_ragdoll" and !RagdollEntities[ent:EntIndex()] then
 		RagdollEntities[ent:EntIndex()] = ent
-	elseif !LocalPlayer():IsGhost() and  ent:GetClass() == "class C_HL2MPRagdoll" then 
+	elseif IsValid(LocalPlayer()) and !LocalPlayer():IsGhost() and  ent:GetClass() == "class C_HL2MPRagdoll" then 
 		if IsValid(ent:GetRagdollOwner()) and ent:GetRagdollOwner():IsGhost() then
 			SafeRemoveEntity(ent)
 		end
@@ -83,7 +83,7 @@ local COLOR_LIGHTGREY = Color(225, 225, 225, 200)
 local COLOR_GREY = Color(255, 255, 255, 100)
 local COLOR_RED = Color(255, 16, 16, 255)
 
-local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", "1", FCVAR_ARCHIVE)
+local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", 1, FCVAR_ARCHIVE)
 hook.Add("Think", "Think_Ghost", function()
 	for k, v in ipairs(RagdollEntities) do
 		if LocalPlayer():IsGhost() then
@@ -118,7 +118,7 @@ hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
 end)
 
 local function SendHeartbeat()
-	if not IsValid(LocalPlayer()) or not LocalPlayer():IsGhost() then return end
+	if not LocalPlayer():IsGhost() then return end
 	for k, v in ipairs(player.GetAll()) do
 		if v != LocalPlayer() and v:IsGhost() and v:Alive() then
 			emitter = ParticleEmitter(LocalPlayer():GetPos())
@@ -384,8 +384,8 @@ end)
 
 local primary = CreateClientConVar("ttt_specdm_primaryweapon", "random", FCVAR_ARCHIVE)
 local secondary = CreateClientConVar("ttt_specdm_secondaryweapon", "random", FCVAR_ARCHIVE)
-local force_deathmatch = CreateClientConVar("ttt_specdm_forcedeathmatch", "1", FCVAR_ARCHIVE)
-local autoswitch = CreateClientConVar("ttt_specdm_autoswitch", "0", FCVAR_ARCHIVE)
+local force_deathmatch = CreateClientConVar("ttt_specdm_forcedeathmatch", 1, FCVAR_ARCHIVE)
+local autoswitch = CreateClientConVar("ttt_specdm_autoswitch", 0, FCVAR_ARCHIVE)
 
 function SpecDM.UpdateLoadout()
 	net.Start("SpecDM_SendLoadout")
@@ -485,9 +485,8 @@ net.Receive("SpecDM_Autoswitch", function()
 	end
 end)
 
-local hitmarker_enabled = false
+local hitmarker = CreateClientConVar("ttt_specdm_hitmarker", 1, FCVAR_ARCHIVE)
 local hitmarker_deadly = false
-local hitmarker = CreateClientConVar("ttt_specdm_hitmarker", "1", FCVAR_ARCHIVE)
 
 local respawntime = -2
 local autorespawntime = -2
