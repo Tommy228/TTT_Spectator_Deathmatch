@@ -65,7 +65,7 @@ local RagdollEntities = {}
 hook.Add("OnEntityCreated", "AddRagdolls_SpecDM", function(ent)
 	if ent:GetClass() == "prop_ragdoll" and !RagdollEntities[ent:EntIndex()] then
 		RagdollEntities[ent:EntIndex()] = ent
-	elseif ent:GetClass() == "class C_HL2MPRagdoll" then 
+	elseif !LocalPlayer():IsGhost() and  ent:GetClass() == "class C_HL2MPRagdoll" then 
 		if IsValid(ent:GetRagdollOwner()) and ent:GetRagdollOwner():IsGhost() then
 			SafeRemoveEntity(ent)
 		end
