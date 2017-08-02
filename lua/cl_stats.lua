@@ -5,7 +5,6 @@ surface.CreateFont("SpecDM_Page", {
 })
 
 local weapon_tbl = {}
-local Stats = nil
 
 local function OpenStats()
 
@@ -192,7 +191,7 @@ local function OpenStats()
 				General_Previous:SetEnabled(true)
 				General_First:SetEnabled(true)
 			end
-			for k,v in ipairs(decoded) do
+			for k, v in ipairs(decoded) do
 				if not v.name or not tonumber(v.kills) or not tonumber(v.kill_row) or not tonumber(v.deaths) or not tonumber(v.time_dm) or not tonumber(v.time_playing) then continue end
 				local time_dm = math.Round(tonumber(v.time_dm) / 3600, 2)
 				local time_playing = math.Round(tonumber(v.time_playing) / 3600, 2)
@@ -204,7 +203,7 @@ local function OpenStats()
 	local Weapon_stats = vgui.Create("DListView")
 	Weapon_stats:AddColumn("Weapon name")
 	Weapon_stats:AddColumn("Number of kills")
-	for k,v in pairs(weapons) do
+	for k, v in pairs(weapons) do
 		local name = weapon_tbl[k] and weapon_tbl[k] or k
 		Weapon_stats:AddLine(name, v)
 	end
@@ -217,7 +216,7 @@ end
 net.Receive("SpecDM_OpenStats", OpenStats)
 
 hook.Add("Initialize", "Initialize_SpecDMStats", function()
-	for k,v in pairs(weapons.GetList()) do
+	for k, v in ipairs(weapons.GetList()) do
 		if v.PrintName then
 			weapon_tbl[v.ClassName] = v.PrintName
 		end

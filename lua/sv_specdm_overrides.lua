@@ -184,7 +184,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 		return old_KarmaHurt(attacker, victim, dmginfo)
 	end
 
-	for k,v in pairs(scripted_ents.GetList()) do
+	for k, v in pairs(scripted_ents.GetList()) do
 		if v.ClassName == "base_ammo_ttt" then
 			local old_PlayerCanPickup = v.PlayerCanPickup
 			v.PlayerCanPickup = function(self, ply)
@@ -313,7 +313,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 			-- play CS:S fall sound if we got somewhat significant damage
 			if damage > 5 then
 				local filter = RecipientFilter()
-				for k,v in ipairs(player.GetHumans()) do -- bots don't need to hear the sound
+				for k, v in ipairs(player.GetHumans()) do -- bots don't need to hear the sound
 					if v:IsGhost() then
 						filter:AddPlayer(v)
 					end
@@ -330,7 +330,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 end)
 
 hook.Add("TTTBeginRound", "BeginRound_SpecDM", function()
-	for k,v in ipairs(player.GetAll()) do
+	for k, v in ipairs(player.GetAll()) do
 		if v:IsTerror() then
 			v:SetNWBool("PlayedSRound", true)
 		else

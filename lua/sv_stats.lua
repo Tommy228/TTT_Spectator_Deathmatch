@@ -1,7 +1,7 @@
 
 local function encode_weapons(tbl)
 	local to_implode = {}
-	for k,v in pairs(tbl) do
+	for k, v in pairs(tbl) do
 		table.insert(to_implode, k.."="..v)
 	end
 	return string.Implode(",", to_implode)
@@ -10,7 +10,7 @@ end
 local function decode_weapons(str)
 	local exploded = string.Explode(",", str)
 	local tbl = {}
-	for k,v in pairs(exploded) do
+	for k, v in pairs(exploded) do
 		local temp = string.Explode("=", v)
 		tbl[temp[1]] = temp[2]
 	end
@@ -68,7 +68,7 @@ end
 
 timer.Create("SpecDM_Time", 1, 0, function()
 	if GetRoundState() == ROUND_ACTIVE then
-		for k,v in ipairs(player.GetHumans()) do
+		for k, v in ipairs(player.GetHumans()) do
 			if not v.specdm_stats_new then continue end
 			if v:IsGhost() and v.specdm_stats_new.time_dm then
 				v.specdm_stats_new.time_dm = v.specdm_stats_new.time_dm + 1
@@ -126,7 +126,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 end)
 
 hook.Add("TTTEndRound", "TTTEndRound_SpecDMStats", function()
-	for k,v in pairs(player.GetHumans()) do
+	for k, v in pairs(player.GetHumans()) do
 		if not v.specdm_stats_newupdates then continue end
 		for column,update in pairs(v.specdm_stats_newupdates) do
 			if not update then continue end

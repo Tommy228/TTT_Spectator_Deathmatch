@@ -6,7 +6,7 @@ local function SpecDM_SendQuake(ply)
 	net.WriteUInt(ply.specdm_killrows, 19)
 	net.WriteUInt(ply.specdm_close_kills, 19)
 	local tbl = {}
-	for k,v in ipairs(player.GetAll()) do
+	for k, v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			table.insert(tbl, v)
 		end
