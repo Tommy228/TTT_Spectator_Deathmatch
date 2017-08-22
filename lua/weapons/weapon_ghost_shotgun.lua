@@ -6,6 +6,7 @@ else
 	SWEP.Icon = "vgui/ttt/icon_shotgun"
 	SWEP.ViewModelFlip		= false
 	SWEP.ViewModelFOV		= 54
+	SWEP.IconLetter = "B"
 end
 
 SWEP.HoldType			= "shotgun"

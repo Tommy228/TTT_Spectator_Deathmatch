@@ -7,6 +7,7 @@ else
 	SWEP.ViewModelFlip		= false
 	SWEP.ViewModelFOV = 54
 	SWEP.Icon = "vgui/ttt/icon_mac"
+	SWEP.IconLetter = "l"
 end
 
 SWEP.HoldType = "ar2"

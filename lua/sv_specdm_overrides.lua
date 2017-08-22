@@ -10,39 +10,6 @@ concommand.Add = function(command, func, ...)
 	return old_concommandAdd(command, func, ...)
 end
 
-hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo, dir, trace)
-	if ply:IsGhost() then
-		local _dmginfo = DamageInfo()
-		_dmginfo:SetDamage(dmginfo:GetDamage())
-		_dmginfo:SetDamagePosition(dmginfo:GetDamagePosition())
-		_dmginfo:SetReportedPosition(dmginfo:GetReportedPosition())
-		if IsValid(dmginfo:GetAttacker()) then
-			_dmginfo:SetAttacker(dmginfo:GetAttacker())
-		end
-		if IsValid(dmginfo:GetInflictor()) then
-			_dmginfo:SetInflictor(dmginfo:GetInflictor())
-		end
-		ply.was_headshot = false
-		local hs = trace.HitGroup == HITGROUP_HEAD
-		if hs then
-			ply.was_headshot = true
-			local wep = util.WeaponFromDamage(_dmginfo)
-			if IsValid(wep) then
-				local s = wep:GetHeadshotMultiplier(ply, _dmginfo) or 2
-				if s < 1 then s = 1 end
-				if hit then s = s-0.2 end
-				_dmginfo:ScaleDamage(s)
-			end
-		else
-			_dmginfo:ScaleDamage(0.55)
-		end
-		if not hit or hs then
-			ply:TakeDamageInfo(_dmginfo)
-		end
-		return true
-	end
-end)
-
 hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
@@ -199,12 +166,11 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			local attacker = dmginfo:GetAttacker()
 			if IsValid(attacker) and attacker:IsPlayer() then
 				if (attacker:IsGhost() and not ent:IsGhost()) or (not attacker:IsGhost() and ent:IsGhost()) then
-					dmginfo:ScaleDamage(0)
+					return true
 				elseif not attacker:IsGhost() and math.floor(dmginfo:GetDamage()) > 0 and GetRoundState() == ROUND_ACTIVE then
 					Damagelog_New(Format("DMG: \t %s [%s] damaged %s [%s] for %d dmg", attacker:Nick(), attacker:GetRoleString(), ent:Nick(), ent:GetRoleString(), math.Round(dmginfo:GetDamage())))
 				end
 			end
-
 			if ent:IsGhost() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "trigger_hurt" then
 				return true
 			end
@@ -350,7 +316,5 @@ end)
 hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 	if t.Entity and t.Entity:IsPlayer() and t.Entity:IsGhost() and t.OriginalSoundName == "HL2Player.BurnPain" then
 		return false
-	else
-		return
 	end
 end)

@@ -6,6 +6,7 @@ else
 	SWEP.ViewModelFlip		= false
 	SWEP.ViewModelFOV = 54
 	SWEP.Icon = "vgui/ttt/icon_scout"
+	SWEP.IconLetter = "n"
 end
 
 SWEP.HoldType           = "ar2"
@@ -80,6 +81,7 @@ function SWEP:PreDrop()
 end
 
 function SWEP:Reload()
+	if ( self:Clip1() == self.Primary.ClipSize or self.Owner:GetAmmoCount( self.Primary.Ammo ) <= 0 ) then return end
     self.Weapon:DefaultReload(ACT_VM_RELOAD)
     self:SetIronsights( false )
     self:SetZoom(false)
@@ -96,10 +98,12 @@ if CLIENT then
    function SWEP:DrawHUD()
       if self:GetIronsights() then
          surface.SetDrawColor( 0, 0, 0, 255 )
+         local scrW = ScrW()
+         local scrH = ScrH()
 
-         local x = ScrW() / 2.0
-         local y = ScrH() / 2.0
-         local scope_size = ScrH()
+         local x = scrW / 2.0
+         local y = scrH / 2.0
+         local scope_size = scrH
 
          -- crosshair
          local gap = 80
@@ -122,6 +126,10 @@ if CLIENT then
          local w = (x - sh) + 2
          surface.DrawRect(0, 0, w, scope_size)
          surface.DrawRect(x + sh - 2, 0, w, scope_size)
+         
+         -- cover gaps on top and bottom of screen
+         surface.DrawLine( 0, 0, scrW, 0 )
+         surface.DrawLine( 0, scrH - 1, scrW, scrH - 1 )
 
          surface.SetDrawColor(255, 0, 0, 255)
          surface.DrawLine(x, y, x + 1, y + 1)
@@ -131,7 +139,6 @@ if CLIENT then
          surface.SetDrawColor(255, 255, 255, 255)
 
          surface.DrawTexturedRectRotated(x, y, scope_size, scope_size, 0)
-
       else
          return self.BaseClass.DrawHUD(self)
       end

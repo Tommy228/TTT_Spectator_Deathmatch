@@ -5,6 +5,7 @@ else
 	SWEP.Slot      = 1
 
 	SWEP.Icon = "vgui/ttt/icon_glock"
+	SWEP.IconLetter = "c"
 end
 
 SWEP.HoldType = "pistol"

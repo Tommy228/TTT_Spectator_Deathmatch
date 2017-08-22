@@ -5,6 +5,7 @@ else
 	SWEP.Slot      = 2
 	SWEP.Icon = "vgui/ttt/icon_m249"
 	SWEP.ViewModelFlip		= false
+	SWEP.IconLetter = "z"
 end
 
 SWEP.HoldType			= "crossbow"
