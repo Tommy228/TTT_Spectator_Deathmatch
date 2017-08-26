@@ -7,6 +7,7 @@ else
 	SWEP.PrintName          = "AWP"
 	SWEP.Slot      = 2
 	SWEP.Icon = "vgui/spec_dm/icon_sdm_awp"
+	SWEP.IconLetter = "r"
 end
 
 SWEP.Base				= "weapon_ghost_base"

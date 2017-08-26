@@ -10,6 +10,7 @@ else
 	SWEP.ViewModelFlip		= false
 	SWEP.ViewModelFOV = 60
 	SWEP.Icon = "vgui/spec_dm/icon_sdm_aug"
+	SWEP.IconLetter = "e"
 end
 
 

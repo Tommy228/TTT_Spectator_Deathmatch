@@ -7,6 +7,7 @@ else
 	SWEP.ViewModelFlip		= false
 
 	SWEP.Icon = "vgui/ttt/icon_deagle"
+	SWEP.IconLetter = "f"
 end
 
 SWEP.HoldType			= "pistol"

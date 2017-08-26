@@ -7,6 +7,7 @@ else
 	SWEP.PrintName			= "MP5"
 	SWEP.Slot      = 2
 	SWEP.Icon = "vgui/spec_dm/icon_sdm_mp5"
+	SWEP.IconLetter = "x"
 end
 
 SWEP.HoldType = "ar2"

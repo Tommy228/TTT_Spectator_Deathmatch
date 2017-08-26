@@ -10,6 +10,7 @@ else
 	SWEP.ViewModelFlip		= false
 	SWEP.ViewModelFOV  = 72
 	SWEP.Icon = "vgui/spec_dm/icon_sdm_galil"
+	SWEP.IconLetter = "v"
 end
 
 SWEP.Base				= "weapon_ghost_base"

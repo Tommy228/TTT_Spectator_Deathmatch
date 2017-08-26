@@ -10,6 +10,13 @@ concommand.Add = function(command, func, ...)
 	return old_concommandAdd(command, func, ...)
 end
 
+hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo, dir, trace)
+	if ply:IsGhost() then
+		ply:TakeDamageInfo(dmginfo)
+		return true
+	end
+end)
+
 hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
