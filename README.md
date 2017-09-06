@@ -1,4 +1,4 @@
-TTT_Spectator_Deathmatch
+TTT Spectator Deathmatch
 ========================
 
 Spectator Deathmatch for Trouble in Terrorist Town (a Garry's Mod gamemode)
