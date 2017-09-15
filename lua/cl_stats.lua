@@ -134,7 +134,7 @@ local function OpenStats()
 	General_Page:SetTextColor(color_black)
 
 	local General_PrevFilter = false
-	local function SpecDM_UpdateStats(general, filter)
+	function SpecDM_UpdateStats(general, filter)
 		if general then
 			net.Start("SpecDM_AskStats")
 			net.WriteUInt(1, 1)
