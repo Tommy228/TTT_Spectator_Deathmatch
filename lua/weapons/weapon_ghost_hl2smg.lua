@@ -70,12 +70,12 @@ function SWEP:Reload()
 
     self.Weapon:DefaultReload( ACT_VM_RELOAD )
     self:SetIronsights( false )
-    if CLIENT and LocalPlayer() == self.Owner then
+    if CLIENT and LocalPlayer() == self:GetOwner() then
         self:EmitSound( "Weapon_SMG1.Reload" )
     else
         local filter = RecipientFilter()
         for k, v in ipairs(player.GetHumans()) do
-            if v != self.Owner and v:IsGhost() then
+            if v != self:GetOwner() and v:IsGhost() then
                 filter:AddPlayer(v)
             end
         end

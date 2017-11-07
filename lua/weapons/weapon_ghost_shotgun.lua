@@ -51,7 +51,7 @@ function SWEP:Reload()
     self:SetIronsights( false )
 	if self.dt.reloading then return end
 	if not IsFirstTimePredicted() then return end
-	if self.Weapon:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount( self.Primary.Ammo ) > 0 then
+	if self.Weapon:Clip1() < self.Primary.ClipSize and self:GetOwner():GetAmmoCount( self.Primary.Ammo ) > 0 then
 	    if self:StartReload() then
             return
         end
@@ -68,7 +68,7 @@ function SWEP:StartReload()
 
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
 
-   local ply = self.Owner
+   local ply = self:GetOwner()
 
    if not ply or ply:GetAmmoCount(self.Primary.Ammo) <= 0 then
       return false
@@ -91,7 +91,7 @@ function SWEP:StartReload()
 end
 
 function SWEP:PerformReload()
-   local ply = self.Owner
+   local ply = self:GetOwner()
 
    -- prevent normal shooting in between reloads
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
@@ -102,7 +102,7 @@ function SWEP:PerformReload()
 
    if wep:Clip1() >= self.Primary.ClipSize then return end
 
-   self.Owner:RemoveAmmo( 1, self.Primary.Ammo, false )
+   self:GetOwner():RemoveAmmo( 1, self.Primary.Ammo, false )
    self.Weapon:SetClip1( self.Weapon:Clip1() + 1 )
 
    wep:SendWeaponAnim(ACT_VM_RELOAD)
@@ -119,12 +119,12 @@ end
 
 function SWEP:CanPrimaryAttack()
     if self.Weapon:Clip1() <= 0 then
-        if CLIENT and LocalPlayer() == self.Owner then
+        if CLIENT and LocalPlayer() == self:GetOwner() then
             self:EmitSound( "Weapon_Shotgun.Empty" )
         else
             local filter = RecipientFilter()
             for k, v in ipairs(player.GetHumans()) do
-                if v != self.Owner and v:IsGhost() then
+                if v != self:GetOwner() and v:IsGhost() then
                     filter:AddPlayer(v)
                 end
             end
@@ -142,14 +142,14 @@ end
 
 function SWEP:Think()
    if self.dt.reloading and IsFirstTimePredicted() then
-      if self.Owner:KeyDown(IN_ATTACK) then
+      if self:GetOwner():KeyDown(IN_ATTACK) then
          self:FinishReload()
          return
       end
 
       if self.reloadtimer <= CurTime() then
 
-         if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+         if self:GetOwner():GetAmmoCount(self.Primary.Ammo) <= 0 then
             self:FinishReload()
          elseif self.Weapon:Clip1() < self.Primary.ClipSize then
             self:PerformReload()
