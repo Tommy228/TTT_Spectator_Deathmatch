@@ -57,3 +57,19 @@ hook.Add("ShouldCollide", "ShouldCollide_Ghost", function(ent1, ent2)
 		end
 	end
 end)
+
+hook.Add("Move", "Move_Ghost", function(ply, mv)
+	if ply:IsGhost() then
+		local basemul = 1
+		local slowed = false
+		local wep = ply:GetActiveWeapon()
+		if IsValid(wep) and wep.GetIronsights and wep:GetIronsights() then
+			basemul = 120 / 220
+			slowed = true
+		end
+		local mul = hook.Call("TTTPlayerSpeedModifier", GAMEMODE, ply, slowed, mv) or 1
+		mul = basemul * mul
+		mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * mul)
+		mv:SetMaxSpeed(mv:GetMaxSpeed() * mul)
+	end
+end)
