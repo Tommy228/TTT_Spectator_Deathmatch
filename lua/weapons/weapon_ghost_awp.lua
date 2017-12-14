@@ -38,15 +38,13 @@ SWEP.IronSightsPos      = Vector( 5, -15, -2 )
 SWEP.IronSightsAng      = Vector( 2.6, 1.37, 3.5 )
 
 function SWEP:SetZoom(state)
-    if CLIENT then
-       return
-    else
-       if state then
-          self:GetOwner():SetFOV(20, 0.3)
-       else
-          self:GetOwner():SetFOV(0, 0.2)
-       end
-    end
+    if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
+      if state then
+         self:GetOwner():SetFOV(20, 0.3)
+      else
+         self:GetOwner():SetFOV(0, 0.2)
+      end
+	end
 end
 
 -- Add some zoom to ironsights for this gun
@@ -58,11 +56,10 @@ function SWEP:SecondaryAttack()
 
     self:SetIronsights( bIronsights )
 
-    if SERVER then
-        self:SetZoom(bIronsights)
-     else
-        self:EmitSound(self.Secondary.Sound)
-    end
+    self:SetZoom(bIronsights)
+	if (CLIENT) then
+		self:EmitSound(self.Secondary.Sound)
+	end
 
     self.Weapon:SetNextSecondaryFire( CurTime() + 0.3)
 end
@@ -74,6 +71,7 @@ function SWEP:PreDrop()
 end
 
 function SWEP:Reload()
+	if ( self:Clip1() == self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) <= 0 ) then return end
     self.Weapon:DefaultReload(ACT_VM_RELOAD)
     self:SetIronsights( false )
     self:SetZoom(false)
@@ -90,10 +88,12 @@ if CLIENT then
    function SWEP:DrawHUD()
       if self:GetIronsights() then
          surface.SetDrawColor( 0, 0, 0, 255 )
+         local scrW = ScrW()
+         local scrH = ScrH()
 
-         local x = ScrW() / 2.0
-         local y = ScrH() / 2.0
-         local scope_size = ScrH()
+         local x = scrW / 2.0
+         local y = scrH / 2.0
+         local scope_size = scrH
 
          -- crosshair
          local gap = 80
@@ -116,6 +116,10 @@ if CLIENT then
          local w = (x - sh) + 2
          surface.DrawRect(0, 0, w, scope_size)
          surface.DrawRect(x + sh - 2, 0, w, scope_size)
+         
+         -- cover gaps on top and bottom of screen
+         surface.DrawLine( 0, 0, scrW, 0 )
+         surface.DrawLine( 0, scrH - 1, scrW, scrH - 1 )
 
          surface.SetDrawColor(255, 0, 0, 255)
          surface.DrawLine(x, y, x + 1, y + 1)
@@ -125,7 +129,6 @@ if CLIENT then
          surface.SetDrawColor(255, 255, 255, 255)
 
          surface.DrawTexturedRectRotated(x, y, scope_size, scope_size, 0)
-
       else
          return self.BaseClass.DrawHUD(self)
       end

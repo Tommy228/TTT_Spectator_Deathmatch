@@ -255,7 +255,7 @@ function SWEP:PrimaryAttack(worldsnd)
    local owner = self:GetOwner()
    if not IsValid(owner) or owner:IsNPC() or (not owner.ViewPunch) then return end
 
-   owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * self.Primary.Recoil, math.Rand(-0.1,0.1) * self.Primary.Recoil, 0 ) )
+   owner:ViewPunch( Angle( util.SharedRandom(self:GetClass(),-0.2,-0.1,0) * self.Primary.Recoil, util.SharedRandom(self:GetClass(),-0.1,0.1,1) * self.Primary.Recoil, 0 ) )
   end
 
 function SWEP:DryFire(setnext)
@@ -321,7 +321,6 @@ function SWEP:ShootBullet( dmg, recoil, numbul, cone )
 	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
   -- self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
 
-   if not IsFirstTimePredicted() then return end
 
    local sights = self:GetIronsights()
 
@@ -397,7 +396,6 @@ function SWEP:DrawWeaponSelection() end
 function SWEP:SecondaryAttack()
 
    if self.NoSights or (not self.IronSightsPos) then return end
-   --if self:GetNextSecondaryFire() > CurTime() then return end
 
    self:SetIronsights(not self:GetIronsights())
 
@@ -410,6 +408,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:Reload()
+	if ( self:Clip1() == self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) <= 0 ) then return end
     self.Weapon:DefaultReload(self.ReloadAnim)
     self:SetIronsights( false )
 end
@@ -544,6 +543,7 @@ function SWEP:DyingShot()
    return fired
 end
 
+local ttt_lowered = CreateConVar("ttt_ironsights_lowered", "1", FCVAR_ARCHIVE)
 local LOWER_POS = Vector(0, 0, -2)
 
 local IRONSIGHT_TIME = 0.25
@@ -580,7 +580,7 @@ function SWEP:GetViewModelPosition( pos, ang )
       if not bIron then mul = 1 - mul end
    end
 
-   local offset = self.IronSightsPos + vector_origin
+   local offset = self.IronSightsPos + (ttt_lowered:GetBool() and LOWER_POS or vector_origin)
 
    if self.IronSightsAng then
       ang = ang * 1

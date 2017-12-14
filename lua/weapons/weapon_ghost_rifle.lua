@@ -45,15 +45,13 @@ SWEP.IronSightsPos         = Vector( 5, -15, -2 )
 SWEP.IronSightsAng = Vector( 2.6, 1.37, 3.5 )
 
 function SWEP:SetZoom(state)
-    if CLIENT then
-       return
-    else
-       if state then
-          self:GetOwner():SetFOV(20, 0.3)
-       else
-          self:GetOwner():SetFOV(0, 0.2)
-       end
-    end
+    if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
+      if state then
+         self:GetOwner():SetFOV(20, 0.3)
+      else
+         self:GetOwner():SetFOV(0, 0.2)
+      end
+	end
 end
 
 -- Add some zoom to ironsights for this gun
@@ -64,12 +62,11 @@ function SWEP:SecondaryAttack()
     local bIronsights = not self:GetIronsights()
 
     self:SetIronsights( bIronsights )
-
-    if SERVER then
-        self:SetZoom(bIronsights)
-     else
-        self:EmitSound(self.Secondary.Sound)
-    end
+	
+	self:SetZoom(bIronsights)
+	if (CLIENT) then
+		self:EmitSound(self.Secondary.Sound)
+	end
 
     self.Weapon:SetNextSecondaryFire( CurTime() + 0.3)
 end
