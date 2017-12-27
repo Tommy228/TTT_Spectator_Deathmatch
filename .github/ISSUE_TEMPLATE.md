@@ -1,7 +1,7 @@
 ### What happened?
 
 
-### Are there any lua error in the console?
+### Are there any lua errors in the console?
 
 
 ### Are you using a beta branch of GarrysMod? (No, prerelease, dev)
