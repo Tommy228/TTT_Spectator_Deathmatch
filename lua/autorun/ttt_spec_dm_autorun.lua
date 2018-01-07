@@ -1,4 +1,4 @@
--- TTT Spectator Deathmatch Copyright (C) 2017 Ismail Ouazzany
+-- TTT Spectator Deathmatch Copyright (C) 2015-2018 Ismail Ouazzany
 -- This program comes with ABSOLUTELY NO WARRANTY; for details view LICENSE.
 
 -- GitHub Repository:

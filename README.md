@@ -40,7 +40,7 @@ And don't forget to update your FastDL (or use the workshop) and edit the specdm
 # License:
 
     This addon allows dead players to enter a deathmatch mode with each other.
-    Copyright (C) 2017 Ismail Ouazzany
+    Copyright (C) 2015-2018 Ismail Ouazzany
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
