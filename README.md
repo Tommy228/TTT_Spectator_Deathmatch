@@ -5,7 +5,7 @@ Spectator Deathmatch for Trouble in Terrorist Town (a Garry's Mod gamemode)
 
 This addon allows dead players to enter a deathmatch mode with each other. The living players won't be able to see or hear you, and you'll be given a random primary/secondary to battle each other with. Find the other "Ghosts" and kill them. This continues until the end of the current round. To enter or leave the deathmatch, type !deathmatch or !specdm into chat.
 
-Facepunch Thread: https://facepunch.com/showthread.php?t=1426936
+Facepunch Thread: https://gmod.facepunch.com/f/gmodaddon/jipl/TTT-Spectator-Deathmatch/1/
 
 
 Some features:
