@@ -182,14 +182,6 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 	end
 end)
 
-hook.Add("Tick", "Tick_Ghost", function()
-	for k, v in ipairs(player.GetAll()) do
-		if v:IsGhost() then
-			v:Extinguish()
-		end
-	end
-end)
-
 hook.Add("EntityTakeDamage", "EntityTakeDamage_SpecDMHitmarker", function(ent, dmginfo)
 	if ent:IsPlayer() and ent:IsGhost() then
 		local att = dmginfo:GetAttacker()

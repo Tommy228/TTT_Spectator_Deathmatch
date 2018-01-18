@@ -132,7 +132,10 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
 	function GAMEMODE:SpectatorThink(ply)
-		if IsValid(ply) and ply:IsGhost() then return true end
+		if IsValid(ply) and ply:IsGhost() then
+			ply:Extinguish()
+			return true
+		end
 		old_SpectatorThink(self, ply)
 	end
 
