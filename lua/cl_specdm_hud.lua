@@ -33,12 +33,12 @@ local function DrawBg(x, y, width, height, client)
 	height = height + th
 	draw.RoundedBox(8, x, y, width, height, bg_colors.background_main)
 	local col = bg_colors.innocent
-	if LocalPlayer():IsGhost() then
+	if client:IsGhost() then
 	elseif GAMEMODE.round_state != ROUND_ACTIVE then
 		col = bg_colors.noround
-	elseif LocalPlayer():GetTraitor() then
+	elseif client:GetTraitor() then
 		col = bg_colors.traitor
-	elseif LocalPlayer():GetDetective() then
+	elseif client:GetDetective() then
 		col = bg_colors.detective
 	end
 	draw.RoundedBox(8, x, y, tw, th, col)
@@ -87,30 +87,31 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 	local margin = 10
 	local old_DrawHUD = GAMEMODE.HUDPaint
 	function GAMEMODE:HUDPaint()
-		if LocalPlayer():IsGhost() then
+		local client = LocalPlayer()
+		if client:IsGhost() then
 			self:HUDDrawTargetID()
-			MSTACK:Draw(LocalPlayer())
-			TBHUD:Draw(LocalPlayer())
-			WSWITCH:Draw(LocalPlayer())
+			MSTACK:Draw(client)
+			TBHUD:Draw(client)
+			WSWITCH:Draw(client)
 			self:HUDDrawPickupHistory()
 			local L = GetLang()
 			local width = 250
 			local height = 90
 			local x = margin
 			local y = ScrH() - margin - height
-			DrawBg(x, y, width, height, LocalPlayer())
+			DrawBg(x, y, width, height, client)
 			local bar_height = 25
 			local bar_width = width - (margin*2)
-			local health = math.max(0, LocalPlayer():Health())
+			local health = math.max(0, client:Health())
 			local health_y = y + margin
-			PaintBar(x + margin, health_y, bar_width, bar_height, health_colors, health/100)
+			PaintBar(x + margin, health_y, bar_width, bar_height, health_colors, health/client:GetMaxHealth())
 			ShadowedText(tostring(health), "HealthAmmo", bar_width, health_y, COLOR_WHITE, TEXT_ALIGN_RIGHT, TEXT_ALIGN_RIGHT)
 			if ttt_health_label:GetBool() then
 				local health_status = util.HealthToString(health)
 				draw.SimpleText(L[health_status], "TabLarge", x + margin*2, health_y + bar_height/2, COLOR_WHITE, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
-			if LocalPlayer():GetActiveWeapon().Primary then
-				local ammo_clip, ammo_max, ammo_inv = GetAmmo(LocalPlayer())
+			if client:GetActiveWeapon().Primary then
+				local ammo_clip, ammo_max, ammo_inv = GetAmmo(client)
 				if ammo_clip != -1 then
 					local ammo_y = health_y + bar_height + margin
 					PaintBar(x+margin, ammo_y, bar_width, bar_height, ammo_colors, ammo_clip/ammo_max)
