@@ -70,16 +70,19 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 		end
 		if SpecDM.RespawnTime < 1 then
 			timer.Simple(0, function()
+				if(not IsValid(victim)) then return end
 				SpecDM_Respawn(victim)
 			end)
 		else
 			net.Start("SpecDM_RespawnTimer")
 			net.Send(victim)
 			timer.Simple(SpecDM.RespawnTime, function()
+				if(not IsValid(victim)) then return end
 				victim.allowrespawn = true
 			end)
 			if SpecDM.AutomaticRespawnTime > -1 then
 				timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
+					if(not IsValid(victim)) then return end
 					SpecDM_Respawn(victim)
 				end)
 			end
