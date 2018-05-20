@@ -2,11 +2,14 @@ local old_concommandAdd = concommand.Add
 concommand.Add = function(command, func, ...)
 	if command == "ttt_spec_use" or command == "ttt_dropweapon" then
 		local old_func = func
+        
 		func = function(ply, cmd, arg)
 			if IsValid(ply) and ply:IsGhost() then return end
+            
 			return old_func(ply, cmd, arg)
 		end
 	end
+    
 	return old_concommandAdd(command, func, ...)
 end
 
@@ -16,30 +19,45 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 		_dmginfo:SetDamage(dmginfo:GetDamage())
 		_dmginfo:SetDamagePosition(dmginfo:GetDamagePosition())
 		_dmginfo:SetReportedPosition(dmginfo:GetReportedPosition())
+        
 		if IsValid(dmginfo:GetAttacker()) then
 			_dmginfo:SetAttacker(dmginfo:GetAttacker())
 		end
+        
 		if IsValid(dmginfo:GetInflictor()) then
 			_dmginfo:SetInflictor(dmginfo:GetInflictor())
 		end
+        
 		ply.was_headshot = false
+        
 		local hg = trace.HitGroup
 		local hs = hg == HITGROUP_HEAD
+        
 		if hs then
 			ply.was_headshot = true
+            
 			local wep = util.WeaponFromDamage(_dmginfo)
+            
 			if IsValid(wep) then
 				local s = wep:GetHeadshotMultiplier(ply, _dmginfo) or 2
-				if s < 1 then s = 1 end
-				if hit then s = s-0.2 end
+				if s < 1 then 
+                    s = 1 
+                end
+                
+				if hit then 
+                    s = s-0.2 
+                end
+                
 				_dmginfo:ScaleDamage(s)
 			end
-		elseif (hg == HITGROUP_LEFTARM or hg == HITGROUP_RIGHTARM or hg == HITGROUP_LEFTLEG or hg == HITGROUP_RIGHTLEG or hg == HITGROUP_GEAR) then
+		elseif hg == HITGROUP_LEFTARM or hg == HITGROUP_RIGHTARM or hg == HITGROUP_LEFTLEG or hg == HITGROUP_RIGHTLEG or hg == HITGROUP_GEAR then
 			_dmginfo:ScaleDamage(0.55)
 		end
+        
 		if not hit or hs then
 			ply:TakeDamageInfo(_dmginfo)
 		end
+        
 		return true
 	end
 end)
@@ -47,42 +65,46 @@ end)
 hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 	if ply:IsGhost() then
 		ply.has_spawned = true
+        
 		ply:UnSpectate()
 		ply:GiveGhostWeapons()
+        
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
 	end
 end)
 
 local function SpecDM_Respawn(ply)
 	ply.allowrespawn = false
-	if IsValid(ply) and ply:IsGhost() and !ply:Alive() then
+    
+	if IsValid(ply) and ply:IsGhost() and not ply:Alive() then
 		ply:UnSpectate()
 		ply:Spawn()
 		ply:GiveGhostWeapons()
+        
 		SpecDM:RelationShip(ply)
 	end
 end
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
 	if victim:IsGhost() then
-		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker != victim then
+		if SpecDM.GivePointshopPoints and IsValid(attacker) and attacker:IsPlayer() and attacker:IsGhost() and attacker ~= victim then
 			attacker:PS_GivePoints(SpecDM.PointshopPoints)
 		end
+        
 		if SpecDM.RespawnTime < 1 then
 			timer.Simple(0, function()
-				if(not IsValid(victim)) then return end
 				SpecDM_Respawn(victim)
 			end)
 		else
 			net.Start("SpecDM_RespawnTimer")
 			net.Send(victim)
+            
 			timer.Simple(SpecDM.RespawnTime, function()
-				if(not IsValid(victim)) then return end
 				victim.allowrespawn = true
 			end)
+            
 			if SpecDM.AutomaticRespawnTime > -1 then
 				timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-					if(not IsValid(victim)) then return end
 					SpecDM_Respawn(victim)
 				end)
 			end
@@ -102,6 +124,7 @@ end)
 hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
 	local old_haste = HasteMode
 	local old_PlayerDeath = GAMEMODE.PlayerDeath
+    
 	function GAMEMODE:PlayerDeath(ply, infl, attacker)
 		if ply:IsGhost() then
 			HasteMode = function()
@@ -114,6 +137,7 @@ hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
 				Damagelog_New(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))
 			end
 		end
+        
 		old_PlayerDeath(self, ply, infl, attacker)
 		HasteMode = old_haste
 	end
@@ -121,33 +145,36 @@ hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
 end)
 
 hook.Add("Initialize", "Initialize_SpecDM", function()
-
 	local old_KeyPress = GAMEMODE.KeyPress
 	function GAMEMODE:KeyPress(ply, key)
 		if IsValid(ply) and ply:IsGhost() then
 			if ply.allowrespawn then
 				SpecDM_Respawn(ply)
 			end
+            
 			return
 		end
+        
 		return old_KeyPress(self, ply, key)
 	end
 
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
 	function GAMEMODE:SpectatorThink(ply)
-		if IsValid(ply) and ply:IsGhost() then
-			ply:Extinguish()
-			return true
-		end
+		if IsValid(ply) and ply:IsGhost() then 
+            return true 
+        end
+        
 		old_SpectatorThink(self, ply)
 	end
 
 	local old_PlayerCanPickupWeapon = GAMEMODE.PlayerCanPickupWeapon
 	function GAMEMODE:PlayerCanPickupWeapon(ply, wep)
 		if not IsValid(ply) or not IsValid(wep) then return end
+        
 		if ply:IsGhost() then
 			return string.Left(wep:GetClass(), #"weapon_ghost") == "weapon_ghost"
 		end
+        
 		return old_PlayerCanPickupWeapon(self, ply, wep)
 	end
 
@@ -158,44 +185,52 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 		if self:IsGhost() then
 			self:SetGhost(false)
 		end
+        
 		return old_SpawnForRound(self, dead_only)
 	end
 
 	local old_ResetRoundFlags = meta.ResetRoundFlags
 	function meta:ResetRoundFlags()
 		if self:IsGhost() then return end
+        
 		old_ResetRoundFlags(self)
 	end
 
 	local old_spectate = meta.Spectate
 	function meta:Spectate(mode)
 		if self:IsGhost() then return end
+        
 		return old_spectate(self, mode)
 	end
 
 	local old_ShouldSpawn = meta.ShouldSpawn
 	function meta:ShouldSpawn()
 		if self:IsGhost() then return true end
+        
 		return old_ShouldSpawn(self)
 	end
 
 	local old_GiveLoadout = GAMEMODE.PlayerLoadout
 	function GAMEMODE:PlayerLoadout(ply)
 		if ply:IsGhost() then return end
+        
 		old_GiveLoadout(self, ply)
 	end
 
 	local old_KarmaHurt = KARMA.Hurt
 	function KARMA.Hurt(attacker, victim, dmginfo)
 		if (IsValid(attacker) and attacker:IsGhost()) or (IsValid(victim) and victim:IsGhost()) then return end
+        
 		return old_KarmaHurt(attacker, victim, dmginfo)
 	end
 
-	for k, v in pairs(scripted_ents.GetList()) do
+	for _, v in pairs(scripted_ents.GetList()) do
 		if v.ClassName == "base_ammo_ttt" then
 			local old_PlayerCanPickup = v.PlayerCanPickup
+            
 			v.PlayerCanPickup = function(self, ply)
 				if ply:IsGhost() then return false end
+                
 				return old_PlayerCanPickup(self, ply)
 			end
 		end
@@ -204,6 +239,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	hook.Add("EntityTakeDamage", "EntityTakeDamage_Ghost", function(ent, dmginfo)
 		if ent:IsPlayer() then
 			local attacker = dmginfo:GetAttacker()
+            
 			if IsValid(attacker) and attacker:IsPlayer() then
 				if (attacker:IsGhost() and not ent:IsGhost()) or (not attacker:IsGhost() and ent:IsGhost()) then
 					return true
@@ -211,6 +247,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 					Damagelog_New(Format("DMG: \t %s [%s] damaged %s [%s] for %d dmg", attacker:Nick(), attacker:GetRoleString(), ent:Nick(), ent:GetRoleString(), math.Round(dmginfo:GetDamage())))
 				end
 			end
+            
 			if ent:IsGhost() and IsValid(dmginfo:GetInflictor()) and dmginfo:GetInflictor():GetClass() == "trigger_hurt" then
 				return true
 			end
@@ -221,8 +258,9 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	function Damagelog_New(str)
 		return old_Damagelog(str)
 	end
+    
 	function DamageLog(str)
-		if string.Left(str, 4) != "KILL" and string.Left(str, 3) != "DMG" then
+		if string.Left(str, 4) ~= "KILL" and string.Left(str, 3) ~= "DMG" then
 			Damagelog_New(str)
 		end
 	end
@@ -234,12 +272,16 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 			else
 				if ply:IsGhost() then
 					ply:SetForceSpec(true)
+                    
 					return
 				end
+                
 				if not ply:IsSpec() then
 					ply:Kill()
 				end
+                
 				GAMEMODE:PlayerSpawnAsSpectator(ply)
+                
 				ply:SetTeam(TEAM_SPEC)
 				ply:SetForceSpec(true)
 				ply:Spawn()
@@ -249,6 +291,7 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	end
 	
 	concommand.Remove("ttt_spectate") -- local function without a hook.call
+    
 	concommand.Add("ttt_spectate", force_spectate)
 end)
 
@@ -260,7 +303,9 @@ local fallsounds = {
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
 	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then
-		if in_water or speed < 450 or not IsValid(ply) then return true end
+		if in_water or speed < 450 or not IsValid(ply) then 
+            return true 
+        end
 
 		-- Everything over a threshold hurts you, rising exponentially with speed
 		local damage = math.pow(0.05 * (speed - 420), 1.75)
@@ -296,7 +341,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 
 				dmg:SetAttacker(att)
 				dmg:SetInflictor(att)
-				dmg:SetDamageForce(Vector(0,0,-1))
+				dmg:SetDamageForce(Vector(0, 0, -1))
 				dmg:SetDamage(damage)
 
 				ground:TakeDamageInfo(dmg)
@@ -311,7 +356,7 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 			dmg:SetDamageType(DMG_FALL)
 			dmg:SetAttacker(game.GetWorld())
 			dmg:SetInflictor(game.GetWorld())
-			dmg:SetDamageForce(Vector(0,0,1))
+			dmg:SetDamageForce(Vector(0, 0, 1))
 			dmg:SetDamage(damage)
 
 			ply:TakeDamageInfo(dmg)
@@ -319,11 +364,13 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 			-- play CS:S fall sound if we got somewhat significant damage
 			if damage > 5 then
 				local filter = RecipientFilter()
-				for k, v in ipairs(player.GetHumans()) do -- bots don't need to hear the sound
+                
+				for _, v in ipairs(player.GetHumans()) do -- bots don't need to hear the sound
 					if v:IsGhost() then
 						filter:AddPlayer(v)
 					end
 				end
+                
 				net.Start("SpecDM_BulletGhost")
 				net.WriteString(fallsounds[math.random(1, 3)])
 				net.WriteVector(ply:GetShootPos())
@@ -331,12 +378,13 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 				net.Send(filter)
 			end
 		end
+        
 		return true
 	end
 end)
 
 hook.Add("TTTBeginRound", "BeginRound_SpecDM", function()
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if v:IsTerror() then
 			v:SetNWBool("PlayedSRound", true)
 		else

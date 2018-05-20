@@ -1,5 +1,6 @@
 if SERVER then
 	AddCSLuaFile()
+    
 	if SpecDM.LoadoutEnabled then
 		resource.AddFile("materials/vgui/spec_dm/icon_sdm_mp5.vmt")
 	end
@@ -26,7 +27,7 @@ SWEP.Primary.DefaultClip = 100
 SWEP.Primary.Automatic   = true
 SWEP.Primary.Ammo        = "smg1"
 SWEP.Primary.Recoil      = 1.2
-SWEP.Primary.Sound       = Sound( "Weapon_MP5Navy.Single" )
+SWEP.Primary.Sound       = Sound("Weapon_MP5Navy.Single")
 SWEP.AutoSpawnable = false
 
 SWEP.NoAmmoEnt = "item_ammo_smg1_ttt"
@@ -41,7 +42,10 @@ SWEP.IronSightsAng = Vector(0.9641, 0.0252, 0)
 
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    local att = dmginfo:GetAttacker()
-   if not IsValid(att) then return 2 end
+   
+   if not IsValid(att) then 
+      return 2 
+   end
 
    local dist = victim:GetPos():Distance(att:GetPos())
    local d = math.max(0, dist - 150)

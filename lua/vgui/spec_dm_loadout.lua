@@ -4,44 +4,57 @@ local PANEL = {
 }
 
 function PANEL:MoveLoadout(direction)
-	if self.Moving or (direction != LEFT and direction != RIGHT) then return end
+	if self.Moving or (direction ~= LEFT and direction ~= RIGHT) then return end
+    
 	if direction == LEFT and self.Start > 1 then
 		self.Start = self.Start-1
 		self.End = self.End-1
 	elseif direction == RIGHT and self.End < self.WeaponsCount then
 		self.Start = self.Start+1
 		self.End = self.End+1
-	else return end
+	else 
+        return 
+    end
+    
 	if not GAMEMODE.LoadoutMoveID then
 		GAMEMODE.LoadoutMoveID = 1
 	else
 		GAMEMODE.LoadoutMoveID = GAMEMODE.LoadoutMoveID + 1
 	end
+    
 	self.Moving = true
 	local i = 0
-	local name = "TimerLoadoutMove_"..tostring(GAMEMODE.LoadoutMoveID)
+    
+	local name = "TimerLoadoutMove_" .. tostring(GAMEMODE.LoadoutMoveID)
+    
 	hook.Add("Think", name, function()
 		i = i + 1
+        
 		if IsValid(self.Loadout) then
-			local x,y = self.Loadout:GetPos()
+			local x, y = self.Loadout:GetPos()
+            
 			if direction == LEFT then
 				self.Loadout:SetPos(x+6, y)
 			else
 				self.Loadout:SetPos(x-6, y)
 			end
 		end
+        
 		if i == 16 then
 			self.Moving = false
+            
 			if self.End >= self.WeaponsCount then
 				self.Right:SetEnabled(false)
 			else
 				self.Right:SetEnabled(true)
 			end
+            
 			if self.Start <= 1 then
 				self.Left:SetEnabled(false)
 			else
 				self.Left:SetEnabled(true)
 			end
+            
 			hook.Remove("Think", name)
 		end
 	end)
@@ -49,15 +62,19 @@ end
 
 function PANEL:SetCategory(name)
 	self.CategoryName = name
+    
 	self:SetName(name)
+    
 	self.CheckBox:SetChecked(GetConVar(self.cvar):GetString() == "random")
 end
 
 function PANEL:SetWeapons(tbl)
 	self.Weapons = {}
-	for k, v in pairs(tbl) do
+    
+	for _, v in pairs(tbl) do
 		self.Weapons[v] = SpecDM.Loadout_Icons[v] or "vgui/ttt/icon_nades"
 	end
+    
 	self:AddWeapons()
 end
 
@@ -79,32 +96,41 @@ function PANEL:AddWeapons()
 	for k, v in pairs(self.Weapons) do
 		local icon = vgui.Create("SimpleIcon", self.Loadout)
 		icon.Value = k
+        
 		icon:SetIconSize(90)
+        
 		if Material(v) and Material(v).IsError and not Material(v):IsError() then
 			icon:SetIcon(v)
 		else
 			icon:SetIcon("vgui/ttt/icon_nades")
 		end
+        
 		icon:SetTooltip(k)
+        
 		local old_func = icon.OnCursorEntered
+        
 		icon.OnCursorEntered = function(panel)
 			if self.Moving then return end
 			old_func(panel)
 		end
+        
 		self.Loadout:AddPanel(icon)
+        
 		if GetConVar(self.cvar):GetString() == k then
 			self.Loadout:SelectPanel(icon)
 		end
 	end
+    
 	self.WeaponsCount = table.Count(self.Weapons)
+    
 	if self.WeaponsCount <= 5 then
 		self.Right:SetEnabled(false)
 	end
+    
 	self.Loadout:SetSize(self.WeaponsCount*96, 100)
 end
 
 function PANEL:Init()
-
 	self.CheckBox = vgui.Create("DCheckBoxLabel", self)
 	self.CheckBox:SetPos(380, 3)
 	self.CheckBox:SetText("Random weapon")
@@ -130,18 +156,23 @@ function PANEL:Init()
 	self.Loadout = vgui.Create("DPanelSelect", self.Panel)
 	self.Loadout:SetSpacing(6)
 	self.Loadout:EnableHorizontal(true)
+    
 	local old_selectpanel = self.Loadout.SelectPanel
+    
 	self.Loadout.SelectPanel = function(panel, selected)
 		old_selectpanel(panel, selected)
+        
 		if selected then
 			selected.PaintOver = function(_, w,h)
 				surface.SetDrawColor(Color(255, 50, 0))
-				for i=0, 2 do
-					surface.DrawOutlinedRect(i, i, w-i*2, h-i*2)
+                
+				for i = 0, 2 do
+					surface.DrawOutlinedRect(i, i, w - i * 2, h - i * 2)
 				end
 			end
 		end
 	end
+    
 	self.Loadout:SetPos(35, 5)
 
 	self.Right = vgui.Create("DButton", self.Panel)

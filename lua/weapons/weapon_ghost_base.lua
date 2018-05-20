@@ -12,7 +12,7 @@ SWEP.Kind = WEAPON_NONE
 -- If CanBuy is a table that contains ROLE_TRAITOR and/or ROLE_DETECTIVE, those
 -- players are allowed to purchase it and it will appear in their Equipment Menu
 -- for that purpose. If CanBuy is nil this weapon cannot be bought.
---   Example: SWEP.CanBuy = { ROLE_TRAITOR }
+--   Example: SWEP.CanBuy = {ROLE_TRAITOR}
 -- (just setting to nil here to document its existence, don't make this buyable)
 SWEP.CanBuy = nil
 
@@ -30,7 +30,7 @@ if CLIENT then
    --
    ---- Desc is the description in the menu. Needs manual linebreaks (via \n).
    --     desc = "Text."
-   -- }
+   --}
 
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
@@ -40,7 +40,11 @@ if CLIENT then
 		local str = net.ReadString()
 		local vector = net.ReadVector()
 		local num = net.ReadUInt(19)
-		if num == 0 then num = nil end
+        
+		if num == 0 then 
+            num = nil 
+        end
+        
 		sound.Play(str, vector, num)
 	end)
 
@@ -75,7 +79,7 @@ SWEP.IsSilent = false
 
 -- If this weapon should be given to players upon spawning, set a table of the
 -- roles this should happen for here
---  SWEP.InLoadoutFor = { ROLE_TRAITOR, ROLE_DETECTIVE, ROLE_INNOCENT }
+--  SWEP.InLoadoutFor = {ROLE_TRAITOR, ROLE_DETECTIVE, ROLE_INNOCENT}
 
 -- DO NOT set SWEP.WeaponID. Only the standard TTT weapons can have it. Custom
 -- SWEPs do not need it for anything.
@@ -103,7 +107,7 @@ SWEP.AutoSwitchTo       = false
 SWEP.AutoSwitchFrom     = false
 SWEP.UseHands			= true
 
-SWEP.Primary.Sound          = Sound( "Weapon_Pistol.Empty" )
+SWEP.Primary.Sound          = Sound("Weapon_Pistol.Empty")
 SWEP.Primary.Recoil         = 1.5
 SWEP.Primary.Damage         = 1
 SWEP.Primary.NumShots       = 1
@@ -141,13 +145,10 @@ local crosshair_size = CreateConVar("ttt_crosshair_size", "1.0", FCVAR_ARCHIVE)
 
 -- crosshair
 if CLIENT then
-
    local GetPTranslation = LANG.GetParamTranslation
 
    -- Many non-gun weapons benefit from some help
    local help_spec = {text = "", font = "TabLarge", xalign = TEXT_ALIGN_CENTER}
-
-
 
    function SWEP:DrawHUD()
       local client = LocalPlayer()
@@ -159,40 +160,37 @@ if CLIENT then
       local scale = math.max(0.2,  10 * self:GetPrimaryCone())
 
       local LastShootTime = self.Weapon:LastShootTime()
-      scale = scale * (2 - math.Clamp( (CurTime() - LastShootTime) * 5, 0.0, 1.0 ))
+      scale = scale * (2 - math.Clamp((CurTime() - LastShootTime) * 5, 0.0, 1.0))
 
       local alpha = 1
       local bright =  1
 
       -- somehow it seems this can be called before my player metatable
       -- additions have loaded
-         surface.SetDrawColor(0,
-                              255 * bright,
-                              0,
-                              255 * alpha)
+         surface.SetDrawColor(0, 255 * bright, 0, 255 * alpha)
 
       local gap = math.floor(20 * scale * (sights and 0.8 or 1))
       local length = math.floor(gap + (25 * crosshair_size:GetFloat()) * scale)
-      surface.DrawLine( x - length, y, x - gap, y )
-      surface.DrawLine( x + length, y, x + gap, y )
-      surface.DrawLine( x, y - length, x, y - gap )
-      surface.DrawLine( x, y + length, x, y + gap )
-
+      
+      surface.DrawLine(x - length, y, x - gap, y)
+      surface.DrawLine(x + length, y, x + gap, y)
+      surface.DrawLine(x, y - length, x, y - gap)
+      surface.DrawLine(x, y + length, x, y + gap)
    end
 
    function SWEP:DrawHelp()
       local data = self.HUDHelp
-
+      
       local translate = data.translatable
       local primary   = data.primary
       local secondary = data.secondary
 
       if translate then
-         primary   = primary   and GetPTranslation(primary,   data.translate_params)
+         primary = primary and GetPTranslation(primary, data.translate_params)
          secondary = secondary and GetPTranslation(secondary, data.translate_params)
       end
 
-      help_spec.pos  = {ScrW() / 2.0, ScrH() - 40}
+      help_spec.pos = {ScrW() / 2.0, ScrH() - 40}
       help_spec.text = secondary or primary
       draw.TextShadow(help_spec, 2)
 
@@ -201,16 +199,17 @@ if CLIENT then
       if secondary then
          help_spec.pos[2] = ScrH() - 60
          help_spec.text = primary
+         
          draw.TextShadow(help_spec, 2)
       end
    end
 
    -- mousebuttons are enough for most weapons
    local default_key_params = {
-      primaryfire   = Key("+attack",  "LEFT MOUSE"),
+      primaryfire = Key("+attack", "LEFT MOUSE"),
       secondaryfire = Key("+attack2", "RIGHT MOUSE"),
-      usekey        = Key("+use",     "USE")
-   }
+      usekey = Key("+use", "USE")
+  }
 
    function SWEP:AddHUDHelp(primary_text, secondary_text, translate, extra_params)
       extra_params = extra_params or {}
@@ -220,27 +219,28 @@ if CLIENT then
          secondary = secondary_text,
          translatable = translate,
          translate_params = table.Merge(extra_params, default_key_params)
-      }
+     }
    end
 end
 
 -- Shooting functions largely copied from weapon_cs_base
 function SWEP:PrimaryAttack(worldsnd)
-
-   self.Weapon:SetNextSecondaryFire( CurTime() + self.Primary.Delay )
-   self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
+   self.Weapon:SetNextSecondaryFire(CurTime() + self.Primary.Delay)
+   self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
    if not self:CanPrimaryAttack() then return end
 
    if CLIENT and LocalPlayer() == self:GetOwner() then
-      self.Weapon:EmitSound( self.Primary.Sound, self.Primary.SoundLevel )
+      self.Weapon:EmitSound(self.Primary.Sound, self.Primary.SoundLevel)
    else
       local tbl = {}
-      for k, v in ipairs(player.GetAll()) do
-         if v != self:GetOwner() and v:IsGhost() then
+      
+      for _, v in ipairs(player.GetAll()) do
+         if v ~= self:GetOwner() and v:IsGhost() then
 	        table.insert(tbl, v)
          end
       end
+      
       net.Start("SpecDM_BulletGhost")
       net.WriteString(self.Primary.Sound)
       net.WriteVector(self:GetPos())
@@ -248,19 +248,19 @@ function SWEP:PrimaryAttack(worldsnd)
       net.Send(tbl)
    end
 
-   self:ShootBullet( self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self:GetPrimaryCone() )
-
-   self:TakePrimaryAmmo( 1 )
+   self:ShootBullet(self.Primary.Damage, self.Primary.Recoil, self.Primary.NumShots, self:GetPrimaryCone())
+   self:TakePrimaryAmmo(1)
 
    local owner = self:GetOwner()
+   
    if not IsValid(owner) or owner:IsNPC() or (not owner.ViewPunch) then return end
 
-   owner:ViewPunch( Angle( util.SharedRandom(self:GetClass(),-0.2,-0.1,0) * self.Primary.Recoil, util.SharedRandom(self:GetClass(),-0.1,0.1,1) * self.Primary.Recoil, 0 ) )
-  end
+   owner:ViewPunch(Angle(util.SharedRandom(self:GetClass(),-0.2,-0.1,0) * self.Primary.Recoil, util.SharedRandom(self:GetClass(),-0.1,0.1,1) * self.Primary.Recoil, 0))
+end
 
 function SWEP:DryFire(setnext)
    if CLIENT and LocalPlayer() == self:GetOwner() then
-      self:EmitSound( "Weapon_Pistol.Empty" )
+      self:EmitSound("Weapon_Pistol.Empty")
    end
 
    setnext(self, CurTime() + 0.2)
@@ -272,6 +272,7 @@ function SWEP:ShootEffects()
 	if CLIENT and not LocalPlayer():IsGhost() then
 		return
 	end
+    
 	return self.BaseClass.ShootEffects(self)
 end
 
@@ -280,8 +281,10 @@ function SWEP:CanPrimaryAttack()
 
    if self.Weapon:Clip1() <= 0 then
       self:DryFire(self.SetNextPrimaryFire)
+      
       return false
    end
+   
    return true
 end
 
@@ -290,8 +293,10 @@ function SWEP:CanSecondaryAttack()
 
    if self.Weapon:Clip2() <= 0 then
       self:DryFire(self.SetNextSecondaryFire)
+      
       return false
    end
+   
    return true
 end
 
@@ -300,6 +305,7 @@ local function Sparklies(attacker, tr, dmginfo)
       local eff = EffectData()
       eff:SetOrigin(tr.HitPos)
       eff:SetNormal(tr.HitNormal)
+      
       util.Effect("cball_bounce", eff)
    end
 end
@@ -316,36 +322,38 @@ function SWEP:FireAnimationEvent(pos, ang, ev)
 	end
 end
 
-function SWEP:ShootBullet( dmg, recoil, numbul, cone )
-
+function SWEP:ShootBullet(dmg, recoil, numbul, cone)
 	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-  -- self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
-
+  -- self:GetOwner():SetAnimation(PLAYER_ATTACK1)
 
    local sights = self:GetIronsights()
 
    numbul = numbul or 1
-   cone   = cone   or 0.01
+   cone = cone or 0.01
 
    self:GetOwner():LagCompensation(true)
 
    local bullet = {}
-   bullet.Num    = numbul
-   bullet.Src    = self:GetOwner():GetShootPos()
-   bullet.Dir    = self:GetOwner():GetAimVector()
-   bullet.Spread = Vector( cone, cone, 0 )
+   bullet.Num = numbul
+   bullet.Src = self:GetOwner():GetShootPos()
+   bullet.Dir = self:GetOwner():GetAimVector()
+   bullet.Spread = Vector(cone, cone, 0)
    bullet.Tracer = 0
    bullet.TracerName = self.Tracer or "Tracer"
-   bullet.Force  = 10
+   bullet.Force = 10
    bullet.Damage = dmg
    bullet.Inflictor = self
+   
    if CLIENT then
       bullet.Callback = function(ply, tr, dmginfo)
-	     if not LocalPlayer():IsGhost() then return false end
+	     if not LocalPlayer():IsGhost() then 
+            return false 
+         end
 	  end
    else
-      bullet.Callback = function(ply,tr,dmginfo)
+      bullet.Callback = function(ply, tr, dmginfo)
 	     local ent = tr.Entity
+         
 		 if not IsValid(ent) or not (ent:IsPlayer() and ent:IsGhost()) then
 		    dmginfo:ScaleDamage(0)
 			dmginfo:SetDamageType(DMG_GENERIC)
@@ -354,9 +362,9 @@ function SWEP:ShootBullet( dmg, recoil, numbul, cone )
    end
 
    if SERVER then
-		self:GetOwner():FireBullets(bullet)
+      self:GetOwner():FireBullets(bullet)
    elseif LocalPlayer():IsGhost() then
-	    self:GetOwner():FireBullets(bullet)
+	  self:GetOwner():FireBullets(bullet)
    end
 
    self:GetOwner():LagCompensation(false)
@@ -364,21 +372,22 @@ function SWEP:ShootBullet( dmg, recoil, numbul, cone )
    -- Owner can die after firebullet
    if (not IsValid(self:GetOwner())) or (not self:GetOwner():Alive()) or self:GetOwner():IsNPC() then return end
 
-   if ((game.SinglePlayer() and SERVER) or
-       ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted())) then
-
+   if ((game.SinglePlayer() and SERVER) 
+   or ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted())) 
+   then
       -- reduce recoil if ironsighting
       recoil = sights and (recoil * 0.6) or recoil
 
       local eyeang = self:GetOwner():EyeAngles()
       eyeang.pitch = eyeang.pitch - recoil
-      self:GetOwner():SetEyeAngles( eyeang )
+      
+      self:GetOwner():SetEyeAngles(eyeang)
    end
-
 end
 
 function SWEP:GetPrimaryCone()
    local cone = self.Primary.Cone or 0.2
+   
    -- 10% accuracy bonus when sighting
    return self:GetIronsights() and (cone * 0.85) or cone
 end
@@ -394,28 +403,30 @@ end
 function SWEP:DrawWeaponSelection() end
 
 function SWEP:SecondaryAttack()
-
    if self.NoSights or (not self.IronSightsPos) then return end
 
    self:SetIronsights(not self:GetIronsights())
-
    self:SetNextSecondaryFire(CurTime() + 0.3)
 end
 
 function SWEP:Deploy()
    self:SetIronsights(false)
+   
    return true
 end
 
 function SWEP:Reload()
-	if ( self:Clip1() == self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) <= 0 ) then return end
+	if (self:Clip1() == self.Primary.ClipSize or self:GetOwner():GetAmmoCount(self.Primary.Ammo) <= 0) then return end
+    
     self.Weapon:DefaultReload(self.ReloadAnim)
-    self:SetIronsights( false )
+    
+    self:SetIronsights(false)
 end
 
 function SWEP:OnRestore()
    self.NextSecondaryAttack = 0
-   self:SetIronsights( false )
+   
+   self:SetIronsights(false)
 end
 
 function SWEP:Ammo1()
@@ -449,8 +460,9 @@ function SWEP:DampenDrop()
    -- to find a given corpse's weapon, so we override the velocity here and call
    -- this when dropping guns on death.
    local phys = self:GetPhysicsObject()
+   
    if IsValid(phys) then
-      phys:SetVelocityInstantaneous(Vector(0,0,-75) + phys:GetVelocity() * 0.001)
+      phys:SetVelocityInstantaneous(Vector(0, 0, -75) + phys:GetVelocity() * 0.001)
       phys:AddAngleVelocity(phys:GetAngleVelocity() * -0.99)
    end
 end
@@ -473,7 +485,8 @@ function SWEP:Equip(newowner)
       local ammo = newowner:GetAmmoCount(self.Primary.Ammo)
       local given = math.min(self.StoredAmmo, self.Primary.ClipMax - ammo)
 
-      newowner:GiveAmmo( given, self.Primary.Ammo)
+      newowner:GiveAmmo(given, self.Primary.Ammo)
+      
       self.StoredAmmo = 0
    end
 end
@@ -481,33 +494,15 @@ end
 -- We were bought as special equipment, some weapons will want to do something
 -- extra for their buyer
 function SWEP:WasBought(buyer)
-end
-	
-function SWEP:SetIronsights(b)
-	if (b ~= self:GetIronsights()) then
-		self:SetIronsightsPredicted(b)
-		self:SetIronsightsTime(CurTime())
-		if CLIENT then
-			self:CalcViewModel()
-		end
-	end
-end
-function SWEP:GetIronsights()
-	return self:GetIronsightsPredicted()
-end
 
---- Dummy functions that will be replaced when SetupDataTables runs. These are
---- here for when that does not happen (due to e.g. stacking base classes)
-function SWEP:GetIronsightsTime() return -1 end
-function SWEP:SetIronsightsTime() end
-function SWEP:GetIronsightsPredicted() return false end
-function SWEP:SetIronsightsPredicted() end
+end
 
 -- Set up ironsights dt bool. Weapons using their own DT vars will have to make
 -- sure they call this.
 function SWEP:SetupDataTables()
-   self:NetworkVar("Bool", 3, "IronsightsPredicted")
-   self:NetworkVar("Float", 3, "IronsightsTime")
+   -- Put it in the last slot, least likely to interfere with derived weapon's
+   -- own stuff.
+   self:DTVar("Bool", 3, "ironsights")
 end
 
 function SWEP:Initialize()
@@ -527,20 +522,13 @@ function SWEP:Initialize()
    end
 end
 
-function SWEP:CalcViewModel()
-   if (not CLIENT) or (not IsFirstTimePredicted()) then return end
-   self.bIron = self:GetIronsights()
-   self.fIronTime = self:GetIronsightsTime()
-   self.fCurrentTime = CurTime()
-   self.fCurrentSysTime = SysTime()
-end
-
 function SWEP:Think()
-	self:CalcViewModel()
+
 end
 
 function SWEP:DyingShot()
    local fired = false
+   
    if self:GetIronsights() then
       self:SetIronsights(false)
 
@@ -556,12 +544,12 @@ function SWEP:DyingShot()
          local eyeang = self:GetOwner():EyeAngles()
          eyeang.pitch = eyeang.pitch - math.Rand(-punch, punch)
          eyeang.yaw = eyeang.yaw - math.Rand(-punch, punch)
-         self:GetOwner():SetEyeAngles( eyeang )
+         
+         self:GetOwner():SetEyeAngles(eyeang)
 
          MsgN(self:GetOwner():Nick() .. " fired his DYING SHOT")
 
          self:GetOwner().dying_wep = self.Weapon
-
          self:PrimaryAttack(true)
 
          fired = true
@@ -572,44 +560,50 @@ function SWEP:DyingShot()
 end
 
 local ttt_lowered = CreateConVar("ttt_ironsights_lowered", "1", FCVAR_ARCHIVE)
-local host_timescale = GetConVar("host_timescale")
 local LOWER_POS = Vector(0, 0, -2)
 
 local IRONSIGHT_TIME = 0.25
-function SWEP:GetViewModelPosition( pos, ang )
-   if (not self.IronSightsPos) or (self.bIron == nil) then return pos, ang end
+function SWEP:GetViewModelPosition(pos, ang)
+   if not self.IronSightsPos then return pos, ang end
 
-   local bIron = self.bIron
-   local time = self.fCurrentTime + (SysTime() - self.fCurrentSysTime) * game.GetTimeScale() * host_timescale:GetFloat()
+   local bIron = self:GetIronsights()
 
-   if bIron then
-      self.SwayScale = 0.3
-      self.BobScale = 0.1
-   else
-      self.SwayScale = 1.0
-      self.BobScale = 1.0
+   if bIron ~= self.bLastIron then
+      self.bLastIron = bIron
+      self.fIronTime = CurTime()
+
+      if bIron then
+         self.SwayScale = 0.3
+         self.BobScale = 0.1
+      else
+         self.SwayScale = 1.0
+         self.BobScale = 1.0
+      end
    end
 
-   local fIronTime = self.fIronTime
-   if (not bIron) and fIronTime < time - IRONSIGHT_TIME then
+   local fIronTime = self.fIronTime or 0
+   
+   if (not bIron) and fIronTime < CurTime() - IRONSIGHT_TIME then
       return pos, ang
    end
 
    local mul = 1.0
 
-   if fIronTime > time - IRONSIGHT_TIME then
-      mul = math.Clamp( (time - fIronTime) / IRONSIGHT_TIME, 0, 1 )
+   if fIronTime > CurTime() - IRONSIGHT_TIME then
+      mul = math.Clamp((CurTime() - fIronTime) / IRONSIGHT_TIME, 0, 1)
 
-      if not bIron then mul = 1 - mul end
+      if not bIron then 
+         mul = 1 - mul 
+      end
    end
 
    local offset = self.IronSightsPos + (ttt_lowered:GetBool() and LOWER_POS or vector_origin)
 
    if self.IronSightsAng then
       ang = ang * 1
-      ang:RotateAroundAxis( ang:Right(),    self.IronSightsAng.x * mul )
-      ang:RotateAroundAxis( ang:Up(),       self.IronSightsAng.y * mul )
-      ang:RotateAroundAxis( ang:Forward(),  self.IronSightsAng.z * mul )
+      ang:RotateAroundAxis(ang:Right(), self.IronSightsAng.x * mul)
+      ang:RotateAroundAxis(ang:Up(), self.IronSightsAng.y * mul)
+      ang:RotateAroundAxis(ang:Forward(), self.IronSightsAng.z * mul)
    end
 
    pos = pos + offset.x * ang:Right() * mul
@@ -628,4 +622,5 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:ShootEffects()
+
 end

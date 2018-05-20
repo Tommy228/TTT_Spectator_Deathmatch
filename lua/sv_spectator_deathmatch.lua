@@ -43,13 +43,14 @@ if SpecDM.QuakeSoundsEnabled then
 end
 
 local commands_table = {}
-for k, v in ipairs(SpecDM.Commands) do
+for _, v in ipairs(SpecDM.Commands) do
 	commands_table[v] = true
 end
 
 hook.Add("PlayerSay", "PlayerSay_SpecDM", function(ply, text, public)
 	if commands_table[string.lower(text)] then
 		ply:WantsToDM()
+        
 		return ""
 	end
 end)
@@ -80,32 +81,41 @@ function meta:GiveGhostWeapons()
 	else
 		self:Give(self.ghost_primary)
 	end
+    
 	if not SpecDM.LoadoutEnabled or not self.ghost_secondary or self.ghost_secondary == "random" or not table.HasValue(SpecDM.Ghost_weapons.secondary, self.ghost_secondary) then
 		self:Give(SpecDM.Ghost_weapons.secondary[math.random(#SpecDM.Ghost_weapons.secondary)])
 	else
 		self:Give(self.ghost_secondary)
 	end
+    
 	self:Give("weapon_ghost_crowbar")
 end
 
 function meta:ManageGhost(spawn, silent)
 	local silent = silent or false
+    
 	self:SetGhost(spawn)
+    
 	if spawn then
 		self:Spawn()
 		self:GiveGhostWeapons()
+        
 		SpecDM:RelationShip(self)
 	else
 		self:KillSilent()
 		self:Spectate(OBS_MODE_ROAMING)
 	end
+    
 	net.Start("SpecDM_Ghost")
 	net.WriteUInt(spawn and 1 or 0, 1)
 	net.Send(self)
+    
 	if silent then return end
+    
 	local filter = RecipientFilter()
 	filter:AddAllPlayers()
 	filter:RemovePlayer(self)
+    
 	net.Start("SpecDM_GhostJoin")
 	net.WriteUInt(spawn and 1 or 0, 1)
 	net.WriteEntity(self)
@@ -113,22 +123,25 @@ function meta:ManageGhost(spawn, silent)
 end
 
 local allowed_groups = {}
-for k, v in ipairs(SpecDM.AllowedGroups) do
+for _, v in ipairs(SpecDM.AllowedGroups) do
 	allowed_groups[v] = true
 end
 
 function meta:WantsToDM()
 	local allowed = true
+    
 	if SpecDM.RestrictCommand then
 		allowed = false
+        
 		if allowed_groups[self:GetUserGroup()] then
 			allowed = true
 		end
 	end
+    
 	if allowed then
 		if self:IsActive() then
 			self:SpecDM_Error("You can't enter spectator deathmatch when you're alive.")
-		elseif GetRoundState() != ROUND_ACTIVE then
+		elseif GetRoundState() ~= ROUND_ACTIVE then
 			self:SpecDM_Error("Error: Current round is inactive.")
 		elseif not self.spawning_ghost then
 			if tonumber(self.DMTimer) and self.DMTimer > 0 then
@@ -136,13 +149,17 @@ function meta:WantsToDM()
 			else
 				local self = self
 				self:ManageGhost(not self:IsGhost())
+                
 				self.DMTimer = 10
-				local timername = "SpecDM_Timer_"..tostring(self:UniqueID())
+                
+				local timername = "SpecDM_Timer_" .. tostring(self:UniqueID())
+                
 				timer.Create(timername, 1, 0, function()
 					if not IsValid(self) then
 						timer.Remove(timername)
 					else
 						self.DMTimer = self.DMTimer - 1
+                        
 						if self.DMTimer <= 0 then
 							timer.Remove(timername)
 						end
@@ -156,7 +173,7 @@ function meta:WantsToDM()
 end
 
 hook.Add("TTTEndRound", "TTTEndRound_Ghost", function()
-	for k, v in ipairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		if v:IsGhost() then
 			v:ManageGhost(false, true)
 		end
@@ -166,14 +183,18 @@ end)
 net.Receive("SpecDM_SendLoadout", function(_, ply)
 	local primary = net.ReadString()
 	local secondary = net.ReadString()
+    
 	if not primary or not secondary then return end
-	if primary == "random" or string.Left(primary, #"weapon_ghost") != "weapon_ghost" then
+    
+	if primary == "random" or string.Left(primary, #"weapon_ghost") ~= "weapon_ghost" then
 		ply.ghost_primary = "random"
 	end
-	if secondary == "random" or string.Left(secondary, #"weapon_ghost") != "weapon_ghost" then
+    
+	if secondary == "random" or string.Left(secondary, #"weapon_ghost") ~= "weapon_ghost" then
 		ply.ghost_primary = "random"
 	end
-	for k, v in ipairs(weapons.GetList()) do
+    
+	for _, v in ipairs(weapons.GetList()) do
 		if v.ClassName == primary and v.Kind == WEAPON_HEAVY then
 			ply.ghost_primary = primary
 		elseif v.ClassName == secondary and v.Kind == WEAPON_PISTOL then
@@ -182,16 +203,21 @@ net.Receive("SpecDM_SendLoadout", function(_, ply)
 	end
 end)
 
+hook.Add("Tick", "Tick_Ghost", function()
+	for _, v in ipairs(player.GetAll()) do
+		if v:IsGhost() then
+			v:Extinguish()
+		end
+	end
+end)
+
 hook.Add("EntityTakeDamage", "EntityTakeDamage_SpecDMHitmarker", function(ent, dmginfo)
 	if ent:IsPlayer() and ent:IsGhost() then
 		local att = dmginfo:GetAttacker()
+        
 		if IsValid(att) and att:IsPlayer() and att:IsGhost() then
 			net.Start("SpecDM_Hitmarker")
-			if SpecDM.DeadlyHitmarker and dmginfo:GetDamage() > ent:Health() then
-				net.WriteBool(true)
-			else
-				net.WriteBool(false)
-			end
+            net.WriteBool(SpecDM.DeadlyHitmarker and dmginfo:GetDamage() > ent:Health())
 			net.Send(att)
 		end
 	end
@@ -206,7 +232,7 @@ end)
 if SpecDM.HP_Regen then
 	timer.Create("SpecDM_HPRegen", 1, 0, function()
 		if GetRoundState() == ROUND_ACTIVE then
-			for k, v in ipairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if v:IsGhost() and v:Alive() and v:Health() > 0 and v:Health() < v:GetMaxHealth() then
 					v:SetHealth(v:Health() + 1)
 				end
