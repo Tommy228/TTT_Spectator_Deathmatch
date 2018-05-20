@@ -495,14 +495,46 @@ end
 -- extra for their buyer
 function SWEP:WasBought(buyer)
 
+end	
+
+function SWEP:SetIronsights(b)
+	if b ~= self:GetIronsights() then
+		self:SetIronsightsPredicted(b)
+		self:SetIronsightsTime(CurTime())
+        
+		if CLIENT then
+			self:CalcViewModel()
+		end
+	end
+end
+
+function SWEP:GetIronsights()
+	return self:GetIronsightsPredicted()
+end
+
+--- Dummy functions that will be replaced when SetupDataTables runs. These are
+--- here for when that does not happen (due to e.g. stacking base classes)
+function SWEP:GetIronsightsTime() 
+    return -1 
+end
+
+function SWEP:SetIronsightsTime() 
+
+end
+
+function SWEP:GetIronsightsPredicted() 
+    return false 
+end
+
+function SWEP:SetIronsightsPredicted() 
+
 end
 
 -- Set up ironsights dt bool. Weapons using their own DT vars will have to make
 -- sure they call this.
 function SWEP:SetupDataTables()
-   -- Put it in the last slot, least likely to interfere with derived weapon's
-   -- own stuff.
-   self:DTVar("Bool", 3, "ironsights")
+    self:NetworkVar("Bool", 3, "IronsightsPredicted")
+    self:NetworkVar("Float", 3, "IronsightsTime")
 end
 
 function SWEP:Initialize()
@@ -522,8 +554,17 @@ function SWEP:Initialize()
    end
 end
 
-function SWEP:Think()
+function SWEP:CalcViewModel()
+    if not CLIENT or not IsFirstTimePredicted() then return end
+    
+    self.bIron = self:GetIronsights()
+    self.fIronTime = self:GetIronsightsTime()
+    self.fCurrentTime = CurTime()
+    self.fCurrentSysTime = SysTime()
+end
 
+function SWEP:Think()
+    self:CalcViewModel()
 end
 
 function SWEP:DyingShot()
@@ -560,57 +601,56 @@ function SWEP:DyingShot()
 end
 
 local ttt_lowered = CreateConVar("ttt_ironsights_lowered", "1", FCVAR_ARCHIVE)
+local host_timescale = GetConVar("host_timescale")
 local LOWER_POS = Vector(0, 0, -2)
 
 local IRONSIGHT_TIME = 0.25
 function SWEP:GetViewModelPosition(pos, ang)
-   if not self.IronSightsPos then return pos, ang end
+    if not self.IronSightsPos or not self.bIron then 
+        return pos, ang
+    end
 
-   local bIron = self:GetIronsights()
+    local bIron = self.bIron
+    local time = self.fCurrentTime + (SysTime() - self.fCurrentSysTime) * game.GetTimeScale() * host_timescale:GetFloat()
 
-   if bIron ~= self.bLastIron then
-      self.bLastIron = bIron
-      self.fIronTime = CurTime()
+    if bIron then
+        self.SwayScale = 0.3
+        self.BobScale = 0.1
+    else
+        self.SwayScale = 1.0
+        self.BobScale = 1.0
+    end
 
-      if bIron then
-         self.SwayScale = 0.3
-         self.BobScale = 0.1
-      else
-         self.SwayScale = 1.0
-         self.BobScale = 1.0
-      end
-   end
+    local fIronTime = self.fIronTime
 
-   local fIronTime = self.fIronTime or 0
-   
-   if (not bIron) and fIronTime < CurTime() - IRONSIGHT_TIME then
-      return pos, ang
-   end
+    if not bIron and fIronTime < time - IRONSIGHT_TIME then
+        return pos, ang
+    end
 
-   local mul = 1.0
+    local mul = 1.0
 
-   if fIronTime > CurTime() - IRONSIGHT_TIME then
-      mul = math.Clamp((CurTime() - fIronTime) / IRONSIGHT_TIME, 0, 1)
+    if fIronTime > time - IRONSIGHT_TIME then
+        mul = math.Clamp((time - fIronTime) / IRONSIGHT_TIME, 0, 1)
 
-      if not bIron then 
-         mul = 1 - mul 
-      end
-   end
+        if not bIron then 
+            mul = 1 - mul 
+        end
+    end
 
-   local offset = self.IronSightsPos + (ttt_lowered:GetBool() and LOWER_POS or vector_origin)
+    local offset = self.IronSightsPos + (ttt_lowered:GetBool() and LOWER_POS or vector_origin)
 
-   if self.IronSightsAng then
-      ang = ang * 1
-      ang:RotateAroundAxis(ang:Right(), self.IronSightsAng.x * mul)
-      ang:RotateAroundAxis(ang:Up(), self.IronSightsAng.y * mul)
-      ang:RotateAroundAxis(ang:Forward(), self.IronSightsAng.z * mul)
-   end
+    if self.IronSightsAng then
+        ang = ang * 1
+        ang:RotateAroundAxis(ang:Right(), self.IronSightsAng.x * mul)
+        ang:RotateAroundAxis(ang:Up(), self.IronSightsAng.y * mul)
+        ang:RotateAroundAxis(ang:Forward(), self.IronSightsAng.z * mul)
+    end
 
-   pos = pos + offset.x * ang:Right() * mul
-   pos = pos + offset.y * ang:Forward() * mul
-   pos = pos + offset.z * ang:Up() * mul
+    pos = pos + offset.x * ang:Right() * mul
+    pos = pos + offset.y * ang:Forward() * mul
+    pos = pos + offset.z * ang:Up() * mul
 
-   return pos, ang
+    return pos, ang
 end
 
 function SWEP:DrawWorldModel()

@@ -93,6 +93,8 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
         
 		if SpecDM.RespawnTime < 1 then
 			timer.Simple(0, function()
+                if not IsValid(victim) then return end
+            
 				SpecDM_Respawn(victim)
 			end)
 		else
@@ -100,11 +102,15 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 			net.Send(victim)
             
 			timer.Simple(SpecDM.RespawnTime, function()
+                if not IsValid(victim) then return end
+            
 				victim.allowrespawn = true
 			end)
             
 			if SpecDM.AutomaticRespawnTime > -1 then
 				timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
+                    if not IsValid(victim) then return end
+                    
 					SpecDM_Respawn(victim)
 				end)
 			end
@@ -160,7 +166,9 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
 	function GAMEMODE:SpectatorThink(ply)
-		if IsValid(ply) and ply:IsGhost() then 
+		if IsValid(ply) and ply:IsGhost() then
+            ply:Extinguish()
+            
             return true 
         end
         

@@ -37,18 +37,18 @@ local function DrawBg(x, y, width, height, client)
     
 	local col = bg_colors.innocent
     
-	if LocalPlayer():IsGhost() then
+	if client:IsGhost() then
 	elseif GAMEMODE.round_state ~= ROUND_ACTIVE then
 		col = bg_colors.noround
 	else
         if not ROLES then
-            if LocalPlayer():GetTraitor() then
+            if client:GetTraitor() then
                 col = bg_colors.traitor
-            elseif LocalPlayer():GetDetective() then
+            elseif client:GetDetective() then
                 col = bg_colors.detective
             end
         else
-            col = LocalPlayer().GetRoleData().color
+            col = client.GetRoleData().color
         end
     end
     
@@ -106,14 +106,16 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 	local old_DrawHUD = GAMEMODE.HUDPaint
     
 	function GAMEMODE:HUDPaint()
-		if LocalPlayer():IsGhost() then
+        local client = LocalPlayer()
+    
+		if client:IsGhost() then
 			self:HUDDrawTargetID()
             
-			MSTACK:Draw(LocalPlayer())
+			MSTACK:Draw(client)
             
-			TBHUD:Draw(LocalPlayer())
+			TBHUD:Draw(client)
             
-			WSWITCH:Draw(LocalPlayer())
+			WSWITCH:Draw(client)
             
 			self:HUDDrawPickupHistory()
             
@@ -123,23 +125,24 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 			local x = margin
 			local y = ScrH() - margin - height
             
-			DrawBg(x, y, width, height, LocalPlayer())
+			DrawBg(x, y, width, height, client)
             
 			local bar_height = 25
 			local bar_width = width - margin * 2
-			local health = math.max(0, LocalPlayer():Health())
+			local health = math.max(0, client:Health())
 			local health_y = y + margin
             
-			PaintBar(x + margin, health_y, bar_width, bar_height, health_colors, health/100)
+			PaintBar(x + margin, health_y, bar_width, bar_height, health_colors, health / client:GetMaxHealth())
 			ShadowedText(tostring(health), "HealthAmmo", bar_width, health_y, COLOR_WHITE, TEXT_ALIGN_RIGHT, TEXT_ALIGN_RIGHT)
             
 			if ttt_health_label:GetBool() then
 				local health_status = util.HealthToString(health)
                 
-				draw.SimpleText(L[health_status], "TabLarge", x + margin*2, health_y + bar_height/2, COLOR_WHITE, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+				draw.SimpleText(L[health_status], "TabLarge", x + margin * 2, health_y + bar_height / 2, COLOR_WHITE, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
-			if LocalPlayer():GetActiveWeapon().Primary then
-				local ammo_clip, ammo_max, ammo_inv = GetAmmo(LocalPlayer())
+            
+			if client:GetActiveWeapon().Primary then
+				local ammo_clip, ammo_max, ammo_inv = GetAmmo(client)
                 
 				if ammo_clip ~= -1 then
 					local ammo_y = health_y + bar_height + margin
