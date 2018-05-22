@@ -1,59 +1,47 @@
-TTT Spectator Deathmatch
-========================
+TTT Damagelogs
+==============
 
-Spectator Deathmatch for Trouble in Terrorist Town (a Garry's Mod gamemode)
+TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
 
-This addon allows dead players to enter a deathmatch mode with each other. The living players won't be able to see or hear you, and you'll be given a random primary/secondary to battle each other with. Find the other "Ghosts" and kill them. This continues until the end of the current round. To enter or leave the deathmatch, type !deathmatch or !specdm into chat.
-
-Facepunch Thread: https://gmod.facepunch.com/f/gmodaddon/jipl/TTT-Spectator-Deathmatch/1/
+**Do not directly download the addon from the repo ! It may contain untested or experimental code. Download the addon from the releases tab : https://github.com/Tommy228/TTTDamagelogs/releases**
 
 
-Some features:
-- Statistics.
-- Loadout on F1.
-- Easy to config : command name, enabling/disabling loadout, pointshop rewards, popup after dying, rank restriction, etc..
-- Visual effect : the world is grey and only ghosts are colored.
-- Includes Dota2-like quake sounds (killstreak sounds).
-- Creates a new scoreboard section to see the list of spectator deathmatch players.
+## Features
+- Damagelogs *with filter and highlight options*
+- Shot logs
+- Damage informations
+- Old logs *which saves and displays all features listed above*
+- RDM Manager 
+- Chat system
+- Report and respond system
+- Punishment options: Autoslay and Autojail
+- Visual Deathscene
+- Translation support: English, German, French, Russian and Polish
+- Storage support for MySQL and SQLite
+- Support for ULX and Serverguard: User groups and RDM punishments
+- Easy configuration via config file and F1 settings menu
 
-### Installation instructions:
 
-##### For *stable* releases look here: https://github.com/Tommy228/TTT_Spectator_Deathmatch/releases
+### Installation
 
-Just drop the TTT_Spectator_Deathmatch folder to addons/.
+##### For *stable* releases look here: https://github.com/Tommy228/TTTDamagelogs/releases
+
+Just drop the TTTDamagelogs folder to addons/. The addon can be configured on the *lua/damagelogs/config/config.lua* file.
 
 **On Linux servers, you need to make the foldername lowercase!**
 
-And don't forget to update your FastDL (or use the workshop) and edit the specdm_config.lua file!
+
+## Support
+- [Facepunch Thread](https://gmod.facepunch.com/f/gmodaddon/jjah/TTT-Damagelogs-MySQL-Edition/1/)
+- [GitHub issues](https://github.com/Tommy228/TTTDamagelogs/issues)
 
 
-### Known issues:
-- On some maps ghost players can get stuck. Rejoining the Spectator Deathmatch is currently the only solution.
+# License
 
-
-## Upcoming features:
-
-* Cleaner code and example template for creating own ghost weapons
-* Add an update notification (like 'TTT Damagelogs' has)
-
-
-# License:
-
-    This addon allows dead players to enter a deathmatch mode with each other.
-    Copyright (C) 2015-2018 Ismail Ouazzany
-
+    TTT Damagelogs is an administration tool designed for TTT to allow handling RDM situations using different tools.
+    Copyright (C) 2012-2018 Ismail Ouazzany
+    
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-#### TTT Spectator Deathmatch uses the following 3rd party software:
-- https://github.com/vercas/vON from Vercas
