@@ -52,8 +52,8 @@ end
 
 function SWEP:Reload()
     if self:GetReloading() then return end
-    
 	if self.Weapon:Clip1() < self.Primary.ClipSize and self:GetOwner():GetAmmoCount(self.Primary.Ammo) > 0 then
+
 	    if self:StartReload() then
             return
         end
@@ -100,7 +100,7 @@ function SWEP:PerformReload()
    if self:Clip1() >= self.Primary.ClipSize then return end
 
    self:GetOwner():RemoveAmmo(1, self.Primary.Ammo, false)
-   
+
    self.Weapon:SetClip1(self.Weapon:Clip1() + 1)
 
    self:SendWeaponAnim(ACT_VM_RELOAD)
@@ -110,7 +110,7 @@ end
 
 function SWEP:FinishReload()
    self:SetReloading(false)
-   
+
    self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
    self:SetReloadTimer(CurTime() + self.Weapon:SequenceDuration())
 end
@@ -121,25 +121,25 @@ function SWEP:CanPrimaryAttack()
             self:EmitSound("Weapon_Shotgun.Empty")
         else
             local filter = RecipientFilter()
-            
+
             for _, v in ipairs(player.GetHumans()) do
                 if v ~= self:GetOwner() and v:IsGhost() then
                     filter:AddPlayer(v)
                 end
             end
-            
+
             net.Start("SpecDM_BulletGhost")
             net.WriteString("Weapon_Shotgun.Empty")
             net.WriteVector(self:GetPos())
             net.WriteUInt(45, 19)
             net.Send(filter)
         end
-        
+
         self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-        
+
         return false
     end
-    
+
     return true
 end
 
@@ -149,7 +149,7 @@ function SWEP:Think()
    if self:GetReloading() then
       if self:GetOwner():KeyDown(IN_ATTACK) then
          self:FinishReload()
-         
+
          return
       end
 
@@ -161,7 +161,7 @@ function SWEP:Think()
          else
             self:FinishReload()
          end
-         
+
          return
       end
    end
@@ -170,7 +170,7 @@ end
 function SWEP:Deploy()
    self:SetReloading(false)
    self:SetReloadTimer(0)
-   
+
    return BaseClass.Deploy(self)
 end
 
@@ -180,9 +180,9 @@ end
 -- lucky headshots relatively easily due to the spread.
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    local att = dmginfo:GetAttacker()
-   
-   if not IsValid(att) then 
-      return 3 
+
+   if not IsValid(att) then
+      return 3
    end
 
    local dist = victim:GetPos():Distance(att:GetPos())

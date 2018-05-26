@@ -35,16 +35,16 @@ if CLIENT then
    -- This sets the icon shown for the weapon in the DNA sampler, search window,
    -- equipment menu (if buyable), etc.
 	SWEP.Icon = "vgui/ttt/icon_nades" -- most generic icon I guess
-	
+
 	net.Receive("SpecDM_BulletGhost", function()
 		local str = net.ReadString()
 		local vector = net.ReadVector()
 		local num = net.ReadUInt(19)
-        
 		if num == 0 then 
             num = nil 
         end
-        
+
+
 		sound.Play(str, vector, num)
 	end)
 
@@ -171,7 +171,7 @@ if CLIENT then
 
       local gap = math.floor(20 * scale * (sights and 0.8 or 1))
       local length = math.floor(gap + (25 * crosshair_size:GetFloat()) * scale)
-      
+
       surface.DrawLine(x - length, y, x - gap, y)
       surface.DrawLine(x + length, y, x + gap, y)
       surface.DrawLine(x, y - length, x, y - gap)
@@ -180,7 +180,7 @@ if CLIENT then
 
    function SWEP:DrawHelp()
       local data = self.HUDHelp
-      
+
       local translate = data.translatable
       local primary   = data.primary
       local secondary = data.secondary
@@ -199,7 +199,7 @@ if CLIENT then
       if secondary then
          help_spec.pos[2] = ScrH() - 60
          help_spec.text = primary
-         
+
          draw.TextShadow(help_spec, 2)
       end
    end
@@ -234,13 +234,13 @@ function SWEP:PrimaryAttack(worldsnd)
       self.Weapon:EmitSound(self.Primary.Sound, self.Primary.SoundLevel)
    else
       local tbl = {}
-      
+
       for _, v in ipairs(player.GetAll()) do
          if v ~= self:GetOwner() and v:IsGhost() then
 	        table.insert(tbl, v)
          end
       end
-      
+
       net.Start("SpecDM_BulletGhost")
       net.WriteString(self.Primary.Sound)
       net.WriteVector(self:GetPos())
@@ -252,7 +252,7 @@ function SWEP:PrimaryAttack(worldsnd)
    self:TakePrimaryAmmo(1)
 
    local owner = self:GetOwner()
-   
+
    if not IsValid(owner) or owner:IsNPC() or (not owner.ViewPunch) then return end
 
    owner:ViewPunch(Angle(util.SharedRandom(self:GetClass(),-0.2,-0.1,0) * self.Primary.Recoil, util.SharedRandom(self:GetClass(),-0.1,0.1,1) * self.Primary.Recoil, 0))
@@ -272,7 +272,7 @@ function SWEP:ShootEffects()
 	if CLIENT and not LocalPlayer():IsGhost() then
 		return
 	end
-    
+
 	return self.BaseClass.ShootEffects(self)
 end
 
@@ -281,10 +281,10 @@ function SWEP:CanPrimaryAttack()
 
    if self.Weapon:Clip1() <= 0 then
       self:DryFire(self.SetNextPrimaryFire)
-      
+
       return false
    end
-   
+
    return true
 end
 
@@ -293,10 +293,10 @@ function SWEP:CanSecondaryAttack()
 
    if self.Weapon:Clip2() <= 0 then
       self:DryFire(self.SetNextSecondaryFire)
-      
+
       return false
    end
-   
+
    return true
 end
 
@@ -305,7 +305,7 @@ local function Sparklies(attacker, tr, dmginfo)
       local eff = EffectData()
       eff:SetOrigin(tr.HitPos)
       eff:SetNormal(tr.HitNormal)
-      
+
       util.Effect("cball_bounce", eff)
    end
 end
@@ -343,17 +343,17 @@ function SWEP:ShootBullet(dmg, recoil, numbul, cone)
    bullet.Force = 10
    bullet.Damage = dmg
    bullet.Inflictor = self
-   
+
    if CLIENT then
       bullet.Callback = function(ply, tr, dmginfo)
-	     if not LocalPlayer():IsGhost() then 
-            return false 
+	     if not LocalPlayer():IsGhost() then
+            return false
          end
 	  end
    else
       bullet.Callback = function(ply, tr, dmginfo)
 	     local ent = tr.Entity
-         
+
 		 if not IsValid(ent) or not (ent:IsPlayer() and ent:IsGhost()) then
 		    dmginfo:ScaleDamage(0)
 			dmginfo:SetDamageType(DMG_GENERIC)
@@ -372,22 +372,22 @@ function SWEP:ShootBullet(dmg, recoil, numbul, cone)
    -- Owner can die after firebullet
    if (not IsValid(self:GetOwner())) or (not self:GetOwner():Alive()) or self:GetOwner():IsNPC() then return end
 
-   if ((game.SinglePlayer() and SERVER) 
-   or ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted())) 
+   if ((game.SinglePlayer() and SERVER)
+   or ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted()))
    then
       -- reduce recoil if ironsighting
       recoil = sights and (recoil * 0.6) or recoil
 
       local eyeang = self:GetOwner():EyeAngles()
       eyeang.pitch = eyeang.pitch - recoil
-      
+
       self:GetOwner():SetEyeAngles(eyeang)
    end
 end
 
 function SWEP:GetPrimaryCone()
    local cone = self.Primary.Cone or 0.2
-   
+
    -- 10% accuracy bonus when sighting
    return self:GetIronsights() and (cone * 0.85) or cone
 end
@@ -411,21 +411,21 @@ end
 
 function SWEP:Deploy()
    self:SetIronsights(false)
-   
+
    return true
 end
 
 function SWEP:Reload()
 	if (self:Clip1() == self.Primary.ClipSize or self:GetOwner():GetAmmoCount(self.Primary.Ammo) <= 0) then return end
-    
+
     self.Weapon:DefaultReload(self.ReloadAnim)
-    
+
     self:SetIronsights(false)
 end
 
 function SWEP:OnRestore()
    self.NextSecondaryAttack = 0
-   
+
    self:SetIronsights(false)
 end
 
@@ -460,7 +460,7 @@ function SWEP:DampenDrop()
    -- to find a given corpse's weapon, so we override the velocity here and call
    -- this when dropping guns on death.
    local phys = self:GetPhysicsObject()
-   
+
    if IsValid(phys) then
       phys:SetVelocityInstantaneous(Vector(0, 0, -75) + phys:GetVelocity() * 0.001)
       phys:AddAngleVelocity(phys:GetAngleVelocity() * -0.99)
@@ -486,7 +486,7 @@ function SWEP:Equip(newowner)
       local given = math.min(self.StoredAmmo, self.Primary.ClipMax - ammo)
 
       newowner:GiveAmmo(given, self.Primary.Ammo)
-      
+
       self.StoredAmmo = 0
    end
 end
@@ -495,13 +495,13 @@ end
 -- extra for their buyer
 function SWEP:WasBought(buyer)
 
-end	
+end
 
 function SWEP:SetIronsights(b)
 	if b ~= self:GetIronsights() then
 		self:SetIronsightsPredicted(b)
 		self:SetIronsightsTime(CurTime())
-        
+
 		if CLIENT then
 			self:CalcViewModel()
 		end
@@ -514,19 +514,19 @@ end
 
 --- Dummy functions that will be replaced when SetupDataTables runs. These are
 --- here for when that does not happen (due to e.g. stacking base classes)
-function SWEP:GetIronsightsTime() 
-    return -1 
+function SWEP:GetIronsightsTime()
+    return -1
 end
 
-function SWEP:SetIronsightsTime() 
+function SWEP:SetIronsightsTime()
 
 end
 
-function SWEP:GetIronsightsPredicted() 
-    return false 
+function SWEP:GetIronsightsPredicted()
+    return false
 end
 
-function SWEP:SetIronsightsPredicted() 
+function SWEP:SetIronsightsPredicted()
 
 end
 
@@ -556,7 +556,7 @@ end
 
 function SWEP:CalcViewModel()
     if not CLIENT or not IsFirstTimePredicted() then return end
-    
+
     self.bIron = self:GetIronsights()
     self.fIronTime = self:GetIronsightsTime()
     self.fCurrentTime = CurTime()
@@ -569,7 +569,7 @@ end
 
 function SWEP:DyingShot()
    local fired = false
-   
+
    if self:GetIronsights() then
       self:SetIronsights(false)
 
@@ -585,7 +585,7 @@ function SWEP:DyingShot()
          local eyeang = self:GetOwner():EyeAngles()
          eyeang.pitch = eyeang.pitch - math.Rand(-punch, punch)
          eyeang.yaw = eyeang.yaw - math.Rand(-punch, punch)
-         
+
          self:GetOwner():SetEyeAngles(eyeang)
 
          MsgN(self:GetOwner():Nick() .. " fired his DYING SHOT")
@@ -606,7 +606,7 @@ local LOWER_POS = Vector(0, 0, -2)
 
 local IRONSIGHT_TIME = 0.25
 function SWEP:GetViewModelPosition(pos, ang)
-    if not self.IronSightsPos or not self.bIron then 
+    if not self.IronSightsPos or not self.bIron then
         return pos, ang
     end
 
@@ -632,8 +632,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     if fIronTime > time - IRONSIGHT_TIME then
         mul = math.Clamp((time - fIronTime) / IRONSIGHT_TIME, 0, 1)
 
-        if not bIron then 
-            mul = 1 - mul 
+        if not bIron then
+            mul = 1 - mul
         end
     end
 

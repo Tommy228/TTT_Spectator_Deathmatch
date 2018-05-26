@@ -1,24 +1,24 @@
 
 local function encode_weapons(tbl)
 	local to_implode = {}
-    
+
 	for k, v in pairs(tbl) do
 		table.insert(to_implode, k .. "=" .. v)
 	end
-    
+
 	return string.Implode(",", to_implode)
 end
 
 local function decode_weapons(str)
 	local exploded = string.Explode(",", str)
 	local tbl = {}
-    
+
 	for _, v in pairs(exploded) do
 		local temp = string.Explode("=", v)
-        
+
 		tbl[temp[1]] = temp[2]
 	end
-    
+
 	return tbl
 end
 
@@ -64,7 +64,7 @@ function meta:SpecDM_EnableUpdate(str)
 	if not self.specdm_stats_newupdates then
 		self.specdm_stats_newupdates = {}
 	end
-    
+
 	if not self.specdm_stats_newupdates[str] then
 		self.specdm_stats_newupdates[str] = true
 	end
@@ -97,11 +97,11 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 	if not ply:IsBot() then
 		ply:SpecDM_CheckKillRows()
 	end
-    
+
 	if ply.specdm_killrows then
 		ply.specdm_killrows = 0
 	end
-    
+
 	if GetRoundState() == ROUND_ACTIVE and IsValid(killer) and killer:IsPlayer()  then
 		if ply:IsGhost() and not (ply == killer) then
 			killer.specdm_killrows = (killer.specdm_killrows and killer.specdm_killrows or 0) + 1
@@ -110,17 +110,17 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 				killer.specdm_stats_new.kills = killer.specdm_stats_new.kills + 1
 				killer:SpecDM_EnableUpdate("kills")
 			end
-			
             if ply.specdm_stats_new then
+
 				if ply.specdm_stats_new.deaths then
 					ply.specdm_stats_new.deaths = ply.specdm_stats_new.deaths + 1
 					ply:SpecDM_EnableUpdate("deaths")
 				end
-                
+
 				ply:SpecDM_CheckKillRows()
 			end
-			
             local dmg = {
+
 				GetInflictor = function()
 					return inflictor
 				end,
@@ -128,20 +128,20 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 					return false
 				end
 			}
-            
+
 			local weapon = util.WeaponFromDamage(dmg)
 			local base = "weapon_ghost"
-            
+
 			if weapon and weapon.GetClass and string.Left(weapon:GetClass(), #base) == base and killer.specdm_wepstats then
 				if killer.specdm_wepstats[weapon:GetClass()] then
 					killer.specdm_wepstats[weapon:GetClass()] = killer.specdm_wepstats[weapon:GetClass()] + 1
 				else
 					killer.specdm_wepstats[weapon:GetClass()] = 1
 				end
-                
+
 				killer:SpecDM_EnableUpdate("weapons")
 			end
-            
+
 			SpecDM_Quake(ply, killer)
 		end
 	end
@@ -180,49 +180,49 @@ local general_sorted = {
 
 net.Receive("SpecDM_AskStats", function(_, ply)
 	local Update_General = net.ReadUInt(1) == 1
-    
+
 	if Update_General then
 		local General_page = net.ReadUInt(19)
 		local sort = net.ReadUInt(19)
 		local General_sort = general_sorted[sort] or "kills"
 		local General_order = net.ReadUInt(1) == 1 and "ASC" or "DESC"
 		local General_filter = net.ReadUInt(1) == 1
-        
+
 		if General_filter then
 			General_filter = net.ReadString()
 		end
-        
+
 		local limit = General_page * 15 - 15
 		local query_str = "SELECT name,kills,kill_row,deaths,time_dm,time_playing FROM specdm_stats_new WHERE time_dm > 0 "
-        
+
 		if General_filter then
 			query_str = query_str.."AND name LIKE "..sql.SQLStr("%"..General_filter.."%").." "
 		end
-        
+
 		query_str = query_str.."ORDER BY "..General_sort.." "..General_order.." LIMIT "..limit..",15"
-        
+
 		local query = sql.Query(query_str)
 		if not query then return end
-        
+
 		local encoded = von.serialize(query)
 		if not encoded then return end
-        
+
 		local compressed = util.Compress(encoded)
 		if not compressed then return end
-        
+
 		net.Start("SpecDM_SendStats")
 		net.WriteUInt(1,1)
-        
+
 		local count
-        
+
 		if General_filter then
 			count = sql.QueryValue("SELECT COUNT(steamid) FROM specdm_stats_new WHERE name LIKE "..sql.SQLStr("%"..General_filter.."%"))
 		else
 			count = sql.QueryValue("SELECT COUNT(steamid) FROM specdm_stats_new")
 		end
-        
+
 		if not count then return end
-        
+
 		net.WriteUInt(count, 19)
 		net.WriteUInt(#compressed, 19)
 		net.WriteData(compressed, #compressed)
@@ -233,11 +233,11 @@ end)
 net.Receive("SpecDM_AskOpenStats", function(_, ply)
 	local query = sql.QueryValue("SELECT COUNT(steamid) FROM specdm_stats_new")
 	local weapons = sql.QueryValue("SELECT weapons FROM specdm_stats_new WHERE steamid = '"..ply:SteamID().."'")
-    
+
 	if not query or not weapons then return end
-    
+
 	weapons = decode_weapons(weapons)
-    
+
 	net.Start("SpecDM_OpenStats")
 	net.WriteUInt(query, 19)
 	net.WriteTable(weapons)
