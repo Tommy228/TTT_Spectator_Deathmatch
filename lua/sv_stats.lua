@@ -35,18 +35,18 @@ hook.Add("PlayerAuthed", "PlayerAuthed_SpecDMStats", function(ply, steamid, uniq
 	if player_exists == steamid then
 		ply.specdm_stats_new = sql.QueryRow("SELECT time_dm, time_playing, kills, deaths, kill_row FROM specdm_stats_new WHERE steamid = '"..steamid.."'")
 		ply.specdm_wepstats = decode_weapons(sql.QueryValue("SELECT weapons FROM specdm_stats_new WHERE steamid = '"..steamid.."'"))
-		
+
         local name = sql.QueryValue("SELECT name FROM specdm_stats_new WHERE steamid = '"..steamid.."'")
-		
+
         if name ~= ply:Nick() then
 			sql.Query("UPDATE specdm_stats_new SET name = "..sql.SQLStr(ply:Nick()).." WHERE steamid = '"..steamid.."'")
 		end
 	else
 		local query = "INSERT INTO specdm_stats_new(`steamid`,`name`,`time_dm`,`time_playing`,`kills`,`deaths`,`kill_row`,`weapons`) "
 		query = query..string.format("VALUES ('%s', %s, 0, 0, 0, 0, 0, '')", steamid, sql.SQLStr(ply:Nick()))
-		
+
         local a = sql.Query(query)
-		
+
         ply.specdm_stats_new = {
 			time_dm = 0,
 			time_playing = 0,
@@ -93,7 +93,7 @@ timer.Create("SpecDM_Time", 1, 0, function()
 	end
 end)
 
-hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflictor)
+hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, inflictor, killer)
 	if not ply:IsBot() then
 		ply:SpecDM_CheckKillRows()
 	end
@@ -105,7 +105,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, killer, inflict
 	if GetRoundState() == ROUND_ACTIVE and IsValid(killer) and killer:IsPlayer()  then
 		if ply:IsGhost() and not (ply == killer) then
 			killer.specdm_killrows = (killer.specdm_killrows and killer.specdm_killrows or 0) + 1
-			
+
             if killer.specdm_stats_new and killer.specdm_stats_new.kills then
 				killer.specdm_stats_new.kills = killer.specdm_stats_new.kills + 1
 				killer:SpecDM_EnableUpdate("kills")
@@ -153,13 +153,13 @@ hook.Add("TTTEndRound", "TTTEndRound_SpecDMStats", function()
             for column, update in pairs(v.specdm_stats_newupdates) do
                 if update then
                     local update_str
-                    
+
                     if column == "weapons" and v.specdm_wepstats then
                         update_str = encode_weapons(v.specdm_wepstats)
                     elseif column ~= "weapons" and v.specdm_stats_new then
                         update_str = v.specdm_stats_new[column]
                     end
-                    
+
                     if update_str then
                         sql.Query("UPDATE specdm_stats_new SET "..column.." = '"..update_str.."' WHERE steamid = '"..v:SteamID().."'")
                     end
