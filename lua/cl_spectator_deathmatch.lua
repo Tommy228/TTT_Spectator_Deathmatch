@@ -4,6 +4,30 @@ include("vgui/spec_dm_loadout.lua")
 include("cl_stats.lua")
 include("cl_quakesounds.lua")
 
+local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", 1, FCVAR_ARCHIVE)
+
+function SpecDM.UpdatePartDrawing(enabled)
+	if pac then
+		for _, v in ipairs(player.GetHumans()) do
+			if not v:IsGhost() then
+				if enabled and not showalive:GetBool() then
+					pac.TogglePartDrawing(v, false)
+               continue
+				end
+         end
+         pac.TogglePartDrawing(v, true)
+		end
+	end
+end
+
+if pac then
+   cvars.AddChangeCallback("ttt_specdm_showaliveplayers", function()
+      if LocalPlayer():IsGhost() then
+         SpecDM.UpdatePartDrawing(true)
+      end
+   end)
+end
+
 net.Receive("SpecDM_Error", function()
 	chat.AddText(Color(255, 62, 62, 255), net.ReadString())
 end)
@@ -19,14 +43,23 @@ net.Receive("SpecDM_Ghost", function()
 	else
 		TIPS:Show()
 	end
+   SpecDM.UpdatePartDrawing(enabled)
 end)
 
 net.Receive("SpecDM_GhostJoin", function()
 	local joined = net.ReadUInt(1) == 1
 	local ply = net.ReadEntity()
 
-	if not LocalPlayer():IsSpec() or not SpecDM.EnableJoinMessages or not IsValid(ply) then return end
+   if not LocalPlayer():IsSpec() or not IsValid(ply) then return end
+   if pac then
+      if joined then
+         pac.TogglePartDrawing(ply, true)
+      else
+         pac.TogglePartDrawing(ply, false)
+      end
+   end
 
+   if not SpecDM.EnableJoinMessages then return end
 	chat.AddText(Color(255,128,0), ply:Nick().." has ", joined and "joined" or "left", " the deathmatch!")
 end)
 
@@ -94,7 +127,6 @@ local COLOR_LIGHTGREY = Color(225, 225, 225, 200)
 local COLOR_GREY = Color(255, 255, 255, 100)
 local COLOR_RED = Color(255, 16, 16, 255)
 
-local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", 1, FCVAR_ARCHIVE)
 
 hook.Add("Think", "Think_Ghost", function()
 	for _, v in ipairs(RagdollEntities) do
