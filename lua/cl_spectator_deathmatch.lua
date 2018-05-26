@@ -378,7 +378,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
 
-	function util.GetPlayerTrace(ply, dir)
+	/*function util.GetPlayerTrace(ply, dir)
 		dir = dir or ply:GetAimVector()
 
 		local trace = {}
@@ -402,6 +402,51 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		end
 
 		return trace
+	end*/
+
+   local oldTraceLine = util.TraceLine
+   function util.TraceLine(tbl)
+      local plyghost = LocalPlayer():IsGhost()
+      if not istable(tbl) or (plyghost and showalive:GetBool()) then
+         return oldTraceLine(tbl)
+      end
+      local filt = tbl.filter
+
+      if filt then
+         if isentity(filt) then
+            tbl.filter = function(ent)
+               if ent == filt or (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) then // maybe ent == ply?
+      				return false
+      			end
+      			return true
+            end
+         elseif istable(filt) then
+            tbl.filter = function(ent)
+               if filt[ent] or (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) then // maybe ent == ply?
+      				return false
+      			end
+      			return true
+            end
+         elseif isfunction(filt) then
+            tbl.filter = function(ent)
+               if (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) or filt() then // maybe ent == ply?
+                  return false
+               end
+               return true
+            end
+         end
+      else
+         local newtbl = {}
+         newtbl.filter = function(ent)
+            if ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost)) then // maybe ent == ply?
+               return false
+            end
+            return true
+         end
+         table.Merge(newtbl, tbl)
+      end
+
+		return oldTraceLine(tbl)
 	end
 end)
 
