@@ -26,7 +26,7 @@ SWEP.Primary.DefaultClip = 150
 SWEP.Primary.Automatic   = true
 SWEP.Primary.Ammo        = "smg1"
 SWEP.Primary.Recoil      = 1.9
-SWEP.Primary.Sound       = Sound( "Weapon_mac10.Single" )
+SWEP.Primary.Sound       = Sound("Weapon_mac10.Single")
 
 SWEP.AutoSpawnable = false
 
@@ -43,7 +43,10 @@ SWEP.DeploySpeed         = 3
 
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    local att = dmginfo:GetAttacker()
-   if not IsValid(att) then return 2 end
+   
+   if not IsValid(att) then 
+      return 2 
+   end
 
    local dist = victim:GetPos():Distance(att:GetPos())
    local d = math.max(0, dist - 150)

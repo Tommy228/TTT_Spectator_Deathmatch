@@ -1,5 +1,6 @@
 if SERVER then
 	AddCSLuaFile()
+    
 	if SpecDM.LoadoutEnabled then
 		resource.AddFile("materials/vgui/spec_dm/icon_sdm_revolver.vmt")
 	end
@@ -45,7 +46,7 @@ SWEP.HeadshotMultiplier = 4
 
 SWEP.AutoSpawnable      = false
 SWEP.NoAmmoEnt = "item_ammo_revolver_ttt"
-SWEP.Primary.Sound = Sound( "weapon_357.Single" )
+SWEP.Primary.Sound = Sound("weapon_357.Single")
 SWEP.ViewModel = Model("models/weapons/v_357.mdl")
 SWEP.WorldModel = Model("models/weapons/w_357.mdl")
 SWEP.IronSightsPos = Vector (-5.6917, -3.2203, 2.3961)

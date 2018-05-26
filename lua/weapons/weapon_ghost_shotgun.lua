@@ -1,19 +1,19 @@
 if SERVER then
 	AddCSLuaFile()
 else
-	SWEP.PrintName			= "shotgun_name"
-	SWEP.Slot      = 2
+	SWEP.PrintName = "shotgun_name"
+	SWEP.Slot = 2
 	SWEP.Icon = "vgui/ttt/icon_shotgun"
-	SWEP.ViewModelFlip		= false
-	SWEP.ViewModelFOV		= 54
+	SWEP.ViewModelFlip = false
+	SWEP.ViewModelFOV = 54
 	SWEP.IconLetter = "B"
 end
 
 DEFINE_BASECLASS "weapon_ghost_base"
 
-SWEP.HoldType			= "shotgun"
+SWEP.HoldType = "shotgun"
 
-SWEP.Base				= "weapon_ghost_base"
+SWEP.Base = "weapon_ghost_base"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
 
@@ -32,14 +32,16 @@ SWEP.Primary.NumShots = 8
 SWEP.AutoSpawnable = false
 SWEP.NoAmmoEnt = "item_box_buckshot_ttt"
 
-SWEP.UseHands			= true
-SWEP.ViewModel			= "models/weapons/cstrike/c_shot_xm1014.mdl"
-SWEP.WorldModel			= "models/weapons/w_shot_xm1014.mdl"
-SWEP.Primary.Sound			= Sound( "Weapon_XM1014.Single" )
-SWEP.Primary.Recoil			= 7
+SWEP.UseHands = true
+SWEP.ViewModel = "models/weapons/cstrike/c_shot_xm1014.mdl"
+SWEP.WorldModel = "models/weapons/w_shot_xm1014.mdl"
+SWEP.Primary.Sound = Sound("Weapon_XM1014.Single")
+SWEP.Primary.Recoil = 7
 
 SWEP.IronSightsPos = Vector(-6.881, -9.214, 2.66)
 SWEP.IronSightsAng = Vector(-0.101, -0.7, -0.201)
+
+SWEP.reloadtimer = 0
 
 function SWEP:SetupDataTables()
    self:NetworkVar("Bool", 0, "Reloading")
@@ -49,9 +51,9 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Reload()
-	if self:GetReloading() then return end
-	
-	if self.Weapon:Clip1() < self.Primary.ClipSize and self:GetOwner():GetAmmoCount( self.Primary.Ammo ) > 0 then
+    if self:GetReloading() then return end
+    
+	if self.Weapon:Clip1() < self.Primary.ClipSize and self:GetOwner():GetAmmoCount(self.Primary.Ammo) > 0 then
 	    if self:StartReload() then
             return
         end
@@ -59,14 +61,13 @@ function SWEP:Reload()
 end
 
 function SWEP:StartReload()
-   --if self.Weapon:GetNWBool( "reloading", false ) then
    if self:GetReloading() then
       return false
    end
-   
-   self:SetIronsights( false )
 
-   self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
+   self:SetIronsights(false)
+
+   self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
    local ply = self:GetOwner()
 
@@ -83,8 +84,6 @@ function SWEP:StartReload()
    wep:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 
    self:SetReloadTimer(CurTime() + wep:SequenceDuration())
-
-   --wep:SetNWBool("reloading", true)
    self:SetReloading(true)
 
    return true
@@ -94,14 +93,15 @@ function SWEP:PerformReload()
    local ply = self:GetOwner()
 
    -- prevent normal shooting in between reloads
-   self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
+   self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 
    if not ply or ply:GetAmmoCount(self.Primary.Ammo) <= 0 then return end
 
    if self:Clip1() >= self.Primary.ClipSize then return end
 
-   self:GetOwner():RemoveAmmo( 1, self.Primary.Ammo, false )
-   self.Weapon:SetClip1( self.Weapon:Clip1() + 1 )
+   self:GetOwner():RemoveAmmo(1, self.Primary.Ammo, false)
+   
+   self.Weapon:SetClip1(self.Weapon:Clip1() + 1)
 
    self:SendWeaponAnim(ACT_VM_RELOAD)
 
@@ -110,44 +110,50 @@ end
 
 function SWEP:FinishReload()
    self:SetReloading(false)
+   
    self.Weapon:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
-
    self:SetReloadTimer(CurTime() + self.Weapon:SequenceDuration())
 end
 
 function SWEP:CanPrimaryAttack()
     if self.Weapon:Clip1() <= 0 then
         if CLIENT and LocalPlayer() == self:GetOwner() then
-            self:EmitSound( "Weapon_Shotgun.Empty" )
+            self:EmitSound("Weapon_Shotgun.Empty")
         else
             local filter = RecipientFilter()
-            for k, v in ipairs(player.GetHumans()) do
-                if v != self:GetOwner() and v:IsGhost() then
+            
+            for _, v in ipairs(player.GetHumans()) do
+                if v ~= self:GetOwner() and v:IsGhost() then
                     filter:AddPlayer(v)
                 end
             end
+            
             net.Start("SpecDM_BulletGhost")
             net.WriteString("Weapon_Shotgun.Empty")
             net.WriteVector(self:GetPos())
             net.WriteUInt(45, 19)
             net.Send(filter)
         end
-      self:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
-      return false
-   end
-   return true
+        
+        self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+        
+        return false
+    end
+    
+    return true
 end
 
 function SWEP:Think()
    BaseClass.Think(self)
+
    if self:GetReloading() then
       if self:GetOwner():KeyDown(IN_ATTACK) then
          self:FinishReload()
+         
          return
       end
 
       if self:GetReloadTimer() <= CurTime() then
-
          if self:GetOwner():GetAmmoCount(self.Primary.Ammo) <= 0 then
             self:FinishReload()
          elseif self.Weapon:Clip1() < self.Primary.ClipSize then
@@ -155,6 +161,7 @@ function SWEP:Think()
          else
             self:FinishReload()
          end
+         
          return
       end
    end
@@ -163,6 +170,7 @@ end
 function SWEP:Deploy()
    self:SetReloading(false)
    self:SetReloadTimer(0)
+   
    return BaseClass.Deploy(self)
 end
 
@@ -172,7 +180,10 @@ end
 -- lucky headshots relatively easily due to the spread.
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
    local att = dmginfo:GetAttacker()
-   if not IsValid(att) then return 3 end
+   
+   if not IsValid(att) then 
+      return 3 
+   end
 
    local dist = victim:GetPos():Distance(att:GetPos())
    local d = math.max(0, dist - 140)
@@ -182,10 +193,9 @@ function SWEP:GetHeadshotMultiplier(victim, dmginfo)
 end
 
 function SWEP:SecondaryAttack()
-   if self.NoSights or (not self.IronSightsPos) or self:GetReloading() then return end
-    --if self:GetNextSecondaryFire() > CurTime() then return end
- 
-    self:SetIronsights(not self:GetIronsights())
- 
-    self:SetNextSecondaryFire(CurTime() + 0.3)
+   if self.NoSights or not self.IronSightsPos or self:GetReloading() then return end
+
+   self:SetIronsights(not self:GetIronsights())
+
+   self:SetNextSecondaryFire(CurTime() + 0.3)
 end

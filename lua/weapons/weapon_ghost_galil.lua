@@ -1,5 +1,6 @@
 if SERVER then
 	AddCSLuaFile()
+    
 	if SpecDM.LoadoutEnabled then
 		resource.AddFile("materials/vgui/spec_dm/icon_sdm_galil.vmt")
 	end
@@ -26,7 +27,7 @@ SWEP.Primary.Ammo        = "smg1"
 SWEP.Primary.ClipSize    = 20
 SWEP.Primary.ClipMax     = 100
 SWEP.Primary.DefaultClip = 120
-SWEP.Primary.Sound       = Sound( "Weapon_GALIL.Single" )
+SWEP.Primary.Sound       = Sound("Weapon_GALIL.Single")
 
 SWEP.IronSightsPos = Vector(-5.1337, -3.9115, 2.1624)
 SWEP.IronSightsAng = Vector(0.0873, 0.0006, 0)

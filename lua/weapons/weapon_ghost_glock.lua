@@ -28,7 +28,7 @@ SWEP.AutoSpawnable = false
 SWEP.ViewModel  = "models/weapons/v_pist_glock18.mdl"
 SWEP.WorldModel = "models/weapons/w_pist_glock18.mdl"
 
-SWEP.Primary.Sound = Sound( "Weapon_Glock.Single" )
-SWEP.IronSightsPos = Vector( 4.33, -4.0, 2.9 )
+SWEP.Primary.Sound = Sound("Weapon_Glock.Single")
+SWEP.IronSightsPos = Vector(4.33, -4.0, 2.9)
 
 SWEP.HeadshotMultiplier = 1.75
