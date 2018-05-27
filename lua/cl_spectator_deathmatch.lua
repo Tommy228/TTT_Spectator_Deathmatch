@@ -442,43 +442,35 @@ hook.Add("Initialize", "Initialize_Ghost", function()
       if not istable(tbl) or (plyghost and showalive:GetBool()) then
          return oldTraceLine(tbl)
       end
+
       local filt = tbl.filter
+      local ignoretbl = {}
+
+      for _, v in ipairs(player.GetAll()) do
+          if (plyghost and not v:IsGhost()) or (not plyghost and v:IsGhost()) then
+              table.insert(ignoretbl, v)
+          end
+      end
 
       if filt then
          if isentity(filt) then
-            tbl.filter = function(ent)
-               if ent == filt or (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) then // maybe ent == ply?
-      				return false
-      			end
-      			return true
-            end
+            tbl.filter = {}
+            table.insert(tbl.filter, filt)
+            table.Add(tbl.filter, ignoretbl)
          elseif istable(filt) then
-            tbl.filter = function(ent)
-               if filt[ent] or (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) then // maybe ent == ply?
-      				return false
-      			end
-      			return true
-            end
+            table.Add(tbl.filter, ignoretbl)
          elseif isfunction(filt) then
             tbl.filter = function(ent)
-               if (ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost))) or filt() then // maybe ent == ply?
+               if ignoretbl[ent] or filt() then
                   return false
                end
                return true
             end
          end
       else
-         local newtbl = {}
-         newtbl.filter = function(ent)
-            if ent:IsPlayer() and ((not ent:IsGhost() and plyghost) or (ent:IsGhost() and not plyghost)) then // maybe ent == ply?
-               return false
-            end
-            return true
-         end
-         table.Merge(newtbl, tbl)
+          tbl.filter = ignoretbl
       end
-
-		return oldTraceLine(tbl)
+      return oldTraceLine(tbl)
 	end
 end)
 
