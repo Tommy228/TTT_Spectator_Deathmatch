@@ -51,12 +51,8 @@ net.Receive("SpecDM_GhostJoin", function()
 	local ply = net.ReadEntity()
 
    if not LocalPlayer():IsSpec() or not IsValid(ply) then return end
-   if pac then
-      if joined then
-         pac.TogglePartDrawing(ply, true)
-      else
-         pac.TogglePartDrawing(ply, false)
-      end
+   if pac and not joined then
+       pac.TogglePartDrawing(ply, false)
    end
 
    if not SpecDM.EnableJoinMessages then return end
