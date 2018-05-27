@@ -12,4 +12,5 @@ Here are a few things you should think about when contributing.
 ## Creating pull requests
 
 * Do **NOT** add unnecessary changes to your code - do not "fix" white space or remove comments
+* Tabulation is required: TAB size = 4 spaces
 * Add a proper description to your pull request or choose a suitable title
