@@ -40,14 +40,14 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 
 			if IsValid(wep) then
 				local s = wep:GetHeadshotMultiplier(ply, _dmginfo) or 2
-				if s < 1 then 
-                    s = 1 
+				if s < 1 then
+                    s = 1
                 end
-                
-				if hit then 
-                    s = s-0.2 
+
+				if hit then
+                    s = s-0.2
                 end
-                
+
 				_dmginfo:ScaleDamage(s)
 			end
 		elseif hg == HITGROUP_LEFTARM or hg == HITGROUP_RIGHTARM or hg == HITGROUP_LEFTLEG or hg == HITGROUP_RIGHTLEG or hg == HITGROUP_GEAR then
@@ -70,7 +70,7 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 		ply:GiveGhostWeapons()
 
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
-	end
+    end
 end)
 
 local function SpecDM_Respawn(ply)
@@ -82,7 +82,7 @@ local function SpecDM_Respawn(ply)
 		ply:GiveGhostWeapons()
 
 		SpecDM:RelationShip(ply)
-	end
+    end
 end
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
@@ -191,7 +191,8 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_SpawnForRound = meta.SpawnForRound
 	function meta:SpawnForRound(dead_only)
 		if self:IsGhost() then
-			self:SetGhost(false)
+            self:SetGhost(false)
+            self:ManageGhost(false, false)
 		end
 
 		return old_SpawnForRound(self, dead_only)
@@ -311,8 +312,8 @@ local fallsounds = {
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
 	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then
-		if in_water or speed < 450 or not IsValid(ply) then 
-            return true 
+		if in_water or speed < 450 or not IsValid(ply) then
+            return true
         end
 
 		-- Everything over a threshold hurts you, rising exponentially with speed

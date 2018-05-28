@@ -4,20 +4,23 @@ include("vgui/spec_dm_loadout.lua")
 include("cl_stats.lua")
 include("cl_quakesounds.lua")
 
+local ghosttable = {}
+local livingtable = {}
+
 local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", 1, FCVAR_ARCHIVE)
 
 function SpecDM.UpdatePartDrawing(enabled)
 	if pac then
-		for _, v in ipairs(player.GetHumans()) do
-			if not v:IsGhost() then
-				if enabled and not showalive:GetBool() then
+        for _, v in ipairs(player.GetHumans()) do
+            if not v:IsGhost() then
+                if enabled and not showalive:GetBool() then
 					pac.TogglePartDrawing(v, false)
-               continue
-				end
-         end
-         pac.TogglePartDrawing(v, true)
-		end
-	end
+                    continue
+                end
+            end
+            pac.TogglePartDrawing(v, true)
+        end
+    end
 end
 
 if pac then
@@ -50,8 +53,18 @@ net.Receive("SpecDM_GhostJoin", function()
 	local joined = net.ReadUInt(1) == 1
 	local ply = net.ReadEntity()
 
-   if not LocalPlayer():IsSpec() or not IsValid(ply) then return end
-   if pac and not joined then
+    if not IsValid(ply) then return end
+    if joined then
+        print("inserted ghost"..ply:Nick())
+        table.insert(ghosttable, ply)
+        table.RemoveByValue(livingtable, ply)
+    else
+        print("removed ghost"..ply:Nick())
+        table.RemoveByValue(ghosttable, ply)
+        table.insert(livingtable, ply)
+    end
+    if not LocalPlayer():IsSpec() then return end
+    if pac and not joined then
        pac.TogglePartDrawing(ply, false)
    end
 
@@ -442,8 +455,14 @@ hook.Add("Initialize", "Initialize_Ghost", function()
       local filt = tbl.filter
       local ignoretbl = {}
 
-      for _, v in ipairs(player.GetAll()) do
-          if (plyghost and not v:IsGhost()) or (not plyghost and v:IsGhost()) then
+      if plyghost then
+          for k, v in ipairs(livingtable) do
+              if !IsValid(v) then livingtable[k] = nil continue end
+              table.insert(ignoretbl, v)
+          end
+      else
+          for k, v in ipairs(ghosttable) do
+              if !IsValid(v) then ghosttable[k] = nil continue end
               table.insert(ignoretbl, v)
           end
       end
@@ -457,10 +476,10 @@ hook.Add("Initialize", "Initialize_Ghost", function()
             table.Add(tbl.filter, ignoretbl)
          elseif isfunction(filt) then
             tbl.filter = function(ent)
-               if ignoretbl[ent] or filt() then
+               if ignoretbl[ent] then
                   return false
                end
-               return true
+               return filt()
             end
          end
       else
@@ -468,6 +487,14 @@ hook.Add("Initialize", "Initialize_Ghost", function()
       end
       return oldTraceLine(tbl)
 	end
+end)
+
+hook.Add("TTTBeginRound", "TTTBeginRound_TableGhost", function()
+    table.Empty(ghosttable)
+    table.Empty(livingtable)
+    for _, v in ipairs(player.GetAll()) do
+        table.insert(livingtable, v)
+    end
 end)
 
 hook.Add("HUDShouldDraw", "SpecDM_TTTPropSpec", function(name)
