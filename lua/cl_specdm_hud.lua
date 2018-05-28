@@ -48,7 +48,7 @@ local function DrawBg(x, y, width, height, client)
                 col = bg_colors.detective
             end
         else
-            col = client.GetRoleData().color
+            col = client:GetRoleData().color
         end
     end
 
