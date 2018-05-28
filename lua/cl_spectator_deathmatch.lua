@@ -55,11 +55,9 @@ net.Receive("SpecDM_GhostJoin", function()
 
     if not IsValid(ply) then return end
     if joined then
-        print("inserted ghost"..ply:Nick())
         table.insert(ghosttable, ply)
         table.RemoveByValue(livingtable, ply)
     else
-        print("removed ghost"..ply:Nick())
         table.RemoveByValue(ghosttable, ply)
         table.insert(livingtable, ply)
     end
