@@ -148,6 +148,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, inflictor, kill
 end)
 
 hook.Add("TTTEndRound", "TTTEndRound_SpecDMStats", function()
+	sql.Begin()
 	for _, v in pairs(player.GetHumans()) do
 		if v.specdm_stats_newupdates then
             for column, update in pairs(v.specdm_stats_newupdates) do
@@ -167,6 +168,7 @@ hook.Add("TTTEndRound", "TTTEndRound_SpecDMStats", function()
             end
         end
 	end
+	sql.Commit()
 end)
 
 local general_sorted = {
