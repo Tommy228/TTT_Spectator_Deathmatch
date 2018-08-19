@@ -415,3 +415,13 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 		return false
 	end
 end)
+
+hook.Add("EntityTakeDamage","GhostDamages_SpecDM", function(ent, dmginfo)
+	local atk = dmginfo:GetAttacker()
+	
+	if(IsValid(ent) and IsValid(atk) and atk:IsGhost()) then
+		if (not ent:IsPlayer() or not ent:IsGhost()) then
+			return true
+		end
+	end
+end)

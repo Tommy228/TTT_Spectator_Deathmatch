@@ -350,15 +350,6 @@ function SWEP:ShootBullet(dmg, recoil, numbul, cone)
             return false
          end
 	  end
-   else
-      bullet.Callback = function(ply, tr, dmginfo)
-	     local ent = tr.Entity
-
-		 if not IsValid(ent) or not (ent:IsPlayer() and ent:IsGhost()) then
-		    dmginfo:ScaleDamage(0)
-			dmginfo:SetDamageType(DMG_GENERIC)
-		 end
-	  end
    end
 
    if SERVER then
