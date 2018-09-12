@@ -418,8 +418,8 @@ end)
 
 hook.Add("EntityTakeDamage","GhostDamages_SpecDM", function(ent, dmginfo)
 	local atk = dmginfo:GetAttacker()
-	
-	if(IsValid(ent) and IsValid(atk) and atk:IsGhost()) then
+
+	if(IsValid(ent) and IsValid(atk) and atk:IsPlayer() and atk:IsGhost()) then
 		if (not ent:IsPlayer() or not ent:IsGhost()) then
 			return true
 		end
