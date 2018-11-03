@@ -41,14 +41,14 @@ local function DrawBg(x, y, width, height, client)
 		if GAMEMODE.round_state ~= ROUND_ACTIVE then
 			col = bg_colors.noround
 		else
-			if not ROLES then
+			if not TTT2 then
 				if client:GetTraitor() then
 					col = bg_colors.traitor
 				elseif client:GetDetective() then
 					col = bg_colors.detective
 				end
 			else
-				col = client:GetRoleData().color
+				col = client:GetSubRoleData().color
 			end
 		end
 	end
