@@ -91,8 +91,8 @@ function meta:GiveGhostWeapons()
 	self:Give("weapon_ghost_crowbar")
 end
 
-function meta:ManageGhost(spawn, silent)
-	local silent = silent or false
+function meta:ManageGhost(spawn, silent2)
+	local silent = silent2 or false
 
 	self:SetGhost(spawn)
 
@@ -147,20 +147,20 @@ function meta:WantsToDM()
 			if tonumber(self.DMTimer) and self.DMTimer > 0 then
 				self:SpecDM_Error("Wait "..tostring(self.DMTimer).." second(s) before using this command again!")
 			else
-				local self = self
-				self:ManageGhost(not self:IsGhost())
+				local slf = self
+				slf:ManageGhost(not slf:IsGhost())
 
-				self.DMTimer = 10
+				slf.DMTimer = 10
 
-				local timername = "SpecDM_Timer_" .. tostring(self:UniqueID())
+				local timername = "SpecDM_Timer_" .. tostring(slf:UniqueID())
 
 				timer.Create(timername, 1, 0, function()
-					if not IsValid(self) then
+					if not IsValid(slf) then
 						timer.Remove(timername)
 					else
-						self.DMTimer = self.DMTimer - 1
+						slf.DMTimer = slf.DMTimer - 1
 
-						if self.DMTimer <= 0 then
+						if slf.DMTimer <= 0 then
 							timer.Remove(timername)
 						end
 					end

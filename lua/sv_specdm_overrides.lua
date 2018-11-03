@@ -41,12 +41,12 @@ hook.Add("PlayerTraceAttack", "PlayerTraceAttack_SpecDM", function(ply, dmginfo,
 			if IsValid(wep) then
 				local s = wep:GetHeadshotMultiplier(ply, _dmginfo) or 2
 				if s < 1 then
-                    s = 1
-                end
+					s = 1
+				end
 
 				if hit then
-                    s = s-0.2
-                end
+					s = s - 0.2
+				end
 
 				_dmginfo:ScaleDamage(s)
 			end
@@ -70,7 +70,7 @@ hook.Add("PlayerSpawn", "PlayerSpawn_SpecDM", function(ply)
 		ply:GiveGhostWeapons()
 
 		hook.Call("PlayerSetModel", GAMEMODE, ply)
-    end
+	end
 end)
 
 local function SpecDM_Respawn(ply)
@@ -82,7 +82,7 @@ local function SpecDM_Respawn(ply)
 		ply:GiveGhostWeapons()
 
 		SpecDM:RelationShip(ply)
-    end
+	end
 end
 
 hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attacker)
@@ -93,7 +93,7 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 
 		if SpecDM.RespawnTime < 1 then
 			timer.Simple(0, function()
-                if not IsValid(victim) then return end
+				if not IsValid(victim) then return end
 
 				SpecDM_Respawn(victim)
 			end)
@@ -102,14 +102,14 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 			net.Send(victim)
 
 			timer.Simple(SpecDM.RespawnTime, function()
-                if not IsValid(victim) then return end
+				if not IsValid(victim) then return end
 
 				victim.allowrespawn = true
 			end)
 
-			if SpecDM.AutomaticRespawnTime > -1 then
+			if SpecDM.AutomaticRespawnTime > - 1 then
 				timer.Simple(SpecDM.AutomaticRespawnTime + SpecDM.RespawnTime, function()
-                    if not IsValid(victim) then return end
+					if not IsValid(victim) then return end
 
 					SpecDM_Respawn(victim)
 				end)
@@ -167,10 +167,10 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_SpectatorThink = GAMEMODE.SpectatorThink
 	function GAMEMODE:SpectatorThink(ply)
 		if IsValid(ply) and ply:IsGhost() then
-            ply:Extinguish()
+			ply:Extinguish()
 
-            return true
-        end
+			return true
+		end
 
 		old_SpectatorThink(self, ply)
 	end
@@ -191,8 +191,8 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_SpawnForRound = meta.SpawnForRound
 	function meta:SpawnForRound(dead_only)
 		if self:IsGhost() then
-            self:SetGhost(false)
-            self:ManageGhost(false, false)
+			self:SetGhost(false)
+			self:ManageGhost(false, false)
 		end
 
 		return old_SpawnForRound(self, dead_only)
@@ -305,16 +305,16 @@ hook.Add("Initialize", "Initialize_SpecDM", function()
 end)
 
 local fallsounds = {
-   Sound("player/damage1.wav"),
-   Sound("player/damage2.wav"),
-   Sound("player/damage3.wav")
+	Sound("player/damage1.wav"),
+	Sound("player/damage2.wav"),
+	Sound("player/damage3.wav")
 }
 
 hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_floater, speed)
 	if IsValid(ply) and ply:IsPlayer() and ply:IsGhost() then
 		if in_water or speed < 450 or not IsValid(ply) then
-            return true
-        end
+			return true
+		end
 
 		-- Everything over a threshold hurts you, rising exponentially with speed
 		local damage = math.pow(0.05 * (speed - 420), 1.75)
@@ -330,12 +330,10 @@ hook.Add("OnPlayerHitGround", "HitGround_SpecDM", function(ply, in_water, on_flo
 				local att = ply
 
 				-- if the faller was pushed, that person should get attrib
+				-- TODO: move push time checking stuff into fn?
 				local push = ply.was_pushed
-				if push then
-					-- TODO: move push time checking stuff into fn?
-					if math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
-						att = push.att
-					end
+				if push and math.max(push.t or 0, push.hurt or 0) > CurTime() - 4 then
+					att = push.att
 				end
 
 				local dmg = DamageInfo()
@@ -403,10 +401,8 @@ hook.Add("TTTBeginRound", "BeginRound_SpecDM", function()
 end)
 
 hook.Add("AcceptInput", "AcceptInput_Ghost", function(ent, name, activator, caller, data)
-	if IsValid(caller) and caller:GetClass() == "ttt_logic_role" then
-		if IsValid(activator) and activator:IsPlayer() and activator:IsGhost() then
-			return true
-		end
+	if IsValid(caller) and caller:GetClass() == "ttt_logic_role" and IsValid(activator) and activator:IsPlayer() and activator:IsGhost() then
+		return true
 	end
 end)
 
@@ -416,12 +412,10 @@ hook.Add("EntityEmitSound", "EntityEmitSound_SpecDM", function(t)
 	end
 end)
 
-hook.Add("EntityTakeDamage","GhostDamages_SpecDM", function(ent, dmginfo)
+hook.Add("EntityTakeDamage", "GhostDamages_SpecDM", function(ent, dmginfo)
 	local atk = dmginfo:GetAttacker()
 
-	if(IsValid(ent) and IsValid(atk) and atk:IsPlayer() and atk:IsGhost()) then
-		if (not ent:IsPlayer() or not ent:IsGhost()) then
-			return true
-		end
+	if (IsValid(ent) and IsValid(atk) and atk:IsPlayer() and atk:IsGhost()) and (not ent:IsPlayer() or not ent:IsGhost()) then
+		return true
 	end
 end)

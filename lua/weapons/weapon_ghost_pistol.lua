@@ -14,7 +14,7 @@ SWEP.Kind = WEAPON_PISTOL
 SWEP.WeaponID = AMMO_PISTOL
 
 SWEP.Base = "weapon_ghost_base"
-SWEP.Primary.Recoil	= 1.3
+SWEP.Primary.Recoil = 1.3
 SWEP.Primary.Damage = 17
 SWEP.Primary.Delay = 0.15
 SWEP.Primary.Cone = 0.025
@@ -24,7 +24,7 @@ SWEP.Primary.DefaultClip = 80
 SWEP.Primary.ClipMax = 60
 SWEP.Primary.Ammo = "Pistol"
 
-SWEP.ViewModel  = "models/weapons/v_pist_fiveseven.mdl"
+SWEP.ViewModel = "models/weapons/v_pist_fiveseven.mdl"
 SWEP.WorldModel = "models/weapons/w_pist_fiveseven.mdl"
 
 SWEP.Primary.Sound = Sound("Weapon_FiveSeven.Single")

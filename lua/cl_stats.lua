@@ -1,6 +1,6 @@
 surface.CreateFont("SpecDM_Page", {
-	font = "DermaDefault",
-	size = 18
+		font = "DermaDefault",
+		size = 18
 })
 
 local weapon_tbl = {}
@@ -11,10 +11,10 @@ local function OpenStats()
 	local General_CurPage = 1
 
 	Stats = vgui.Create("DFrame")
-	Stats:SetPos(50,50)
+	Stats:SetPos(50, 50)
 	Stats:SetSize(620, 400)
-    Stats:SetTitle("TTT Spectator Deathmatch Statistics")
-    Stats:MakePopup()
+	Stats:SetTitle("TTT Spectator Deathmatch Statistics")
+	Stats:MakePopup()
 	Stats:Center()
 
 	local PropertySheet = vgui.Create("DPropertySheet", Stats)
@@ -123,9 +123,9 @@ local function OpenStats()
 
 	if general_pages <= 15 then
 		General_Next:SetEnabled(false)
-		if General_Last then 
-            General_Last:SetEnabled(false) 
-        end
+		if General_Last then
+			General_Last:SetEnabled(false)
+		end
 
 	end
 
@@ -164,7 +164,7 @@ local function OpenStats()
 
 		surface.SetFont("SpecDM_Page")
 
-		local x, y = surface.GetTextSize(text)
+		local x = surface.GetTextSize(text)
 
 		self:SetPos((484 + 70) / 2 - x / 2, 302)
 	end

@@ -7,14 +7,14 @@ function PANEL:MoveLoadout(direction)
 	if self.Moving or (direction ~= LEFT and direction ~= RIGHT) then return end
 
 	if direction == LEFT and self.Start > 1 then
-		self.Start = self.Start-1
-		self.End = self.End-1
+		self.Start = self.Start - 1
+		self.End = self.End - 1
 	elseif direction == RIGHT and self.End < self.WeaponsCount then
-		self.Start = self.Start+1
-		self.End = self.End+1
-	else 
-        return 
-    end
+		self.Start = self.Start + 1
+		self.End = self.End + 1
+	else
+		return
+	end
 
 	if not GAMEMODE.LoadoutMoveID then
 		GAMEMODE.LoadoutMoveID = 1
@@ -34,9 +34,9 @@ function PANEL:MoveLoadout(direction)
 			local x, y = self.Loadout:GetPos()
 
 			if direction == LEFT then
-				self.Loadout:SetPos(x+6, y)
+				self.Loadout:SetPos(x + 6, y)
 			else
-				self.Loadout:SetPos(x-6, y)
+				self.Loadout:SetPos(x - 6, y)
 			end
 		end
 
@@ -127,7 +127,7 @@ function PANEL:AddWeapons()
 		self.Right:SetEnabled(false)
 	end
 
-	self.Loadout:SetSize(self.WeaponsCount*96, 100)
+	self.Loadout:SetSize(self.WeaponsCount * 96, 100)
 end
 
 function PANEL:Init()
@@ -150,7 +150,7 @@ function PANEL:Init()
 	self.Panel:SetSize(600, 100)
 	self.Panel.Paint = function(panel, w, h)
 		surface.SetDrawColor(Color(200, 200, 200))
-		surface.DrawRect(30, 1, w-60, h-2)
+		surface.DrawRect(30, 1, w - 60, h - 2)
 	end
 
 	self.Loadout = vgui.Create("DPanelSelect", self.Panel)
@@ -163,7 +163,7 @@ function PANEL:Init()
 		old_selectpanel(panel, selected)
 
 		if selected then
-			selected.PaintOver = function(_, w,h)
+			selected.PaintOver = function(_, w, h)
 				surface.SetDrawColor(Color(255, 50, 0))
 
 				for i = 0, 2 do

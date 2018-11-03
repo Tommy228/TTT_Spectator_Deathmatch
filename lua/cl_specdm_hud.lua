@@ -1,13 +1,13 @@
 local dr = draw
 
 local function ShadowedText(text, font, x, y, color, xalign, yalign)
-	dr.SimpleText(text, font, x+2, y+2, COLOR_BLACK, xalign, yalign)
+	dr.SimpleText(text, font, x + 2, y + 2, COLOR_BLACK, xalign, yalign)
 	dr.SimpleText(text, font, x, y, color, xalign, yalign)
 end
 
 local bg_colors = {
 	background_main = Color(0, 0, 10, 200),
-	noround = Color(100,100,100,200),
+	noround = Color(100, 100, 100, 200),
 	traitor = Color(200, 25, 25, 200),
 	innocent = Color(25, 200, 25, 200),
 	detective = Color(25, 25, 200, 200)
@@ -37,20 +37,21 @@ local function DrawBg(x, y, width, height, client)
 
 	local col = bg_colors.innocent
 
-	if client:IsGhost() then
-	elseif GAMEMODE.round_state ~= ROUND_ACTIVE then
-		col = bg_colors.noround
-	else
-        if not ROLES then
-            if client:GetTraitor() then
-                col = bg_colors.traitor
-            elseif client:GetDetective() then
-                col = bg_colors.detective
-            end
-        else
-            col = client:GetRoleData().color
-        end
-    end
+	if not client:IsGhost() then
+		if GAMEMODE.round_state ~= ROUND_ACTIVE then
+			col = bg_colors.noround
+		else
+			if not ROLES then
+				if client:GetTraitor() then
+					col = bg_colors.traitor
+				elseif client:GetDetective() then
+					col = bg_colors.detective
+				end
+			else
+				col = client:GetRoleData().color
+			end
+		end
+	end
 
 	draw.RoundedBox(8, x, y, tw, th, col)
 end
@@ -63,23 +64,23 @@ local function RoundedMeter(bs, x, y, w, h, color)
 	surface.DrawRect(x, y + bs, bs, h - bs * 2)
 
 	surface.SetTexture(Tex_Corner8)
-	surface.DrawTexturedRectRotated(x + bs / 2 , y + bs / 2, bs, bs, 0)
-	surface.DrawTexturedRectRotated(x + bs / 2 , y + h - bs / 2, bs, bs, 90)
+	surface.DrawTexturedRectRotated(x + bs / 2, y + bs / 2, bs, bs, 0)
+	surface.DrawTexturedRectRotated(x + bs / 2, y + h - bs / 2, bs, bs, 90)
 
 	if w > 14 then
 		surface.DrawRect(x + w - bs, y + bs, bs, h - bs * 2)
-		surface.DrawTexturedRectRotated(x + w - bs / 2 , y + bs / 2, bs, bs, 270)
-		surface.DrawTexturedRectRotated(x + w - bs / 2 , y + h - bs / 2, bs, bs, 180)
+		surface.DrawTexturedRectRotated(x + w - bs / 2, y + bs / 2, bs, bs, 270)
+		surface.DrawTexturedRectRotated(x + w - bs / 2, y + h - bs / 2, bs, bs, 180)
 	else
-		surface.DrawRect(x + math.max(w-bs, bs), y, bs/2, h)
+		surface.DrawRect(x + math.max(w - bs, bs), y, bs / 2, h)
 	end
 end
 
 local function GetAmmo(ply)
 	local weap = ply:GetActiveWeapon()
 	if not weap or not ply:Alive() then
-        return -1
-    end
+		return - 1
+	end
 
 
 	local ammo_inv = weap:Ammo1() or 0
@@ -106,7 +107,7 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 	local old_DrawHUD = GAMEMODE.HUDPaint
 
 	function GAMEMODE:HUDPaint()
-        local client = LocalPlayer()
+		local client = LocalPlayer()
 
 		if client:IsGhost() then
 			self:HUDDrawTargetID()
@@ -147,7 +148,7 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 				if ammo_clip ~= -1 then
 					local ammo_y = health_y + bar_height + margin
 
-					PaintBar(x+margin, ammo_y, bar_width, bar_height, ammo_colors, ammo_clip/ammo_max)
+					PaintBar(x + margin, ammo_y, bar_width, bar_height, ammo_colors, ammo_clip / ammo_max)
 
 					local text = string.format("%i + %02i", ammo_clip, ammo_inv)
 
@@ -160,9 +161,10 @@ hook.Add("Initialize", "Initialize_GhostHUD", function()
 
 			ShadowedText(text, "TraitorState", x + margin + 73, traitor_y, COLOR_WHITE, TEXT_ALIGN_CENTER)
 
+			text = nil
+
 			local is_haste = HasteMode() and round_state == ROUND_ACTIVE
 			local endtime = GetGlobalFloat("ttt_round_end", 0) - CurTime()
-			local text
 			local font = "TimeLeft"
 			local color = COLOR_WHITE
 			local rx = x + margin + 170

@@ -23,7 +23,7 @@
 	If you disagree with the above, don't use the code.
 
 -----------------------------------------------------------------------------------------------------------------------------
-	
+
 	Thanks to the following people for their contribution:
 		-	Divran						Suggested improvements for making the code quicker.
 										Suggested an excellent new way of deserializing strings.
@@ -34,7 +34,7 @@
 		-	People who contributed on the GitHub repository by reporting bugs, posting fixes, etc.
 
 -----------------------------------------------------------------------------------------------------------------------------
-	
+
 	The vanilla types supported in this release of vON are:
 		-	table
 		-	number
@@ -56,7 +56,7 @@
 	These are the types one would normally serialize.
 
 -----------------------------------------------------------------------------------------------------------------------------
-	
+
 	New in this version:
 		-	Fixed addition of extra entity types. I messed up really badly.
 --]]
@@ -64,7 +64,7 @@
 
 
 local _deserialize, _serialize, _d_meta, _s_meta, d_findVariable, s_anyVariable
-local sub, gsub, find, insert, concat, error, tonumber, tostring, type, next = string.sub, string.gsub, string.find, table.insert, table.concat, error, tonumber, tostring, type, next
+local sub, gsub, find, concat, error, tonumber, tostring, type, next = string.sub, string.gsub, string.find, table.insert, table.concat, error, tonumber, tostring, type, next
 
 
 
@@ -74,8 +74,8 @@ local sub, gsub, find, insert, concat, error, tonumber, tostring, type, next = s
 
 
 --	This is kept away from the table for speed.
-function d_findVariable(s, i, len, lastType, jobstate)
-	local i, c, typeRead, val = i or 1
+function d_findVariable(s, i2, len, lastType, jobstate)
+	local i, c, typeRead, val = i2 or 1
 
 	--	Keep looping through the string.
 	while true do
@@ -94,48 +94,48 @@ function d_findVariable(s, i, len, lastType, jobstate)
 			--	Return the value read, the index of the last processed character, and the type of the last read variable.
 			return val, i, lastType
 
-		--	@ means nil. It should not even appear in the output string of the serializer. Nils are useless to store.
+			--	@ means nil. It should not even appear in the output string of the serializer. Nils are useless to store.
 		elseif c == "@" then
 			return nil, i, lastType
 
-		--	$ means a table reference will follow - a number basically.
+			--	$ means a table reference will follow - a number basically.
 		elseif c == "$" then
 			lastType = "table_reference"
 			typeRead = true
 
-		--	n means a number will follow. Base 10... :C
+			--	n means a number will follow. Base 10... :C
 		elseif c == "n" then
 			lastType = "number"
 			typeRead = true
 
-		--	b means boolean flags.
+			--	b means boolean flags.
 		elseif c == "b" then
 			lastType = "boolean"
 			typeRead = true
 
-		--	' means the start of a string.
+			--	' means the start of a string.
 		elseif c == "'" then
 			lastType = "string"
 			typeRead = true
 
-		--	" means the start of a string prior to version 1.2.0.
+			--	" means the start of a string prior to version 1.2.0.
 		elseif c == "\"" then
 			lastType = "oldstring"
 			typeRead = true
 
-		--	{ means the start of a table!
+			--	{ means the start of a table!
 		elseif c == "{" then
 			lastType = "table"
 			typeRead = true
 
 
---[[    Garry's Mod types go here    ]]
+			--[[    Garry's Mod types go here    ]]
 
-		--	e means an entity ID will follow.
+			--	e means an entity ID will follow.
 		elseif c == "e" then
 			lastType = "Entity"
 			typeRead = true
---[[
+			--[[
 		--	c means a vehicle ID will follow.
 		elseif c == "c" then
 			lastType = "Vehicle"
@@ -151,31 +151,31 @@ function d_findVariable(s, i, len, lastType, jobstate)
 			lastType = "NPC"
 			typeRead = true
 --]]
-		--	p means a player ID will follow.
-		--	Kept for backwards compatibility.
+			--	p means a player ID will follow.
+			--	Kept for backwards compatibility.
 		elseif c == "p" then
 			lastType = "Entity"
 			typeRead = true
 
-		--	v means a vector will follow. 3 numbers.
+			--	v means a vector will follow. 3 numbers.
 		elseif c == "v" then
 			lastType = "Vector"
 			typeRead = true
 
-		--	a means an Euler angle will follow. 3 numbers.
+			--	a means an Euler angle will follow. 3 numbers.
 		elseif c == "a" then
 			lastType = "Angle"
 			typeRead = true
 
---[[    Garry's Mod types end here    ]]
+			--[[    Garry's Mod types end here    ]]
 
 
-		--	If no type has been found, attempt to deserialize the last type read.
+			--	If no type has been found, attempt to deserialize the last type read.
 		elseif lastType then
 			val, i = _deserialize[lastType](s, i, len, false, jobstate)
 			return val, i, lastType
 
-		--	This will occur if the very first character in the vON code is wrong.
+			--	This will occur if the very first character in the vON code is wrong.
 		else
 			error("vON: Malformed data... Can't find a proper type definition. Char#" .. i .. ":" .. c)
 		end
@@ -220,10 +220,10 @@ end
 
 
 _deserialize = {
---	Well, tables are very loose...
---	The first table doesn't have to begin and end with { and }.
-	["table"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local ret, numeric, i, c, lastType, val, ind, expectValue, key = {}, true, i or 1, nil, nil, nil, 1
+	--	Well, tables are very loose...
+	--	The first table doesn't have to begin and end with { and }.
+	["table"] = function(s, i2, len, unnecessaryEnd, jobstate)
+		local ret, numeric, i, c, lastType, val, ind, expectValue, key = {}, true, i2 or 1, nil, nil, nil, 1
 		--	Locals, locals, locals, locals, locals, locals, locals, locals and locals.
 
 		if sub(s, i, i) == "#" then
@@ -256,7 +256,7 @@ _deserialize = {
 				if unnecessaryEnd then
 					return ret, i
 
-				--	Otherwise, the data has to be damaged.
+					--	Otherwise, the data has to be damaged.
 				else
 					error("vON: Reached end of string, incomplete table definition.")
 				end
@@ -270,15 +270,14 @@ _deserialize = {
 			if c == "}" then
 				return ret, i
 
-			--	If it's the component separator, switch to key:value pairs.
+				--	If it's the component separator, switch to key:value pairs.
 			elseif c == "~" then
 				numeric = false
-
 			elseif c == ";" then
 				--	Lol, nothing!
 				--	Remenant from numbers, for faster parsing.
 
-			--	OK, now, if it's on the numeric component, simply add everything encountered.
+				--	OK, now, if it's on the numeric component, simply add everything encountered.
 			elseif numeric then
 				--	Find a variable and it's value
 				val, i, lastType = d_findVariable(s, i, len, lastType, jobstate)
@@ -287,7 +286,7 @@ _deserialize = {
 
 				ind = ind + 1
 
-			--	Otherwise, if it's the key:value component...
+				--	Otherwise, if it's the key:value component...
 			else
 				--	If a value is expected...
 				if expectValue then
@@ -298,17 +297,17 @@ _deserialize = {
 					--	Clean up.
 					expectValue, key = false, nil
 
-				--	If it's the separator...
+					--	If it's the separator...
 				elseif c == ":" then
 					--	Expect a value next.
 					expectValue = true
 
-				--	But, if there's a key read already...
+					--	But, if there's a key read already...
 				elseif key then
 					--	Then this is malformed.
 					error("vON: Malformed table... Two keys declared successively? Char#" .. i .. ":" .. c)
 
-				--	Otherwise the key will be read.
+					--	Otherwise the key will be read.
 				else
 					--	I love multi-return and multi-assignement.
 					key, i, lastType = d_findVariable(s, i, len, lastType, jobstate)
@@ -321,9 +320,9 @@ _deserialize = {
 		return nil, i
 	end,
 
---	Just a number which points to a table.
-	["table_reference"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local i, a = i or 1
+	--	Just a number which points to a table.
+	["table_reference"] = function(s, i2, len, unnecessaryEnd, jobstate)
+		local i, a = i2 or 1
 		--	Locals, locals, locals, locals
 
 		a = find(s, "[;:}~]", i)
@@ -344,11 +343,11 @@ _deserialize = {
 	end,
 
 
---	Numbers are weakly defined.
---	The declaration is not very explicit. It'll do it's best to parse the number.
---	Has various endings: \n, }, ~, : and ;, some of which will force the table deserializer to go one char backwards.
-	["number"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local i, a = i or 1
+	--	Numbers are weakly defined.
+	--	The declaration is not very explicit. It'll do it's best to parse the number.
+	--	Has various endings: \n, }, ~, : and ;, some of which will force the table deserializer to go one char backwards.
+	["number"] = function(s, i2, len, unnecessaryEnd, jobstate)
+		local i, a = i2 or 1
 		--	Locals, locals, locals, locals
 
 		a = find(s, "[;:}~]", i)
@@ -363,17 +362,17 @@ _deserialize = {
 	end,
 
 
---	A boolean is A SINGLE CHARACTER, either 1 for true or 0 for false.
---	Any other attempt at boolean declaration will result in a failure.
+	--	A boolean is A SINGLE CHARACTER, either 1 for true or 0 for false.
+	--	Any other attempt at boolean declaration will result in a failure.
 	["boolean"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local c = sub(s,i,i)
+		local c = sub(s, i, i)
 		--	Only one character is needed.
 
 		--	If it's 1, then it's true
 		if c == "1" then
 			return true, i
 
-		--	If it's 0, then it's false.
+			--	If it's 0, then it's false.
 		elseif c == "0" then
 			return false, i
 		end
@@ -383,9 +382,9 @@ _deserialize = {
 	end,
 
 
---	Strings prior to 1.2.0
-	["oldstring"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local res, i, a = "", i or 1
+	--	Strings prior to 1.2.0
+	["oldstring"] = function(s, i2, len, unnecessaryEnd, jobstate)
+		local res, i, a = "", i2 or 1
 		--	Locals, locals, locals, locals
 
 		while true do
@@ -404,9 +403,9 @@ _deserialize = {
 		end
 	end,
 
---	Strings after 1.2.0
-	["string"] = function(s, i, len, unnecessaryEnd, jobstate)
-		local res, i, a = "", i or 1
+	--	Strings after 1.2.0
+	["string"] = function(s, i2, len, unnecessaryEnd, jobstate)
+		local res, i, a = "", i2 or 1
 		--	Locals, locals, locals, locals
 
 		while true do
@@ -429,24 +428,24 @@ _deserialize = {
 
 
 _serialize = {
---	Uh. Nothing to comment.
---	Ton of parameters.
---	Makes stuff faster than simply passing it around in locals.
---	table.concat works better than normal concatenations WITH LARGE-ISH STRINGS ONLY.
+	--	Uh. Nothing to comment.
+	--	Ton of parameters.
+	--	Makes stuff faster than simply passing it around in locals.
+	--	table.concat works better than normal concatenations WITH LARGE-ISH STRINGS ONLY.
 	["table"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 		--print(string.format("data: %s; mustInitiate: %s; isKey: %s; isLast: %s; nice: %s; indent: %s; first: %s", tostring(data), tostring(mustInitiate), tostring(isKey), tostring(isLast), tostring(nice), tostring(indent), tostring(first)))
 
-		local result, keyvals, len, keyvalsLen, keyvalsProgress, val, lastType, newIndent, indentString = {}, {}, #data, 0, 0
+		local result, keyvals, len, keyvalsLen, keyvalsProgress, val, lastType = {}, {}, #data, 0, 0
 		--	Locals, locals, locals, locals, locals, locals, locals, locals, locals and locals.
 
 		--	First thing to be done is separate the numeric and key:value components of the given table in two tables.
 		--	pairs(data) is slower than next, data as far as my tests tell me.
 		for k, v in next, data do
 			--	Skip the numeric keyz.
-			if type(k) ~= "number" or k < 1 or k > len or (k % 1 ~= 0) then	--	k % 1 == 0 is, as proven by personal benchmarks,
-				keyvals[#keyvals + 1] = k									--	the quickest way to check if a number is an integer.
-			end																--	k % 1 ~= 0 is the fastest way to check if a number
-		end																	--	is NOT an integer. > is proven slower.
+			if type(k) ~= "number" or k < 1 or k > len or (k % 1 ~= 0) then --	k % 1 == 0 is, as proven by personal benchmarks,
+				keyvals[#keyvals + 1] = k --	the quickest way to check if a number is an integer.
+			end --	k % 1 ~= 0 is the fastest way to check if a number
+		end --	is NOT an integer. > is proven slower.
 
 		keyvalsLen = #keyvals
 
@@ -489,7 +488,7 @@ _serialize = {
 				result[#result + 1] = val..":"
 
 				val, lastType = s_anyVariable(data[keyvals[_i]], lastType, false, false, keyvalsProgress == keyvalsLen and not first, jobstate)
-				
+
 				result[#result + 1] = val
 			end
 		end
@@ -502,7 +501,7 @@ _serialize = {
 		return concat(result)
 	end,
 
---	Number which points to table.
+	--	Number which points to table.
 	["table_reference"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 		data = jobstate[1][data]
 
@@ -523,8 +522,8 @@ _serialize = {
 	end,
 
 
---	Normal concatenations is a lot faster with small strings than table.concat
---	Also, not so branched-ish.
+	--	Normal concatenations is a lot faster with small strings than table.concat
+	--	Also, not so branched-ish.
 	["number"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 		--	If a number hasn't been written before, add the type prefix.
 		if mustInitiate then
@@ -543,9 +542,9 @@ _serialize = {
 	end,
 
 
---	I hope gsub is fast enough.
+	--	I hope gsub is fast enough.
 	["string"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
-		if sub(data, #data, #data) == "\\" then	--	Hah, old strings fix this best.
+		if sub(data, #data, #data) == "\\" then --	Hah, old strings fix this best.
 			return "\"" .. gsub(data, "\"", "\\\"") .. "v\""
 		end
 
@@ -553,7 +552,7 @@ _serialize = {
 	end,
 
 
---	Fastest.
+	--	Fastest.
 	["boolean"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 		--	Prefix if we must.
 		if mustInitiate then
@@ -572,7 +571,7 @@ _serialize = {
 	end,
 
 
---	Fastest.
+	--	Fastest.
 	["nil"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 		return "@"
 	end,
@@ -584,16 +583,16 @@ _serialize = {
 
 
 
-if gmod then	--	Luckily, a specific table named after the game is present in Garry's Mod.
+if gmod then --	Luckily, a specific table named after the game is present in Garry's Mod.
 	local Entity = Entity
 
 
 
 	local extra_deserialize = {
---	Entities are stored simply by the ID. They're meant to be transfered, not stored anyway.
---	Exactly like a number definition, except it begins with "e".
-		["Entity"] = function(s, i, len, unnecessaryEnd, jobstate)
-			local i, a = i or 1
+		--	Entities are stored simply by the ID. They're meant to be transfered, not stored anyway.
+		--	Exactly like a number definition, except it begins with "e".
+		["Entity"] = function(s, i2, len, unnecessaryEnd, jobstate)
+			local i, a = i2 or 1
 			--	Locals, locals, locals, locals
 
 			a = find(s, "[;:}~]", i)
@@ -606,9 +605,9 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 		end,
 
 
---	A pair of 3 numbers separated by a comma (,).
-		["Vector"] = function(s, i, len, unnecessaryEnd, jobstate)
-			local i, a, x, y, z = i or 1
+		--	A pair of 3 numbers separated by a comma (,).
+		["Vector"] = function(s, i2, len, unnecessaryEnd, jobstate)
+			local i, a, x, y, z = i2 or 1
 			--	Locals, locals, locals, locals
 
 			a = find(s, ",", i)
@@ -639,9 +638,9 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 		end,
 
 
---	A pair of 3 numbers separated by a comma (,).
-		["Angle"] = function(s, i, len, unnecessaryEnd, jobstate)
-			local i, a, p, y, r = i or 1
+		--	A pair of 3 numbers separated by a comma (,).
+		["Angle"] = function(s, i2, len, unnecessaryEnd, jobstate)
+			local i, a, p, y, r = i2 or 1
 			--	Locals, locals, locals, locals
 
 			a = find(s, ",", i)
@@ -673,7 +672,7 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 	}
 
 	local extra_serialize = {
---	Same as numbers, except they start with "e" instead of "n".
+		--	Same as numbers, except they start with "e" instead of "n".
 		["Entity"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 			data = data:EntIndex()
 
@@ -693,7 +692,7 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 		end,
 
 
---	3 numbers separated by a comma.
+		--	3 numbers separated by a comma.
 		["Vector"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 			if mustInitiate then
 				if isKey or isLast then
@@ -711,7 +710,7 @@ if gmod then	--	Luckily, a specific table named after the game is present in Gar
 		end,
 
 
---	3 numbers separated by a comma.
+		--	3 numbers separated by a comma.
 		["Angle"] = function(data, mustInitiate, isNumeric, isKey, isLast, first, jobstate)
 			if mustInitiate then
 				if isKey or isLast then
@@ -764,7 +763,7 @@ local function checkTableForRecursion(tab, checked, assoc)
 		if type(k) == "table" and not checked[k] then
 			checkTableForRecursion(k, checked, assoc)
 		end
-		
+
 		if type(v) == "table" and not checked[v] then
 			checkTableForRecursion(v, checked, assoc)
 		end
@@ -807,10 +806,10 @@ _s_meta = {
 
 von = {
 	version = "1.3.4",
-	versionNumber = 1003004,	--	Reserving 3 digits per version component.
+	versionNumber = 1003004, --	Reserving 3 digits per version component.
 
-	deserialize = setmetatable(_deserialize,_d_meta),
-	serialize = setmetatable(_serialize,_s_meta)
+	deserialize = setmetatable(_deserialize, _d_meta),
+	serialize = setmetatable(_serialize, _s_meta)
 }
 
 

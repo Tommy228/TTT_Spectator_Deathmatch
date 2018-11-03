@@ -36,18 +36,18 @@ hook.Add("PlayerAuthed", "PlayerAuthed_SpecDMStats", function(ply, steamid, uniq
 		ply.specdm_stats_new = sql.QueryRow("SELECT time_dm, time_playing, kills, deaths, kill_row FROM specdm_stats_new WHERE steamid = '"..steamid.."'")
 		ply.specdm_wepstats = decode_weapons(sql.QueryValue("SELECT weapons FROM specdm_stats_new WHERE steamid = '"..steamid.."'"))
 
-        local name = sql.QueryValue("SELECT name FROM specdm_stats_new WHERE steamid = '"..steamid.."'")
+		local name = sql.QueryValue("SELECT name FROM specdm_stats_new WHERE steamid = '"..steamid.."'")
 
-        if name ~= ply:Nick() then
+		if name ~= ply:Nick() then
 			sql.Query("UPDATE specdm_stats_new SET name = "..sql.SQLStr(ply:Nick()).." WHERE steamid = '"..steamid.."'")
 		end
 	else
 		local query = "INSERT INTO specdm_stats_new(`steamid`,`name`,`time_dm`,`time_playing`,`kills`,`deaths`,`kill_row`,`weapons`) "
 		query = query..string.format("VALUES ('%s', %s, 0, 0, 0, 0, 0, '')", steamid, sql.SQLStr(ply:Nick()))
 
-        local a = sql.Query(query)
+		sql.Query(query) -- local a
 
-        ply.specdm_stats_new = {
+		ply.specdm_stats_new = {
 			time_dm = 0,
 			time_playing = 0,
 			kills = 0,
@@ -81,14 +81,14 @@ timer.Create("SpecDM_Time", 1, 0, function()
 	if GetRoundState() == ROUND_ACTIVE then
 		for _, v in ipairs(player.GetHumans()) do
 			if v.specdm_stats_new then
-                if v:IsGhost() and v.specdm_stats_new.time_dm then
-                    v.specdm_stats_new.time_dm = v.specdm_stats_new.time_dm + 1
-                    v:SpecDM_EnableUpdate("time_dm")
-                elseif v:IsActive() and v.specdm_stats_new.time_playing then
-                    v.specdm_stats_new.time_playing = v.specdm_stats_new.time_playing + 1
-                    v:SpecDM_EnableUpdate("time_playing")
-                end
-            end
+				if v:IsGhost() and v.specdm_stats_new.time_dm then
+					v.specdm_stats_new.time_dm = v.specdm_stats_new.time_dm + 1
+					v:SpecDM_EnableUpdate("time_dm")
+				elseif v:IsActive() and v.specdm_stats_new.time_playing then
+					v.specdm_stats_new.time_playing = v.specdm_stats_new.time_playing + 1
+					v:SpecDM_EnableUpdate("time_playing")
+				end
+			end
 		end
 	end
 end)
@@ -102,72 +102,72 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDMStats", function(ply, inflictor, kill
 		ply.specdm_killrows = 0
 	end
 
-	if GetRoundState() == ROUND_ACTIVE and IsValid(killer) and killer:IsPlayer()  then
-		if ply:IsGhost() and not (ply == killer) then
-			killer.specdm_killrows = (killer.specdm_killrows and killer.specdm_killrows or 0) + 1
+	if GetRoundState() == ROUND_ACTIVE and IsValid(killer) and killer:IsPlayer() and ply:IsGhost() and ply ~= killer then
+		killer.specdm_killrows = (killer.specdm_killrows and killer.specdm_killrows or 0) + 1
 
-            if killer.specdm_stats_new and killer.specdm_stats_new.kills then
-				killer.specdm_stats_new.kills = killer.specdm_stats_new.kills + 1
-				killer:SpecDM_EnableUpdate("kills")
-			end
-            if ply.specdm_stats_new then
-
-				if ply.specdm_stats_new.deaths then
-					ply.specdm_stats_new.deaths = ply.specdm_stats_new.deaths + 1
-					ply:SpecDM_EnableUpdate("deaths")
-				end
-
-				ply:SpecDM_CheckKillRows()
-			end
-            local dmg = {
-
-				GetInflictor = function()
-					return inflictor
-				end,
-				IsDamageType = function()
-					return false
-				end
-			}
-
-			local weapon = util.WeaponFromDamage(dmg)
-			local base = "weapon_ghost"
-
-			if weapon and weapon.GetClass and string.Left(weapon:GetClass(), #base) == base and killer.specdm_wepstats then
-				if killer.specdm_wepstats[weapon:GetClass()] then
-					killer.specdm_wepstats[weapon:GetClass()] = killer.specdm_wepstats[weapon:GetClass()] + 1
-				else
-					killer.specdm_wepstats[weapon:GetClass()] = 1
-				end
-
-				killer:SpecDM_EnableUpdate("weapons")
-			end
-
-			SpecDM_Quake(ply, killer)
+		if killer.specdm_stats_new and killer.specdm_stats_new.kills then
+			killer.specdm_stats_new.kills = killer.specdm_stats_new.kills + 1
+			killer:SpecDM_EnableUpdate("kills")
 		end
+		if ply.specdm_stats_new then
+
+			if ply.specdm_stats_new.deaths then
+				ply.specdm_stats_new.deaths = ply.specdm_stats_new.deaths + 1
+				ply:SpecDM_EnableUpdate("deaths")
+			end
+
+			ply:SpecDM_CheckKillRows()
+		end
+		local dmg = {
+
+			GetInflictor = function()
+				return inflictor
+			end,
+			IsDamageType = function()
+				return false
+			end
+		}
+
+		local weapon = util.WeaponFromDamage(dmg)
+		local base = "weapon_ghost"
+
+		if weapon and weapon.GetClass and string.Left(weapon:GetClass(), #base) == base and killer.specdm_wepstats then
+			if killer.specdm_wepstats[weapon:GetClass()] then
+				killer.specdm_wepstats[weapon:GetClass()] = killer.specdm_wepstats[weapon:GetClass()] + 1
+			else
+				killer.specdm_wepstats[weapon:GetClass()] = 1
+			end
+
+			killer:SpecDM_EnableUpdate("weapons")
+		end
+
+		SpecDM_Quake(ply, killer)
 	end
 end)
 
 hook.Add("TTTEndRound", "TTTEndRound_SpecDMStats", function()
 	sql.Begin()
+
 	for _, v in pairs(player.GetHumans()) do
 		if v.specdm_stats_newupdates then
-            for column, update in pairs(v.specdm_stats_newupdates) do
-                if update then
-                    local update_str
+			for column, update in pairs(v.specdm_stats_newupdates) do
+				if update then
+					local update_str
 
-                    if column == "weapons" and v.specdm_wepstats then
-                        update_str = encode_weapons(v.specdm_wepstats)
-                    elseif column ~= "weapons" and v.specdm_stats_new then
-                        update_str = v.specdm_stats_new[column]
-                    end
+					if column == "weapons" and v.specdm_wepstats then
+						update_str = encode_weapons(v.specdm_wepstats)
+					elseif column ~= "weapons" and v.specdm_stats_new then
+						update_str = v.specdm_stats_new[column]
+					end
 
-                    if update_str then
-                        sql.Query("UPDATE specdm_stats_new SET "..column.." = '"..update_str.."' WHERE steamid = '"..v:SteamID().."'")
-                    end
-                end
-            end
-        end
+					if update_str then
+						sql.Query("UPDATE specdm_stats_new SET "..column.." = '"..update_str.."' WHERE steamid = '"..v:SteamID().."'")
+					end
+				end
+			end
+		end
 	end
+
 	sql.Commit()
 end)
 
@@ -213,7 +213,7 @@ net.Receive("SpecDM_AskStats", function(_, ply)
 		if not compressed then return end
 
 		net.Start("SpecDM_SendStats")
-		net.WriteUInt(1,1)
+		net.WriteUInt(1, 1)
 
 		local count
 

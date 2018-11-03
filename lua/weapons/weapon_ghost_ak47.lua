@@ -1,6 +1,6 @@
 if SERVER then
 	AddCSLuaFile()
-    
+
 	if SpecDM.LoadoutEnabled then
 		resource.AddFile("materials/vgui/spec_dm/icon_sdm_ak47.vmt")
 	end
@@ -33,5 +33,5 @@ SWEP.Primary.Sound = Sound("Weapon_AK47.Single")
 SWEP.IronSightsPos = Vector(6.05, -5, 2.4)
 SWEP.IronSightsAng = Vector(2.2, -0.1, 0)
 
-SWEP.ViewModel  = "models/weapons/v_rif_ak47.mdl"
+SWEP.ViewModel = "models/weapons/v_rif_ak47.mdl"
 SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"

@@ -11,24 +11,24 @@ local showalive = CreateClientConVar("ttt_specdm_showaliveplayers", 1, FCVAR_ARC
 
 function SpecDM.UpdatePartDrawing(enabled)
 	if pac then
-        for _, v in ipairs(player.GetHumans()) do
-            if not v:IsGhost() then
-                if enabled and not showalive:GetBool() then
-					pac.TogglePartDrawing(v, false)
-                    continue
-                end
-            end
-            pac.TogglePartDrawing(v, true)
-        end
-    end
+		for _, v in ipairs(player.GetHumans()) do
+			if not v:IsGhost() and enabled and not showalive:GetBool() then
+				pac.TogglePartDrawing(v, false)
+
+				continue
+			end
+
+			pac.TogglePartDrawing(v, true)
+		end
+	end
 end
 
 if pac then
-   cvars.AddChangeCallback("ttt_specdm_showaliveplayers", function()
-      if LocalPlayer():IsGhost() then
-         SpecDM.UpdatePartDrawing(true)
-      end
-   end)
+	cvars.AddChangeCallback("ttt_specdm_showaliveplayers", function()
+		if LocalPlayer():IsGhost() then
+			SpecDM.UpdatePartDrawing(true)
+		end
+	end)
 end
 
 net.Receive("SpecDM_Error", function()
@@ -46,28 +46,32 @@ net.Receive("SpecDM_Ghost", function()
 	else
 		TIPS:Show()
 	end
-   SpecDM.UpdatePartDrawing(enabled)
+	SpecDM.UpdatePartDrawing(enabled)
 end)
 
 net.Receive("SpecDM_GhostJoin", function()
 	local joined = net.ReadUInt(1) == 1
 	local ply = net.ReadEntity()
 
-    if not IsValid(ply) then return end
-    if joined then
-        table.insert(ghosttable, ply)
-        table.RemoveByValue(livingtable, ply)
-    else
-        table.RemoveByValue(ghosttable, ply)
-        table.insert(livingtable, ply)
-    end
-    if not LocalPlayer():IsSpec() then return end
-    if pac and not joined then
-       pac.TogglePartDrawing(ply, false)
-   end
+	if not IsValid(ply) then return end
 
-   if not SpecDM.EnableJoinMessages then return end
-	chat.AddText(Color(255,128,0), ply:Nick().." has ", joined and "joined" or "left", " the deathmatch!")
+	if joined then
+		table.insert(ghosttable, ply)
+		table.RemoveByValue(livingtable, ply)
+	else
+		table.RemoveByValue(ghosttable, ply)
+		table.insert(livingtable, ply)
+	end
+
+	if not LocalPlayer():IsSpec() then return end
+
+	if pac and not joined then
+		pac.TogglePartDrawing(ply, false)
+	end
+
+	if not SpecDM.EnableJoinMessages then return end
+
+	chat.AddText(Color(255, 128, 0), ply:Nick().." has ", joined and "joined" or "left", " the deathmatch!")
 end)
 
 local emitter
@@ -90,22 +94,22 @@ hook.Add("RenderScreenspaceEffects", "RenderScreenspaceEffects_Ghost", function(
 
 		cam.Start3D(EyePos(), EyeAngles())
 
-        for _, v in ipairs(player.GetAll()) do
-            if v:IsGhost() and v:Alive() then
-                render.SuppressEngineLighting(true)
-                render.SetColorModulation(1, 1, 1)
+		for _, v in ipairs(player.GetAll()) do
+			if v:IsGhost() and v:Alive() then
+				render.SuppressEngineLighting(true)
+				render.SetColorModulation(1, 1, 1)
 
-                if emitter then
-                    emitter:Draw()
-                end
+				if emitter then
+					emitter:Draw()
+				end
 
-                if not v:IsDormant() then
-                    v:DrawModel()
-                end
+				if not v:IsDormant() then
+					v:DrawModel()
+				end
 
-                render.SuppressEngineLighting(false)
-            end
-        end
+				render.SuppressEngineLighting(false)
+			end
+		end
 
 		cam.End3D()
 	end
@@ -129,7 +133,7 @@ hook.Add("EntityRemoved", "RemoveRagdolls_SpecDM", function(ent)
 	end
 end)
 
-local COLOR_WHITE = Color(255,255,255,255)
+local COLOR_WHITE = Color(255, 255, 255, 255)
 local COLOR_LIGHTGREY = Color(225, 225, 225, 200)
 local COLOR_GREY = Color(255, 255, 255, 100)
 local COLOR_RED = Color(255, 16, 16, 255)
@@ -147,43 +151,43 @@ hook.Add("Think", "Think_Ghost", function()
 end)
 
 hook.Add("PrePlayerDraw", "PrePlayerDraw_SpecDM", function(ply)
-    if IsValid(LocalPlayer()) and LocalPlayer():IsGhost() then
-        if not ply:IsGhost() and not showalive:GetBool() then
-            ply:DrawShadow(false)
+	if IsValid(LocalPlayer()) and LocalPlayer():IsGhost() then
+		if not ply:IsGhost() and not showalive:GetBool() then
+			ply:DrawShadow(false)
 
-            if IsValid(ply:GetActiveWeapon()) then
-                ply:GetActiveWeapon():DrawShadow(false)
-            end
+			if IsValid(ply:GetActiveWeapon()) then
+				ply:GetActiveWeapon():DrawShadow(false)
+			end
 
-            return true
-        elseif ply:IsTerror() then
-            ply:SetRenderMode(RENDERMODE_TRANSALPHA)
-            ply:SetColor(COLOR_GREY)
-            ply:DrawShadow(true)
+			return true
+		elseif ply:IsTerror() then
+			ply:SetRenderMode(RENDERMODE_TRANSALPHA)
+			ply:SetColor(COLOR_GREY)
+			ply:DrawShadow(true)
 
-            if IsValid(ply:GetActiveWeapon()) then
-                ply:GetActiveWeapon():DrawShadow(true)
-            end
-        end
-    else
-        if ply:IsGhost() then
-            ply:DrawShadow(false)
+			if IsValid(ply:GetActiveWeapon()) then
+				ply:GetActiveWeapon():DrawShadow(true)
+			end
+		end
+	else
+		if ply:IsGhost() then
+			ply:DrawShadow(false)
 
-            if IsValid(ply:GetActiveWeapon()) then
-                ply:GetActiveWeapon():DrawShadow(false)
-            end
+			if IsValid(ply:GetActiveWeapon()) then
+				ply:GetActiveWeapon():DrawShadow(false)
+			end
 
-            return true
-        else
-            ply:SetRenderMode(RENDERMODE_NORMAL)
-            ply:SetColor(COLOR_WHITE)
-            ply:DrawShadow(true)
+			return true
+		else
+			ply:SetRenderMode(RENDERMODE_NORMAL)
+			ply:SetColor(COLOR_WHITE)
+			ply:DrawShadow(true)
 
-            if IsValid(ply:GetActiveWeapon()) then
-                ply:GetActiveWeapon():DrawShadow(true)
-            end
-        end
-    end
+			if IsValid(ply:GetActiveWeapon()) then
+				ply:GetActiveWeapon():DrawShadow(true)
+			end
+		end
+	end
 end)
 
 local function SendHeartbeat()
@@ -200,7 +204,7 @@ local function SendHeartbeat()
 			heartbeat:SetEndAlpha(0)
 			heartbeat:SetStartSize(50)
 			heartbeat:SetEndSize(0)
-			heartbeat:SetColor(255,0,0)
+			heartbeat:SetColor(255, 0, 0)
 		end
 	end
 end
@@ -268,10 +272,8 @@ if not SpecDM.IsScoreboardCustom then
 			if not force and not self:IsVisible() then return end
 
 			for _, v in ipairs(player.GetAll()) do
-				if v:IsGhost() and LocalPlayer():IsSpec() then
-					if self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
-						self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
-					end
+				if v:IsGhost() and LocalPlayer():IsSpec() and self.ply_groups[GROUP_DEATHMATCH] and not self.ply_groups[GROUP_DEATHMATCH]:HasPlayerRow(v) then
+					self.ply_groups[GROUP_DEATHMATCH]:AddPlayerRow(v)
 				end
 			end
 
@@ -374,7 +376,7 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 	end
 
 	function ScoreGroup(p)
-		if not IsValid(p) then return -1 end
+		if not IsValid(p) then return - 1 end
 
 		local group = hook.Call("TTTScoreGroup", nil, p)
 
@@ -400,16 +402,14 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 			end
 		end
 
-		if DetectiveMode() then
-			if p:IsSpec() and p:GetNWBool("PlayedSRound", false) and not p:Alive() then
-				if p:GetNWBool("body_found", false) then
-					return GROUP_FOUND
+		if DetectiveMode() and p:IsSpec() and p:GetNWBool("PlayedSRound", false) and not p:Alive() then
+			if p:GetNWBool("body_found", false) then
+				return GROUP_FOUND
+			else
+				if client:IsSpec() or client:IsActiveTraitor() or ((GAMEMODE.round_state ~= ROUND_ACTIVE) and client:IsTerror()) then
+					return GROUP_NOTFOUND
 				else
-					if client:IsSpec() or client:IsActiveTraitor() or ((GAMEMODE.round_state ~= ROUND_ACTIVE) and client:IsTerror()) then
-						return GROUP_NOTFOUND
-					else
-						return GROUP_TERROR
-					end
+					return GROUP_TERROR
 				end
 			end
 		end
@@ -417,7 +417,8 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		return p:IsTerror() and GROUP_TERROR or GROUP_SPEC
 	end
 
-	/*function util.GetPlayerTrace(ply, dir)
+	--[[
+	function util.GetPlayerTrace(ply, dir)
 		dir = dir or ply:GetAimVector()
 
 		local trace = {}
@@ -441,58 +442,68 @@ hook.Add("Initialize", "Initialize_Ghost", function()
 		end
 
 		return trace
-	end*/
+	end
+	]]--
 
-   local oldTraceLine = util.TraceLine
-   function util.TraceLine(tbl)
-      local plyghost = LocalPlayer():IsGhost()
-      if not istable(tbl) or (plyghost and showalive:GetBool()) then
-         return oldTraceLine(tbl)
-      end
+	local oldTraceLine = util.TraceLine
+	function util.TraceLine(tbl)
+		local plyghost = LocalPlayer():IsGhost()
+		if not istable(tbl) or (plyghost and showalive:GetBool()) then
+			return oldTraceLine(tbl)
+		end
 
-      local filt = tbl.filter
-      local ignoretbl = {}
+		local filt = tbl.filter
+		local ignoretbl = {}
 
-      if plyghost then
-          for k, v in ipairs(livingtable) do
-              if !IsValid(v) then livingtable[k] = nil continue end
-              table.insert(ignoretbl, v)
-          end
-      else
-          for k, v in ipairs(ghosttable) do
-              if !IsValid(v) then ghosttable[k] = nil continue end
-              table.insert(ignoretbl, v)
-          end
-      end
+		if plyghost then
+			for k, v in ipairs(livingtable) do
+				if not IsValid(v) then livingtable[k] = nil continue end
+				table.insert(ignoretbl, v)
+			end
+		else
+			for k, v in ipairs(ghosttable) do
+				if not IsValid(v) then
+					ghosttable[k] = nil
 
-      if filt then
-         if isentity(filt) then
-            tbl.filter = {}
-            table.insert(tbl.filter, filt)
-            table.Add(tbl.filter, ignoretbl)
-         elseif istable(filt) then
-            table.Add(tbl.filter, ignoretbl)
-         elseif isfunction(filt) then
-            tbl.filter = function(ent)
-               if ignoretbl[ent] then
-                  return false
-               end
-               return filt()
-            end
-         end
-      else
-          tbl.filter = ignoretbl
-      end
-      return oldTraceLine(tbl)
+					continue
+				end
+
+				table.insert(ignoretbl, v)
+			end
+		end
+
+		if filt then
+			if isentity(filt) then
+				tbl.filter = {}
+
+				table.insert(tbl.filter, filt)
+				table.Add(tbl.filter, ignoretbl)
+			elseif istable(filt) then
+				table.Add(tbl.filter, ignoretbl)
+			elseif isfunction(filt) then
+				tbl.filter = function(ent)
+					if ignoretbl[ent] then
+						return false
+					end
+
+					return filt()
+				end
+			end
+		else
+			tbl.filter = ignoretbl
+		end
+
+		return oldTraceLine(tbl)
 	end
 end)
 
 hook.Add("TTTBeginRound", "TTTBeginRound_TableGhost", function()
-    table.Empty(ghosttable)
-    table.Empty(livingtable)
-    for _, v in ipairs(player.GetAll()) do
-        table.insert(livingtable, v)
-    end
+	table.Empty(ghosttable)
+	table.Empty(livingtable)
+
+	for _, v in ipairs(player.GetAll()) do
+		table.insert(livingtable, v)
+	end
 end)
 
 hook.Add("HUDShouldDraw", "SpecDM_TTTPropSpec", function(name)
@@ -607,16 +618,16 @@ net.Receive("SpecDM_Autoswitch", function()
 		close.DoClick = function()
 			frame:Close()
 		end
-        local close_icon = vgui.Create("DImageButton", close)
+		local close_icon = vgui.Create("DImageButton", close)
 
 		close_icon:SetPos(2, 5)
 		close_icon:SetMaterial("materials/icon16/cross.png")
 		close_icon:SizeToContents()
-        frame:MakePopup()
+		frame:MakePopup()
 
 	end
 	if SpecDM.DisplayMessage and not spawned then
-		chat.AddText(Color(255, 62, 62), "[DM] ", color_white, "You've died! Type ", Color(98,176,255), SpecDM.Commands[1], COLOR_WHITE, " to enter deathmatch mode and ", Color(255,62,62), "keep killing", COLOR_WHITE, "!")
+		chat.AddText(Color(255, 62, 62), "[DM] ", color_white, "You've died! Type ", Color(98, 176, 255), SpecDM.Commands[1], COLOR_WHITE, " to enter deathmatch mode and ", Color(255, 62, 62), "keep killing", COLOR_WHITE, "!")
 		-- Now this will say !dm instead of !deathmatch. (see specdm_config.lua)
 	end
 end)
@@ -664,7 +675,7 @@ hook.Add("HUDPaint", "HUDPaint_SpecDM", function()
 	elseif respawntime ~= -2 then
 		local waittime = math.Round(respawntime - CurTime())
 
-		if waittime > -1 then
+		if waittime > - 1 then
 			draw.DrawText("You need to wait " .. waittime .. " second(s) before you can respawn", "Trebuchet24", x, y, COLOR_WHITE, TEXT_ALIGN_CENTER)
 		end
 	end
