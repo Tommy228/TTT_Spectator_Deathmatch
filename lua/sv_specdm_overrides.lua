@@ -156,7 +156,6 @@ hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
 end)
 
 hook.Add("TTT2ShouldSkipHaste", "SpecDMShouldSkipHaste", function(ply, attacker)
-	print("FEHLER: TTT2SpecDMHaste " .. ply:Nick())
 	if ply:IsGhost() then
 		return true
 	elseif GetRoundState() == ROUND_ACTIVE then
