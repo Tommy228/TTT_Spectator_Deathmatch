@@ -128,7 +128,10 @@ end)
 -- too many damn scripts override this function on Initialize
 -- so I had the idea of putting this here (Some scripts override this, too...)
 hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
-	if TTT2 then return end
+	if TTT2 then
+		hook.Remove("TTTBeginRound", "TTTBeginRound_Ghost")
+		return
+	end
 
 	local old_haste = HasteMode
 	local old_PlayerDeath = GAMEMODE.PlayerDeath
