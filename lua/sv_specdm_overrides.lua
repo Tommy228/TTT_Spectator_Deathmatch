@@ -125,37 +125,19 @@ hook.Add("PlayerDeath", "PlayerDeath_SpecDM", function(victim, inflictor, attack
 	end
 end)
 
-if not TTT2 then
-	-- too many damn scripts override this function on Initialize
-	-- so I had the idea of putting this here (Some scripts override this, too...)
-	hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
-		local old_haste = HasteMode
-		local old_PlayerDeath = GAMEMODE.PlayerDeath
+-- too many damn scripts override this function on Initialize
+-- so I had the idea of putting this here (Some scripts override this, too...)
+hook.Add("TTTBeginRound", "TTTBeginRound_Ghost", function()
+	if TTT2 then return end
 
-		function GAMEMODE:PlayerDeath(ply, infl, attacker)
-			if ply:IsGhost() then
-				HasteMode = function()
-					return false
-				end
-			elseif GetRoundState() == ROUND_ACTIVE then
-				if IsValid(attacker) and attacker:IsPlayer() then
-					Damagelog_New(Format("KILL:\t %s [%s] killed %s [%s]", attacker:Nick(), attacker:GetRoleString(), ply:Nick(), ply:GetRoleString()))
-				else
-					Damagelog_New(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))
-				end
-			end
+	local old_haste = HasteMode
+	local old_PlayerDeath = GAMEMODE.PlayerDeath
 
-			old_PlayerDeath(self, ply, infl, attacker)
-			HasteMode = old_haste
-		end
-		hook.Remove("TTTBeginRound", "TTTBeginRound_Ghost")
-	end)
-
-else
-
-	hook.Add("TTT2ShouldSkipHaste", "SpecDMShouldAddHaste", function(ply, attacker)
+	function GAMEMODE:PlayerDeath(ply, infl, attacker)
 		if ply:IsGhost() then
-			return true
+			HasteMode = function()
+				return false
+			end
 		elseif GetRoundState() == ROUND_ACTIVE then
 			if IsValid(attacker) and attacker:IsPlayer() then
 				Damagelog_New(Format("KILL:\t %s [%s] killed %s [%s]", attacker:Nick(), attacker:GetRoleString(), ply:Nick(), ply:GetRoleString()))
@@ -163,9 +145,25 @@ else
 				Damagelog_New(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))
 			end
 		end
-	end)
 
-end
+		old_PlayerDeath(self, ply, infl, attacker)
+		HasteMode = old_haste
+	end
+	hook.Remove("TTTBeginRound", "TTTBeginRound_Ghost")
+end)
+
+hook.Add("TTT2ShouldSkipHaste", "SpecDMShouldSkipHaste", function(ply, attacker)
+	print("FEHLER: TTT2SpecDMHaste " .. ply:Nick())
+	if ply:IsGhost() then
+		return true
+	elseif GetRoundState() == ROUND_ACTIVE then
+		if IsValid(attacker) and attacker:IsPlayer() then
+			Damagelog_New(Format("KILL:\t %s [%s] killed %s [%s]", attacker:Nick(), attacker:GetRoleString(), ply:Nick(), ply:GetRoleString()))
+		else
+			Damagelog_New(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))
+		end
+	end
+end)
 
 hook.Add("Initialize", "Initialize_SpecDM", function()
 	local old_KeyPress = GAMEMODE.KeyPress
